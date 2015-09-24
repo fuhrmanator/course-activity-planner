@@ -1,0 +1,80 @@
+@startuml
+skinparam style strictuml
+hide methods
+hide empty members
+class Instructor
+class Term {
+name : String
+year : Year
+coursesStart : Date
+coursesEnd : Date
+}
+class Schedule {
+dayOfWeek : String
+startTime : String
+endTime : String
+}
+
+class "Teaching\nActivity\nDescription" as TAD {
+  name : String
+  weight : Percentage
+  gradedOutOf : int
+  …
+}
+class "Teaching\nActivity" as TA {
+  …
+}
+class Course {
+  courseID : String
+}
+class Section {
+  groupeID : int
+}
+
+class Meeting {
+  number : int
+  …
+}
+
+class RelativeTime {
+  deltaTimeMinutes : int
+}
+
+note as n1
+Meetings are associated with
+dates according to the section's
+schedule and the university
+calendar. The calendar specifies
+breaks and day permutations 
+(e.g., for a given Tuesday the
+university follows schedules for
+a Monday).
+end note
+
+n1 .up. Term
+n1 .. Meeting
+Course "1" -- "0..1" CourseActivity : includes >
+Course "1" -- "0..1" LabActivity : includes >
+Course "1" -- "0..1" ExerciseActivity : includes >
+
+CourseActivity "1" -- "13" Meeting : takes-place-during >
+LabActivity "1" -- "12" Meeting : takes-place-during >
+ExerciseActivity "1" -- "13" Meeting : takes-place-during >
+
+TAD "1" -- "*" TA : describes
+TA "1" -- "1" RelativeTime : begins-at >
+TA "1" -- "1" RelativeTime : ends-at >
+
+RelativeTime "1" -- "1" Meeting : is-relative-to
+
+Course "1" - "1..*" Section : is-taught-in >
+Instructor "1" -- "1..*" Section : teaches >
+Course "1" - "1..*" TAD : contains >
+Section "1" -- "1..*" Meeting : takes-place-during >
+Schedule "1" -left- "*" Section : applies-to >
+Section "*" -down- "1" Term : applies-to <
+
+'Instructor <|-- Professor
+'Instructor <|-- Lecturer
+'Instructor <|-- TeachingAssistant
+@enduml
