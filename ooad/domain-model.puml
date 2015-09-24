@@ -1,4 +1,5 @@
 @startuml
+title Domain model for course activity planner
 skinparam style strictuml
 hide methods
 hide empty members
