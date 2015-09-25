@@ -1,5 +1,33 @@
+
+
+# User stories
+
+We're trying to track these as issues:
+ - [#1](../issues/1)
+
+From the original document (in French):
+
+ - En tant qu’enseignant, je veux planifier les activités pédagogiques à un seul endroit, parce que je ne veux pas répéter la saisie des informations.
+
+ - En tant qu’enseignant, je veux réutiliser la planification des activités pédagogiques d’un autre groupe-cours, parce que je ne veux pas répéter la saisie des informations.
+
+
 # Use cases
 ![Use case model in PlantUML](http://www.plantuml.com/plantuml/svg/3SlB3OCm303GLUW0YUziunf38YLsv0zLjuVJExrF5nfvSDhOMiJo7S3mLwyUBR_fRAGIB5599vpPRA9Wg05fcdD1Ydxt-9SrK8GD9dgygE81xo-4pbvNpl40)
+
+## Manage course activities
+Instructors add/delete/modify course activities for a course. This includes importing existing activities defined in the LMS and GMS. These activities represent a general structure to the course as well as their grading details and weight. For example, instructors define the number of exams, quizzes, homeworks, etc., as well as their timing within the course, e.g., 
+ - exam 1 is worth 20% and occurs during the 6th lecture session, 
+ - reading quiz 2 is worth 1% and is available on the LMS immediately after the 1st lecture session and has a deadline of 30 minutes before the 2nd lecture session 4, 
+ - etc. 
+
+## Plan section
+Instructors need to configure dates for course activities that are relative to a course section’s calendar. Those dates must be pushed to the various related systems: LMS, GMS and Syllabus. 
+## Manage grade synchronization
+As activities that are done within the LMS are graded, synchronization is necessary between the LMS and the GMS. Instructors can configure if this is done and how frequently it should occur.
+## Synchronize grades
+Synchronization between LMS and GMS occurs according to how it is configured. 
+
 
 # Domain model
 ![Domain model in PlantUML](http://plantuml.com:80/plantuml/svg/3SNB4K8n2030LhI0XBlTy0YQpF394D2nUztBtfUHrE0AkStCVHu0WP_-MZdhgiD1RicMdLpXMJCK3TC3o2iEDwHSxvNVjWNDE43nv3zt731SSLbJ7onzbyeF)
