@@ -1,0 +1,34 @@
+@startuml
+title Use cases
+skinparam style strictuml
+left to right direction
+actor Instructor as I
+rectangle "Learning\nManagement\nSystem" as lms
+rectangle "Syllabus\nManagement\nSystem" as sms
+rectangle "Grade\nManagement\nSystem" as gms
+rectangle "Course\nCalendar\nSystem" as ccs
+
+rectangle "Course activity planner" {
+
+(Manage\ncourse\nactivities) as ma
+(Plan\nsection) as ps
+(Manage\ngrade\nsynchronization) as mgs
+(Synchronize\ngrades) as sg
+}
+
+I -- ma
+ma <-- lms
+ma <-- gms
+
+' plan section
+I -- ps
+ps --> lms
+ps --> sms
+ps --> gms
+ps <-- ccs
+
+'sync grades
+I -- mgs
+sg <-- lms
+sg --> gms
+@enduml
