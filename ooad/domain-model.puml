@@ -16,15 +16,19 @@ startTime : String
 endTime : String
 }
 
-class "Teaching\nActivity\nDescription" as TAD {
+class "Activity\nDescription" as TAD {
   name : String
   weight : Percentage
   gradedOutOf : int
   …
 }
-class "Teaching\nActivity" as TA {
+class "Activity" as TA {
   …
 }
+note left
+Online quiz, homework, 
+lab report, exam, etc.
+end note
 class Course {
   courseID : String
 }
@@ -34,6 +38,8 @@ class Section {
 
 class Meeting {
   number : int
+  starts : DateTime
+  ends : DateTime
   …
 }
 
@@ -54,19 +60,19 @@ end note
 
 n1 .up. Term
 n1 .. Meeting
-Course "1" -- "0..1" CourseActivity : includes >
-Course "1" -- "0..1" LabActivity : includes >
-Course "1" -- "0..1" ExerciseActivity : includes >
+Course "1" -- "0..1" Seminars : includes >
+Course "1" -- "0..1" Labs : includes >
+Course "1" -- "0..1" Practica : includes >
 
-CourseActivity "1" -- "13" Meeting : takes-place-during >
-LabActivity "1" -- "12" Meeting : takes-place-during >
-ExerciseActivity "1" -- "13" Meeting : takes-place-during >
+Seminars "1" -- "13" Meeting : takes-place-during >
+Labs "1" -- "12" Meeting : takes-place-during >
+Practica "1" -- "13" Meeting : takes-place-during >
 
 TAD "1" -- "*" TA : describes
 TA "1" -- "1" RelativeTime : begins-at >
 TA "1" -- "1" RelativeTime : ends-at >
 
-RelativeTime "1" -- "1" Meeting : is-relative-to
+RelativeTime "1" -- "1" Meeting : is-relative-to-start-or-end
 
 Course "1" - "1..*" Section : is-taught-in >
 Instructor "1" -- "1..*" Section : teaches >
