@@ -1,12 +1,14 @@
 # LMS interfacing
 Interfacing with the LMS could be done in various ways:
- - REST API, e.g., http://stackoverflow.com/questions/24730583/create-quiz-using-rest-api-in-moodle
+ - REST API, e.g., http://stackoverflow.com/q/19903456/1168342 or http://stackoverflow.com/questions/24730583/create-quiz-using-rest-api-in-moodle
  - via files that are imported/exported
  
 In the case of Moodle (the LMS at ÉTS), the shortest-term solution might be to use the backup file.
 
 # Format of a Moodle Backup file
 It's a file of type `.mbz` which can be opened using 7-Zip (Windows). It contains directories, some of which contain information about activities (quizzes, assignments, etc.).
+
+![screenshot of Moodle .mbz file inside 7-zip in Windows](https://cloud.githubusercontent.com/assets/7606540/10108355/6fb03536-638e-11e5-8ac0-1ee69b15e009.png)
 
 For example:
     `backup-moodle2-course-2558-s20152-log210-01-20150609-1748-nu.mbz\backup-moodle2-course-2558-s20152-log210-01-20150609-1748-nu\activities\quiz_108660\` 
@@ -44,4 +46,4 @@ This represents a single quiz. In the directory are several XML files, notably `
 	<shuffleanswers>1</shuffleanswers>
 ```
 
-Moodle's documentation about its XML is sparse. If you want to know more about this file format, it's best to Google it, e.g., [`Moodle timeopen`](https://www.google.com/search?q=allintext:moodle+timeopen)
+Moodle's documentation about its XML is sparse. If you want to know more about this file format, it's best to Google it, e.g., [`allintext:Moodle timeopen`](https://www.google.com/search?q=allintext:moodle+timeopen)
