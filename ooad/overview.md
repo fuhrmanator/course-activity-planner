@@ -3,7 +3,7 @@
 # User stories
 
 We're trying to track these as issues:
- - [#1](../issues/1)
+ - [#1](../../../issues/1)
 
 From the original document (in French):
 
