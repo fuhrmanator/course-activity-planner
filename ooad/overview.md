@@ -1,14 +1,14 @@
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
-- [Problem description](#)
-- [User stories](#)
-- [Use cases](#)
+- [Problem description](#problem-description)
+- [User stories](#user-stories)
+- [Use cases](#use-cases)
 	- [Manage course activities](#)
 	- [Plan section](#)
 	- [Manage grade synchronization](#)
 	- [Synchronize grades](#)
-- [Domain model](#)
-- [Glossary](#)
+- [Domain model](#domain-model)
+- [Glossary](#glossary)
 
 # Problem description
 
