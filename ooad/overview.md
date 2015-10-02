@@ -1,3 +1,29 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [Problem description](#problem-description)
+  - [Course planning](#course-planning)
+  - [Determining specific dates of activities](#determining-specific-dates-of-activities)
+  - [Defining activities in separate systems](#defining-activities-in-separate-systems)
+  - [Same dates go into various systems](#same-dates-go-into-various-systems)
+  - [Too much clicking!](#too-much-clicking)
+  - [Grades must be synchronized across systems](#grades-must-be-synchronized-across-systems)
+- [Activity diagrams of legacy workflow (C. Fuhrman)](#activity-diagrams-of-legacy-workflow-c-fuhrman)
+  - [Instructor updates dates for entire course at start of new semester](#instructor-updates-dates-for-entire-course-at-start-of-new-semester)
+  - [Instructor updates details of an assignment before start of semester](#instructor-updates-details-of-an-assignment-before-start-of-semester)
+  - [Instructor synchronizes grading data to SIGNETS](#instructor-synchronizes-grading-data-to-signets)
+- [User stories](#user-stories)
+- [Use cases](#use-cases)
+  - [Manage course activities](#manage-course-activities)
+  - [Plan section](#plan-section)
+  - [Manage grade synchronization](#manage-grade-synchronization)
+  - [Synchronize grades](#synchronize-grades)
+- [Domain model](#domain-model)
+- [Glossary](#glossary)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
 - [Problem description](#problem-description)

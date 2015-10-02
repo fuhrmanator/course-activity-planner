@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [LMS interfacing](#lms-interfacing)
+- [Format of a Moodle Backup file](#format-of-a-moodle-backup-file)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # LMS interfacing
 Interfacing with the LMS could be done in various ways:
  - REST API, e.g., http://stackoverflow.com/q/19903456/1168342 or http://stackoverflow.com/questions/24730583/create-quiz-using-rest-api-in-moodle
