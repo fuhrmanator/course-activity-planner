@@ -1,0 +1,28 @@
+@startuml
+title Activity dates are relative to meetings
+skinparam style strictuml
+hide empty members
+skinparam packageStyle rect
+
+package courses {
+class "Course\nMeeting 01" as Séance01
+class "Course\nMeeting 02" as Séance02
+class "Course\nMeeting 03" as Séance03
+class "Course\nMeeting 04" as Séance04
+class "Course\nMeeting 05" as Séance05
+Séance01 -> Séance02
+Séance02 -> Séance03
+Séance03 -> Séance04
+Séance04 -> Séance05
+Séance05 -> "…"
+class "Moodle\nQuiz 1" as q1 #pink 
+q1 .up.> Séance02 : finishes\n15m before >
+q1 .up.> Séance01 : can be\nattempted after >
+class "Moodle\nHomework 1" as h1 #lightblue 
+h1 .up.> Séance03 : can be\nstarted after >
+h1 .up.> Séance04 : is due the\nnight before >
+class "Midterm\nExam" as m #orange
+m .up.> Séance05 : takes place\nduring
+}
+
+@enduml
