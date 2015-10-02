@@ -134,8 +134,13 @@ Instructors add/delete/modify course activities for a course. This includes impo
 
 ## Plan section
 Instructors need to configure dates for course activities that are relative to a course section’s calendar. Those dates must be pushed to the various related systems: LMS, GMS and Syllabus. 
+
+## Manage study groups
+The GMS (SIGNETS) offers tools to create study groups. An instructor can ask the tool to create teams of *N* students for working on group activities. Team creation can be done with various algorithms (random, according to GPA, specified by the instructor, etc.). Team activities that involve the LMS (Moodle) require that the team information created in the GMS (SIGNETS) be synchronized with the LMS (Moodle). This use case attempts to manage the way this is done.
+
 ## Manage grade synchronization
 As activities that are done within the LMS are graded, synchronization is necessary between the LMS and the GMS. Instructors can configure if this is done and how frequently it should occur.
+
 ## Synchronize grades
 Synchronization between LMS and GMS occurs according to how it is configured. 
 
