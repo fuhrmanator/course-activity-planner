@@ -97,6 +97,13 @@ For these reasons, instructors wait until the end of the semester to perform syn
 
 For more information, see [this Google Document (visible only to people within ETSMTL.NET domain for now)](https://docs.google.com/a/etsmtl.net/document/d/1fR7WbNnG00eFnsoG_btXn4GYPfs761-66AR2i0Wa2bM/edit?usp=sharing). 
 
+# Concept of dates relative to meetings
+It could be useful if activities could be defined with dates that are relative to a particular meeting. Here are a few examples:
+
+![Course meetings and activities that take place relative to them](http://plantuml.com/plantuml/svg/7SlB3G8n303HLg20ZUzSeG8wC5v38Zbsv0-8xbbnciFJd8UIrCxbSkgPAou0Zf_s6jdhKS5EficQZMp2ixfFL4np82iFtf1ol4T-joMeoWuJ8u-OuGvt5ZoORvWSr_yGRTMK7m00)
+
+![Lab meetings and activities that take place relative to them](http://plantuml.com/plantuml/svg/3Scx4S8m303GLM20M3qr9HKRA8h0lfCbdpvmR4-gLxphK98wk5mkFNF53S3nszuZU-qLx6IQhDd89hog-qJ5D0Uoyk0DASTdv6zRWghiC37on0mFUBBWsNp7v7ZW7ctLb3y0)
+
 
 # User stories
 
