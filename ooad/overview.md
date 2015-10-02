@@ -28,7 +28,7 @@
 
 This project fills a void between various online tools used by instructors in the execution of their teaching activities. We’ll use the situation at the ETS as an example, but probably there are analogous tools at other universities with similar problems:
 
- -PlanETS is the in-house Syllabus Management System (SMS), which aims to standardize the content of syllabi at the university.
+ - PlanETS is the in-house Syllabus Management System (SMS), which aims to standardize the content of syllabi at the university.
  - SIGNETS is the in-house Grade Management System (GMS), which aims to standardize and facilitate the management of grades across all courses at the university.
  - Moodle is the Learning Management System (LMS), which aims to standardize the presentation of course content and provide instructors with pedagogical tools. 
  - The Course Calendar System is an abstraction of the various sources of data representing course calendars at ETS (it’s not really a system per se). This includes PDF files, iCal files, data available within PlanETS, etc.
