@@ -1,0 +1,12 @@
+@startuml
+skinparam style strictuml
+|Moodle (LMS)|
+start
+:Export grades to Excel;
+:Excel file on PC]
+|SIGNETS (GMS)|
+:Import grades into SIGNETS,
+matching names of assignments
+from Moodle to SIGNETS;
+stop
+@enduml
