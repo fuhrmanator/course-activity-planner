@@ -24,18 +24,6 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-**Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
-
-- [Problem description](#problem-description)
-- [User stories](#user-stories)
-- [Use cases](#use-cases)
-	- [Manage course activities](#)
-	- [Plan section](#)
-	- [Manage grade synchronization](#)
-	- [Synchronize grades](#)
-- [Domain model](#domain-model)
-- [Glossary](#glossary)
-
 # Problem description
 
 This project fills a void between various online tools used by instructors in the execution of their teaching activities. We’ll use the situation at the ETS as an example, but probably there are analogous tools at other universities with similar problems:
