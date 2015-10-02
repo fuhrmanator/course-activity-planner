@@ -3,14 +3,15 @@ title Use cases
 skinparam style strictuml
 left to right direction
 actor Instructor as I
-rectangle "Learning\nManagement\nSystem" as lms
-rectangle "Syllabus\nManagement\nSystem" as sms
-rectangle "Grade\nManagement\nSystem" as gms
+rectangle "Learning\nManagement\nSystem\n**Moodle**" as lms
+rectangle "Syllabus\nManagement\nSystem\n**PlanETS**" as sms
+rectangle "Grade\nManagement\nSystem\n**SIGNETS**" as gms
 rectangle "Course\nCalendar\nSystem" as ccs
 
 rectangle "Course activity planner" {
 
 (Manage\ncourse\nactivities) as ma
+(Manage\nstudy\ngroups) as msg
 (Plan\nsection) as ps
 (Manage\ngrade\nsynchronization) as mgs
 (Synchronize\ngrades) as sg
@@ -19,6 +20,10 @@ rectangle "Course activity planner" {
 I -- ma
 ma <-- lms
 ma <-- gms
+
+I -- msg
+msg <-- gms
+msg --> lms
 
 ' plan section
 I -- ps
