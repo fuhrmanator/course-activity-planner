@@ -1,13 +1,13 @@
 @startuml
 skinparam style strictuml
-|<img:https://planets.etsmtl.ca/App_Themes/ApplicationTheme/Images/logo_planETS.png>|
+|PlanETS (SMS)|
 start
 :Update weight of assignment
 (if needed);
-|<img:http://www.taotesting.com/wp-content/uploads/2014/09/moodle-logo.jpg>|
+|Moodle (LMS)|
 :Update weight, name, contents,
 dates, etc. of assignment;
-|<img:https://signets.etsmtl.ca/App_Themes/ApplicationTheme/Images/logo_app.png>|
+|SIGNETS (GMS)|
 :Update weight, name, contents,
 dates, etc. of assignment;
 stop
