@@ -1,0 +1,23 @@
+@startuml
+title Activity dates are relative to meetings
+skinparam style strictuml
+hide empty members
+skinparam packageStyle rect
+
+package labs {
+class "Lab\nMeeting 01" as l1 #lightgreen
+class "Lab\nMeeting 02" as l2 #lightgreen
+class "Lab\nMeeting 03" as l3 #lightgreen
+class "Lab\nMeeting 04" as l4 #lightgreen
+'class "Lab\nMeeting 05" as l5 #lightgreen
+class "…" as lf #lightgreen
+l1 -> l2
+l2 -> l3
+l3 -> l4
+l4 -> lf
+class "Moodle\nHomework Lab1" as lh1 #lightblue 
+lh1 .d.> l1 : can be\nstarted after >
+lh1 .d.> l4 : is due the\nnight before >
+}
+
+@enduml
