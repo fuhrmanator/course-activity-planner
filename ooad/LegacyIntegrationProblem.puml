@@ -1,0 +1,37 @@
+@startuml
+skinparam style strictuml
+hide empty members
+hide empty methods
+allow_mixing
+title Lack of integration in legacy systems
+class "Activity" as AP {
+name
+startingDate
+endingDate
+weight
+maxPoints
+...
+}
+class "**SIGNETS**\n(GMS)" as SIGNETS
+class "**PlanETS**\n(SMS)" as PlanETS
+class "**Moodle**\n(LMS)" as Moodle
+AP -- PlanETS : is-defined-in >
+AP -- SIGNETS : is-defined-in >
+AP -- Moodle : can-be-\ndefined-in >
+actor Student
+Actor StudentServices
+Actor Instructor
+Student -up- SIGNETS : observes-dates-\nand-grades >
+Student -up- PlanETS: observes-dates >
+Student -up- Moodle : completes-activities-\nand-observes-dates-\nand-grades >
+StudentServices -up-> SIGNETS : uses-dates-\nto-plan-help
+Instructor - AP : grades >
+Instructor - AP : plans >
+SIGNETS - Moodle : exports-groups-to >
+SIGNETS - Moodle : exports-grades-to <
+note right of AP
+e.g., midterm, 
+quiz, homework, lab
+report, etc.
+end note
+@enduml
