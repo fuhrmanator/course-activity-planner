@@ -1,0 +1,35 @@
+skinparam style strictuml
+title Instructor updates dates for all activities at the start of a new semester
+|Google Calendar\n<img:http://www.bay.k12.fl.us/portals/18/Images/calendar_icon.jpg>|
+start
+:Create meetings for each 
+instance of seminar, lab, etc.;
+:Calendar files (.ics)]
+|SMS\nPlanETS|
+:Copy syllabus from
+previous semester;
+:Copy of syllabus with
+dates from last semester]
+:Modify mid-term date
+according to schedule,
+e.g., date of 6th seminar
+meeting;
+|LMS\nMoodle|
+:Copy activities from
+last semester;
+:Copy of activities
+with same dates from
+last semester.]
+:Update dates according 
+to current schedule.
+<img:http://png-1.findicons.com/files/icons/2770/ios_7_icons/50/left_click.png><img:https://cdn4.iconfinder.com/data/icons/48x48-free-time-icons/48/Slow.png>;
+|GMS\nSIGNETS|
+:Copy structure from
+last semester;
+:Copy of activities
+with same dates from
+last semester.]
+:Update dates according 
+to current schedule.
+<img:http://png-1.findicons.com/files/icons/2770/ios_7_icons/50/left_click.png><img:https://cdn4.iconfinder.com/data/icons/48x48-free-time-icons/48/Slow.png>;
+stop
