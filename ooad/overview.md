@@ -127,7 +127,7 @@ From the original document (in French):
 
 
 # Use cases
-![Use case model in PlantUML](http://www.plantuml.com/plantuml/svg/3SlB3OCm303GLUW0YUziunf38YLsv0zLjuVJExrF5nfvSDhOMiJo7S3mLwyUBR_fRAGIB5599vpPRA9Wg05fcdD1Ydxt-9SrK8GD9dgygE81xo-4pbvNpl40)
+![Use case diagram in PlantUML](http://www.plantuml.com/plantuml/svg/3SlB3OCm303GLUW0YUziunf38YLsv0zLjuVJExrF5nfvSDhOMiJo7S3mLwyUBR_fRAGIB5599vpPRA9Wg05fcdD1Ydxt-9SrK8GD9dgygE81xo-4pbvNpl40)
 
 ## Manage course activities
 Instructors add/delete/modify course activities for a course. This includes importing existing activities defined in the LMS and GMS. These activities represent a general structure to the course as well as their grading details and weight. For example, instructors define the number of exams, quizzes, homeworks, etc., as well as their timing within the course, e.g., 
