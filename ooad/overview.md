@@ -149,6 +149,10 @@ Synchronization between LMS and GMS occurs according to how it is configured.
 # Domain model
 ![Domain model in PlantUML](http://plantuml.com:80/plantuml/svg/3SNB4K8n2030LhI0XBlTy0YQpF394D2nUztBtfUHrE0AkStCVHu0WP_-MZdhgiD1RicMdLpXMJCK3TC3o2iEDwHSxvNVjWNDE43nv3zt731SSLbJ7onzbyeF)
 
+# User friendly date-time choice
+
+See the [discussion on Moodle's bug tracker](https://tracker.moodle.org/browse/MDL-41652?focusedCommentId=364578&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-364578).
+
 # Glossary
 
 Term | Definition | Synonyms
