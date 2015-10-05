@@ -56,3 +56,9 @@ This represents a single quiz. In the directory are several XML files, notably `
 ```
 
 Moodle's documentation about its XML is sparse. If you want to know more about this file format, it's best to Google it, e.g., [`allintext:Moodle timeopen`](https://www.google.com/search?q=allintext:moodle+timeopen)
+
+# Reverse engineered XML
+
+Here are some important fields reverse-engineered by looking at the XML format of some backup files:
+
+![PlantUML class diagram of XML for activities](http://plantuml.com/plantuml/svg/BSan5i8m203GgzW3DEnkEjUzAwNOv9b07W7xlBqEJd_uKn6giNDOlMJtFgu0XcSwYkVOOh2HYhDu8ctmZ6mD1LqDICC6pqXUtiK_SwyemWODX_zGnHrk_xmZlQAlZoNrQFKB) 
