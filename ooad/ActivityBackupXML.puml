@@ -1,0 +1,56 @@
+@startuml
+skinparam style strictuml
+hide empty members
+hide empty methods
+title Important fields from XML backup files
+abstract class "Activity" as AP {
+}
+class Module {
+  id : ID
+  moduleName : String
+  availableFrom : DateTime
+  availableUntil : DateTime
+  ...
+}
+
+note right of Module::moduleName
+e.g., moduleName="quiz", 
+moduleName="assign", etc.
+end note
+
+AP - Module : specifies <
+
+class Assign {
+  id : ID
+  name : String
+  dueDate : DateTime
+  cutoffDate : DateTime
+  allowSubmissionsFromDate : DateTime
+  ...
+}
+note bottom of Assign
+See assign.xml in 
+Moodle backup file
+end note
+
+AP -- Assign : can-be >
+
+class Quiz {
+  id : ID
+  name : String
+  timeOpen : DateTime
+  timeClose : DateTime
+  timeLimitSeconds : int
+  gracePeriod : ?
+  timeCreated : DateTime
+  timeModified : DateTime
+  ...
+}
+note bottom of Quiz
+See quiz.xml in 
+Moodle backup file
+end note
+
+AP -- Quiz : can-be >
+
+@enduml
