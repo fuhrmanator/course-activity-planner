@@ -4,6 +4,7 @@
 
 - [LMS interfacing](#lms-interfacing)
 - [Format of a Moodle Backup file](#format-of-a-moodle-backup-file)
+- [Reverse engineered XML](#reverse-engineered-xml)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
