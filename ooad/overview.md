@@ -119,11 +119,9 @@ It could be useful if activities could be defined with dates that are relative t
 We're trying to track these as issues:
  - [#1](../../../issues/1)
 
-From the original document (in French):
+ - As an instructor, I want to plan my activities in one place, because I don't want to repeat myself when entering information. 
 
- - En tant qu’enseignant, je veux planifier les activités pédagogiques à un seul endroit, parce que je ne veux pas répéter la saisie des informations.
-
- - En tant qu’enseignant, je veux réutiliser la planification des activités pédagogiques d’un autre groupe-cours, parce que je ne veux pas répéter la saisie des informations.
+ - As an instructor, I want to reuse the planning of activities from another section of a course, because I don't want to waste time re-defining the same information.
 
 
 # Use cases
