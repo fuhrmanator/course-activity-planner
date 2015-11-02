@@ -33,7 +33,6 @@ public class MoodleBackupFile {
 	 */
 	private static final int BUFFER_SIZE = 4096;
 	private ArrayList<String> fileList = new ArrayList<String>();
-    private static final String OUTPUT_ZIP_FILE = "MyFile.mbz";
     private static final String SOURCE_FOLDER = "MoodleBackup\\\\";
 	/**
 	 * Extracts a zip file specified by the zipFilePath to a directory specified
@@ -43,8 +42,6 @@ public class MoodleBackupFile {
 	 * @param destDirectory
 	 * @throws IOException
 	 */
-    
-    final String OUTPUT_FOLDER = "dest";
     
     public void unzip(String file, String destDirectory) throws FileNotFoundException, IOException, ArchiveException {
  

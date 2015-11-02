@@ -27,7 +27,7 @@ public class Modele {
 		
 		//ArrayList<Activite> activites = new ArrayList<Activite>();
 		ArrayList<Quiz> quizs = new ArrayList<Quiz>();
-		String pathExctract = "C:\\Users\\Denis\\workspace\\ActivitETS\\MoodleBackup";
+		String pathExctract = "MoodleBackup";
 		String pathActivities = pathExctract + "\\activities";
 		//path = "C:\\Users\\Denis\\workspace\\ActivitETS\\backup-moodle2-course-nu.mbz";
 		File fToExctract = new File(path);
