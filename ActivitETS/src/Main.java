@@ -1,5 +1,4 @@
 import gui.Fenetre;
-import gui.Gui;
 import javax.swing.JFrame;
 import modele.Modele;
 import controleur.Controleur;

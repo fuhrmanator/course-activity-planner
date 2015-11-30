@@ -13,9 +13,10 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import activites.Activite;
+import activites.Cours;
 import activites.Quiz;
 import gui.Fenetre;
-import gui.Gui;
+import gui.FenetreGestionCours;
 import modele.Modele;
 
 public class Controleur{
@@ -25,6 +26,8 @@ public class Controleur{
 	private JFrame vue;
 	private ActionListener actionListener;
 	private ChangeListener changeListener;
+	private ArrayList<Cours> listeCours;
+	private ArrayList<Quiz> listeQuizs;
 
 	public Controleur(Modele modele, JFrame vue) {
 		this.modele = modele;
@@ -59,6 +62,18 @@ public class Controleur{
 				afficherInfos();
 			}
 		});
+		
+		((Fenetre) vue).getMenuCalendrier().addActionListener(new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String pathCalendrier = ((Fenetre) vue).choixFic();
+				listeCours = modele.recupererCours(pathCalendrier);
+				/*FenetreGestionCours vueListeCours = new FenetreGestionCours();
+				vueListeCours.afficherListeCours(listeCours);*/
+				((Fenetre) vue).afficherListeCours(listeCours, listeQuizs);
+			}
+		});
 
 		((Fenetre) vue).getMenuQuitter().addActionListener(
 				new AbstractAction() {
@@ -78,13 +93,33 @@ public class Controleur{
 				((Fenetre) vue).afficherFicCompresseOK();
 			}
 		});
+		
+		((Fenetre) vue).getBtnSyncCoursQuizs().addActionListener(new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+				modele.syncCoursQuizs(listeCours, listeQuizs);
+				
+				((Fenetre) vue).syncCoursQuizs(listeCours, listeQuizs);
+			}
+		});
+		
+		((Fenetre) vue).getBtnSetDeltas().addActionListener(new AbstractAction() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+				
+			}
+		});
 
 	}
 
 	private void ouvrirFic(String path) {
 		// if(path.contains("quiz.xml")) {
 		// ArrayList<Activite> listeActivites = modele.recupererActivites(path);
-		ArrayList<Quiz> listeQuizs = modele.recupererActivites(path);
+		listeQuizs = modele.recupererActivites(path);
 		for (int i = 0; i < listeQuizs.size(); ++i) {
 			String pathNameFic = listeQuizs.get(i).getPath();
 			modele.recupererInfosQuiz(pathNameFic, listeQuizs.get(i));

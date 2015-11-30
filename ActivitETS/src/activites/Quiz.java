@@ -19,12 +19,23 @@ public class Quiz {
 	private LocalDateTime dateOpen;
 	private LocalDateTime dateClose;
 	TimeZone timeZone = TimeZone.getDefault();
+	private Cours coursDebut;
+	private Cours coursFin;
 	
 	public Quiz(int id, String nomFichier, String path) {
 		//super(nom, nomFichier);
 		this.id =id;
 		this.nomFichier = nomFichier;
 		this.path = path;
+	}
+	
+	public Quiz(int id, String nomFichier, String path, Cours coursDebut, Cours coursFin) {
+		//super(nom, nomFichier);
+		this.id =id;
+		this.nomFichier = nomFichier;
+		this.path = path;
+		this.coursDebut = coursDebut;
+		this.coursFin = coursFin;
 	}
 	
 	/*public Quiz(int id, String nom, String resume, Calendar dateStart, Calendar dateStop) {
@@ -108,6 +119,22 @@ public class Quiz {
 
 	public void setDateClose(LocalDateTime dateClose) {
 		this.dateClose = dateClose;
+	}	
+
+	public Cours getCoursDebut() {
+		return coursDebut;
+	}
+
+	public void setCoursDebut(Cours coursDebut) {
+		this.coursDebut = coursDebut;
+	}
+
+	public Cours getCoursFin() {
+		return coursFin;
+	}
+
+	public void setCoursFin(Cours coursFin) {
+		this.coursFin = coursFin;
 	}
 
 	public String toString() {
