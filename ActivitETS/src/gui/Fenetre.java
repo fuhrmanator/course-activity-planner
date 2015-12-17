@@ -11,13 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 import java.awt.GridBagLayout;
 
@@ -27,9 +21,9 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,7 +32,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Properties;
 
 import javax.swing.JPanel;
@@ -57,7 +50,6 @@ import javax.swing.TransferHandler;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DropMode;
 import javax.swing.JCheckBox;
@@ -66,31 +58,29 @@ import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-import controleur.Controleur;
-import utils.DateFormattedListCellRenderer;
-import utils.DateLabelFormatter;
-import utils.TableRenderer;
-import utils.SpinnerEditor;
-import utils.MyComboBoxRenderer;
+import utils.*;
 import modele.ListeCoursTableModel;
 import modele.Modele;
 import net.miginfocom.swing.MigLayout;
 
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
+
+/*
+ * projet : ActivitETS
+ * @author : Denis BRESSAND
+ * Date : 17/12/2015
+ * 
+ * Vue principale
+ */
 
 public class Fenetre extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JFrame frmR;
 	private JMenuItem mntmOuvrirFichiermbz;
@@ -159,7 +149,7 @@ public class Fenetre extends JFrame {
 		mntmOuvrirFichiermbz = new JMenuItem("Ouvrir fichier .MBZ");
 		mnFichier.add(mntmOuvrirFichiermbz);
 
-		mntmCompresserEnMbz = new JMenuItem("Compresser en MBZ");
+		mntmCompresserEnMbz = new JMenuItem("Enregistrer");
 		mnFichier.add(mntmCompresserEnMbz);
 
 		mntmImporterDesCours = new JMenuItem("Importer des cours");
@@ -209,24 +199,6 @@ public class Fenetre extends JFrame {
 		btnSyncCoursQuizs = new JButton("Importer tous les quizs à partir de la séance n. : ");
 		btnSetDeltas = new JButton("Enregistrer les deltas");
 		btnSetDeltas.setVisible(false);
-		
-		/*
-		 * int xSize = frmR.getWidth(); int ySize = frmR.getHeight();
-		 * 
-		 * int gameHeight = (int) (Math.round(ySize * 0.10)); int gameWidth =
-		 * (int) (Math.round(xSize * 0.10));
-		 * 
-		 * btnPanel = new JPanel(new MigLayout("fill")); btnEnregistrer = new
-		 * JButton("Enregistrer");
-		 * 
-		 * btnPanel.add(btnEnregistrer, "span, right, wrap");
-		 * btnPanel.setPreferredSize(new Dimension(gameWidth, gameHeight));
-		 * 
-		 * GridBagConstraints gbc_panel_1 = new GridBagConstraints();
-		 * gbc_panel_1.fill = GridBagConstraints.BOTH; gbc_panel_1.gridx = 0;
-		 * gbc_panel_1.gridy = 1; frmR.getContentPane().add(btnPanel,
-		 * gbc_panel_1);
-		 */
 
 		frmR.setVisible(true);
 	}
@@ -266,7 +238,7 @@ public class Fenetre extends JFrame {
 	public JButton getBtnSyncCoursQuizs() {
 		return btnSyncCoursQuizs;
 	}
-	
+
 	public JButton getBtnSetDeltas() {
 		return btnSetDeltas;
 	}
@@ -308,7 +280,6 @@ public class Fenetre extends JFrame {
 			txtCeMinitestVise.setText(resume);
 			txtCeMinitestVise.setEditable(false);
 			txtCeMinitestVise.setLineWrap(true);
-			// txtCeMinitestVise.setMinimumSize(resumePanel.getMaximumSize());
 			txtCeMinitestVise.setSize(500, 80);
 			resumePanel.add(txtCeMinitestVise);
 
@@ -342,8 +313,7 @@ public class Fenetre extends JFrame {
 			txtHourOpenReadOnly = new JTextField();
 			txtHourOpenReadOnly.setText(listeQuizs.get(i).getDateOpen().toString().split("T")[1]);
 
-			cbHourOpenReadOnly = setHeureCombobox(
-					listeQuizs.get(i).getDateOpen().toString().split("T")[1]);
+			cbHourOpenReadOnly = setHeureCombobox(listeQuizs.get(i).getDateOpen().toString().split("T")[1]);
 			cbHourOpenReadOnly.setEditable(true);
 			cbHourOpenReadOnly.setEnabled(false);
 			datePanelReadOnly.add(cbHourOpenReadOnly, "grow");
@@ -366,8 +336,7 @@ public class Fenetre extends JFrame {
 			JLabel lblAClose = new JLabel("à");
 			datePanelReadOnly.add(lblAClose, "grow");
 
-			cbHourCloseReadOnly = setHeureCombobox(
-					listeQuizs.get(i).getDateClose().toString().split("T")[1]);
+			cbHourCloseReadOnly = setHeureCombobox(listeQuizs.get(i).getDateClose().toString().split("T")[1]);
 			cbHourCloseReadOnly.setEditable(true);
 			cbHourCloseReadOnly.setEnabled(false);
 			datePanelReadOnly.add(cbHourCloseReadOnly, "grow");
@@ -446,9 +415,6 @@ public class Fenetre extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 
-					// System.out.println("heure : " + (((LocalTime)
-					// cbHourOpen.getSelectedItem()).getHour()));
-
 					LocalDateTime dateOpen = LocalDateTime.of(datePickerOpen.getModel().getYear(),
 							datePickerOpen.getModel().getMonth() + 1, datePickerOpen.getModel().getDay(),
 							(Integer.valueOf(cbHourOpen.getSelectedItem().toString().split(":")[0])),
@@ -521,58 +487,44 @@ public class Fenetre extends JFrame {
 
 		tableModel = new ListeCoursTableModel(listeCours);
 		cbBoxCours = new JComboBox(listeCours.toArray());
-		
-		
-		
+
 		spinOpen = new JSpinner(setJspinnerEditor(model));
 		JSpinner.DateEditor de = new JSpinner.DateEditor(spinOpen, "hh:mm");
-		de.getTextField().setEditable( true );
+		de.getTextField().setEditable(true);
 		spinOpen.setEditor(de);
 		spinOpen.setVisible(false);
-		
+
 		spinClose = new JSpinner(setJspinnerEditor(model));
 		JSpinner.DateEditor deClose = new JSpinner.DateEditor(spinClose, "hh:mm");
-		deClose.getTextField().setEditable( true );
+		deClose.getTextField().setEditable(true);
 		spinClose.setEditor(deClose);
 		spinClose.setVisible(false);
 
 		/*
 		 * Override pour DnD des cellules de la table
 		 */
-		tableCours = new JTable(tableModel);/* {
-			public boolean isCellEditable(int row, int column) {
-				return true;
-			}
-
-			private boolean pressed;
-
-			@Override
-			protected void processMouseEvent(MouseEvent e) {
-				pressed = e.getID() == MouseEvent.MOUSE_PRESSED;
-				if (pressed && !e.isShiftDown() && !e.isControlDown())
-					clearSelection();
-				try {
-					super.processMouseEvent(e);
-				} finally {
-					pressed = false;
-				}
-			}
-
-			@Override
-			public boolean isCellSelected(int row, int col) {
-				return pressed ? true : super.isCellSelected(row, col);
-			}
-		};*/
+		tableCours = new JTable(tableModel);
 
 		DefaultTableCellRenderer renderer = new TableRenderer();
 		Calendar calendar = Calendar.getInstance();
 		SpinnerDateModel spinnerModel = new SpinnerDateModel(calendar.getTime(), null, null, Calendar.HOUR_OF_DAY);
-		//tableCours.getColumnModel().getColumn(4).setCellEditor(new SpinnerEditor(spinnerModel, tableModel));
-		//tableCours.getColumnModel().getColumn(5).setCellEditor(new SpinnerEditor(spinnerModel, tableModel));
+		// tableCours.getColumnModel().getColumn(4).setCellEditor(new
+		// SpinnerEditor(spinnerModel, tableModel));
+		// tableCours.getColumnModel().getColumn(5).setCellEditor(new
+		// SpinnerEditor(spinnerModel, tableModel));
 		tableCours.setDefaultRenderer(Object.class, renderer);
-		//tableCours.setDragEnabled(true);
-		//tableCours.setDropMode(DropMode.USE_SELECTION);
-		//renderer.setHorizontalAlignment(JLabel.CENTER);
+		/*
+		 * tableCours.setDragEnabled(true);
+		 * tableCours.setDropMode(DropMode.USE_SELECTION);
+		 * tableCours.setTransferHandler(new TransferHelper());
+		 */
+		renderer.setHorizontalAlignment(JLabel.CENTER);
+
+		tableCours.setDragEnabled(true);
+		tableCours.setDropMode(DropMode.USE_SELECTION);
+		tableCours.setTransferHandler(new TransferHelper());
+		tableCours.setRowSelectionAllowed(false);
+		tableCours.setCellSelectionEnabled(true);
 
 		/*
 		 * Drag&Drop cellules des tables
@@ -643,7 +595,7 @@ public class Fenetre extends JFrame {
 		 */
 
 		panelListeCours.add("North", new JScrollPane(tableCours));
-		//panelListeCours.setLayout(new MigLayout("fill"));
+		// panelListeCours.setLayout(new MigLayout("fill"));
 		panelImportQuiz = new JPanel();
 		panelImportQuiz.setLayout(new MigLayout("fill"));
 
@@ -651,35 +603,35 @@ public class Fenetre extends JFrame {
 		lblDeltaDebut.setVisible(false);
 		lblDeltaFin = new JLabel("delta fin : - ");
 		lblDeltaFin.setVisible(false);
-		
-		
-		panelImportQuiz.add(btnSyncCoursQuizs);
-		panelImportQuiz.add(cbBoxCours, "wrap");
+
+		// panelImportQuiz.add(btnSyncCoursQuizs);
+		// panelImportQuiz.add(cbBoxCours, "wrap");
 		panelImportQuiz.add(lblDeltaDebut);
 		panelImportQuiz.add(spinOpen);
 		panelImportQuiz.add(lblDeltaFin);
 		panelImportQuiz.add(spinClose);
 		panelImportQuiz.add(btnSetDeltas, "wrap");
-		
 
 		panelListeCours.add("Center", panelImportQuiz);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void syncCoursQuizs(ArrayList<Cours> listeCours, ArrayList<Quiz> listeQuizs) {
-		
+
 		int rows = tableCours.getModel().getRowCount();
-		/*for(int i = 0; i < listeQuizs.size(); ++i) {
-			tableCours.getModel().setValueAt(listeQuizs.get(i), i, 3);
-		}*/
+		/*
+		 * for(int i = 0; i < listeQuizs.size(); ++i) {
+		 * tableCours.getModel().setValueAt(listeQuizs.get(i), i, 3); }
+		 */
 		tableModel.refreshQuizs(listeQuizs);
-		for(int i = 0; i < listeQuizs.size(); ++i) {
+		for (int i = 0; i < listeQuizs.size(); ++i) {
 			cbHourOpenReadOnly = setHeureCombobox(listeQuizs.get(i).getDateOpen().toString().split("T")[1]);
-			
+
 			cbHourCloseReadOnly = setHeureCombobox(listeQuizs.get(i).getDateClose().toString().split("T")[1]);
-			System.out.println(listeQuizs.get(i).getNom() + " // Date Open : " + listeQuizs.get(i).getDateOpen() + " // Date Close : " + listeQuizs.get(i).getDateClose());
+			System.out.println(listeQuizs.get(i).getNom() + " // Date Open : " + listeQuizs.get(i).getDateOpen()
+					+ " // Date Close : " + listeQuizs.get(i).getDateClose());
 		}
-		
+
 		spinOpen.setVisible(true);
 		spinClose.setVisible(true);
 		btnSetDeltas.setVisible(true);
@@ -687,18 +639,195 @@ public class Fenetre extends JFrame {
 		lblDeltaFin.setVisible(true);
 		revalidate();
 		repaint();
-		
+
 	}
-	
+
 	private SpinnerDateModel setJspinnerEditor(SpinnerDateModel model) {
-		
+
 		Date initDate = new Date();
-		model = new SpinnerDateModel(initDate,
-		                             null,
-		                             null,
-		                             Calendar.HOUR);
-		
+		model = new SpinnerDateModel(initDate, null, null, Calendar.HOUR);
+
 		return model;
 	}
+
+	public static final DataFlavor CELL_DATA_FLAVOR = createConstant(CellData.class, "application/x-java-celldata");
 	
+	static protected DataFlavor createConstant(Class clazz, String name) {
+		try {
+			return new DataFlavor(clazz, name);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public class CellDataTransferable implements Transferable {
+
+		
+		private CellData cellData;
+
+		public CellDataTransferable(CellData cellData) {
+			this.cellData = cellData;
+		}
+
+		@Override
+		public DataFlavor[] getTransferDataFlavors() {
+			return new DataFlavor[] { CELL_DATA_FLAVOR };
+		}
+
+		@Override
+		public boolean isDataFlavorSupported(DataFlavor flavor) {
+			boolean supported = false;
+			for (DataFlavor available : getTransferDataFlavors()) {
+				if (available.equals(flavor)) {
+					supported = true;
+				}
+			}
+			return supported;
+		}
+
+		@Override
+		public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+			return cellData;
+		}
+
+		
+
+	}
+
+	//TransferHandler personnalisé pour le Drag&Drop
+	public class TransferHelper extends TransferHandler {
+
+		private static final long serialVersionUID = 1L;
+
+		public TransferHelper() {
+		}
+
+		@Override
+		public int getSourceActions(JComponent c) {
+			return MOVE;
+		}
+
+		@Override
+		protected Transferable createTransferable(JComponent source) {
+			// Create the transferable
+			JTable table = (JTable) source;
+			int row = table.getSelectedRow();
+			int col = table.getSelectedColumn();
+			Object value = table.getValueAt(row, col);
+			return new CellDataTransferable(new CellData(table));
+		}
+
+		@Override
+		protected void exportDone(JComponent source, Transferable data, int action) {
+		}
+
+		@Override
+		public boolean canImport(TransferSupport support) {
+			// Reject the import by default...
+			boolean canImport = false;
+			// Can only import into another JTable
+			Component comp = support.getComponent();
+			if (comp instanceof JTable) {
+				JTable target = (JTable) comp;
+				// Need the location where the drop might occur
+				DropLocation dl = support.getDropLocation();
+				Point dp = dl.getDropPoint();
+				// Get the column at the drop point
+				int dragColumn = target.columnAtPoint(dp);
+				try {
+					// Get the Transferable, we need to check
+					// the constraints
+					Transferable t = support.getTransferable();
+					CellData cd = (CellData) t.getTransferData(CELL_DATA_FLAVOR);
+					// Make sure we're not dropping onto ourselves...
+					if (cd.getTable() == target) {
+						// Do the columns match...?
+						if (dragColumn == cd.getColumn()) {
+							canImport = true;
+						}
+					}
+				} catch (UnsupportedFlavorException | IOException ex) {
+					ex.printStackTrace();
+				}
+			}
+			return canImport;
+		}
+
+		@Override
+		public boolean importData(TransferSupport support) {
+			// Import failed for some reason...
+			boolean imported = false;
+			// Only import into JTables...
+			Component comp = support.getComponent();
+			if (comp instanceof JTable) {
+				JTable target = (JTable) comp;
+				// Need to know where we are importing to...
+				DropLocation dl = support.getDropLocation();
+				Point dp = dl.getDropPoint();
+				int dropCol = target.columnAtPoint(dp);
+				int dropRow = target.rowAtPoint(dp);
+				try {
+					// Get the Transferable at the heart of it all
+					Transferable t = support.getTransferable();
+					CellData cd = (CellData) t.getTransferData(CELL_DATA_FLAVOR);
+					if (cd.getTable() == target) {
+						if (cd.swapValuesWith(dropRow, dropCol)) {
+							imported = true;
+						}
+					}
+				} catch (UnsupportedFlavorException | IOException ex) {
+					ex.printStackTrace();
+				}
+
+			}
+			return imported;
+		}
+	}
+
+	//Cell model personalisé
+	public class CellData {
+		private final Object value;
+		private final int col;
+		private final JTable table;
+		private final int row;
+
+		public CellData(JTable source) {
+			this.col = source.getSelectedColumn();
+			this.row = source.getSelectedRow();
+			this.value = source.getValueAt(row, col);
+			this.table = source;
+		}
+
+		public int getColumn() {
+			return col;
+		}
+
+		public Object getValue() {
+			return value;
+		}
+
+		public JTable getTable() {
+			return table;
+		}
+
+		public boolean swapValuesWith(int targetRow, int targetCol) {
+
+			boolean swapped = false;
+
+			if (targetCol == col) {
+
+				Object exportValue = table.getValueAt(targetRow, targetCol);
+				table.setValueAt(value, targetRow, targetCol);
+				table.setValueAt(exportValue, row, col);
+				swapped = true;
+
+			}
+
+			return swapped;
+
+		}
+
+	}
+
 }

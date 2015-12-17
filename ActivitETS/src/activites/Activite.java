@@ -1,5 +1,13 @@
 package activites;
 
+/*
+ * projet : ActivitETS
+ * @author : Denis BRESSAND
+ * Date : 17/12/2015
+ * 
+ * Classe générale Activité
+ */
+
 import java.io.File;
 import java.time.LocalDateTime;
 
@@ -9,6 +17,10 @@ public class Activite {
 	private String nom;
 	private LocalDateTime dateOpen;
 	private LocalDateTime dateClose;
+	
+	public Activite() {
+		
+	}
 	
 	public Activite(String type, String nomFichier, String nom) {
 		nomFichier = nomFichier;

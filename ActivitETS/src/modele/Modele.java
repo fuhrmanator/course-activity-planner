@@ -20,6 +20,15 @@ import utils.MoodleBackupFile;
 import utils.MoodleImportBackup;
 import utils.OperationsFichiers;
 
+/*
+ * projet : ActivitETS
+ * @author : Denis BRESSAND
+ * Date : 17/12/2015
+ * 
+ * Modele de l'architecture MVC
+ */
+
+
 public class Modele {
 
 	private LocalDateTime dateStart, dateStop;
@@ -31,15 +40,12 @@ public class Modele {
 	
 	public ArrayList<Quiz> recupererActivites(String path) {
 		
-		//ArrayList<Activite> activites = new ArrayList<Activite>();
 		ArrayList<Quiz> quizs = new ArrayList<Quiz>();
 		String pathExctract = "MoodleBackup";
 		String pathActivities = pathExctract + "\\activities";
-		//path = "C:\\Users\\Denis\\workspace\\ActivitETS\\backup-moodle2-course-nu.mbz";
 		File fToExctract = new File(path);
 		File fExtract = new File(pathExctract);
 		File fActivite = new File(pathActivities);
-		//operationsFics.lireFic(path);
 		
 		try {
 			backup.unzip(path, pathExctract);
@@ -54,25 +60,13 @@ public class Modele {
 		dateStart = operationsFics.getDateOpen();
 		dateStop = operationsFics.getDateClose();
 
-		
-
-		
-		//System.out.println(quiz.getDateStart().toString());
-
 		return quizs;
 	}
 	
 	public void recupererInfosQuiz(String fic, Quiz quiz) {
 		operationsFics.lireFic(fic, quiz);
 	}
-	
-	/*public Quiz recupererInfos() {
-		
-		quizName = operationsFics.getQuizName();
-		quizResume = operationsFics.getQuizResume();
-		
-		return quiz;
-	}*/
+
 	
 	public void createNewXML(ArrayList<LocalDateTime> listesNewDates, String pathNewFile) {
 		
@@ -80,11 +74,6 @@ public class Modele {
 	}
 	
 	public void createNewMBZ(String fileToZip) {
-		/*File fileCompress = new File(fileToZip);
-		
-		File fileToCompress = new File("MoodleBackup\\\\");
-		MoodleImportBackup moodleImport = new MoodleImportBackup();
-		moodleImport.compress(fileToCompress, fileCompress);*/
 		backup.zipIt(fileToZip);
 	}
 	
@@ -112,15 +101,7 @@ public class Modele {
 			listeNewDates.add(listeQuizs.get(i).getDateClose());
 			String pathNewFile = listeQuizs.get(i).getPath();
 			createNewXML(listeNewDates, pathNewFile);
-			/*for(Quiz quiz : listeQuizs) {
-				quiz.setCoursDebut(listeCours.get(i));
-				quiz.setCoursFin(listeCours.get(i+1));
-			}*/
 		}
-		
-		
-		
-		System.out.println();
 	}
 	
 }

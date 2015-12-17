@@ -40,6 +40,15 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import activites.Activite;
 import activites.Quiz;
 
+/*
+ * projet : ActivitETS
+ * @author : Denis BRESSAND
+ * Date : 17/12/2015
+ * 
+ * Classe permettant de parser les fichiers XML à l'aide de SAX Parser
+ */
+
+
 public class OperationsFichiers {
 
 	private String quizName, quizResume;

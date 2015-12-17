@@ -16,13 +16,20 @@ import activites.Activite;
 import activites.Cours;
 import activites.Quiz;
 import gui.Fenetre;
-import gui.FenetreGestionCours;
 import modele.Modele;
+
+/*
+ * projet : ActivitETS
+ * @author : Denis BRESSAND
+ * Date : 17/12/2015
+ * 
+ * Controleur de l'architecture MVC
+ */
+
 
 public class Controleur{
 
 	private Modele modele;
-	// private Fenetre vue;
 	private JFrame vue;
 	private ActionListener actionListener;
 	private ChangeListener changeListener;
@@ -35,24 +42,8 @@ public class Controleur{
 	}
 
 	public void control() {
-		/*
-		 * actionListener = new ActionListener() {
-		 * 
-		 * @Override public void actionPerformed(ActionEvent actionEvent) {
-		 * if(actionEvent.getSource() == ((Fenetre)vue).getMenuFic()) { String
-		 * path = ((Fenetre)vue).choixFic(); ouvrirFic(path); afficherInfos(); }
-		 * else if(actionEvent.getSource() == ((Gui) vue).getBtnCreateFic()) {
-		 * String pathNewFile = "QuizzMoodle\\activities\\quizTest.xml";
-		 * ArrayList<LocalDateTime> listesNewDates = ((Gui) vue).getNewDates();
-		 * generateNewFile(listesNewDates, pathNewFile); }
-		 * 
-		 * }
-		 * 
-		 * };
-		 */
-		
-		//start();
 
+		//Ouvrir une sauvegarde Moodle et afficher les activités
 		((Fenetre) vue).getMenuFic().addActionListener(new AbstractAction() {
 
 			@Override
@@ -63,18 +54,21 @@ public class Controleur{
 			}
 		});
 		
+		//Importer les cours depuis un .ics et les afficher
 		((Fenetre) vue).getMenuCalendrier().addActionListener(new AbstractAction() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String pathCalendrier = ((Fenetre) vue).choixFic();
 				listeCours = modele.recupererCours(pathCalendrier);
-				/*FenetreGestionCours vueListeCours = new FenetreGestionCours();
-				vueListeCours.afficherListeCours(listeCours);*/
 				((Fenetre) vue).afficherListeCours(listeCours, listeQuizs);
+				modele.syncCoursQuizs(listeCours, listeQuizs);
+				
+				((Fenetre) vue).syncCoursQuizs(listeCours, listeQuizs);
 			}
 		});
 
+		//Quitter l'app
 		((Fenetre) vue).getMenuQuitter().addActionListener(
 				new AbstractAction() {
 
@@ -84,6 +78,7 @@ public class Controleur{
 					}
 				});
 		
+		//COmpresser les activités dans une nouvelle sauvegarde .mbz compatible Moodle
 		((Fenetre) vue).getMenuCompresser().addActionListener(new AbstractAction() {
 
 			@Override
@@ -94,6 +89,7 @@ public class Controleur{
 			}
 		});
 		
+		//Synchroniser les quizs avec les cours
 		((Fenetre) vue).getBtnSyncCoursQuizs().addActionListener(new AbstractAction() {
 
 			@Override
@@ -104,6 +100,7 @@ public class Controleur{
 				((Fenetre) vue).syncCoursQuizs(listeCours, listeQuizs);
 			}
 		});
+		
 		
 		((Fenetre) vue).getBtnSetDeltas().addActionListener(new AbstractAction() {
 
@@ -117,18 +114,13 @@ public class Controleur{
 	}
 
 	private void ouvrirFic(String path) {
-		// if(path.contains("quiz.xml")) {
-		// ArrayList<Activite> listeActivites = modele.recupererActivites(path);
+
 		listeQuizs = modele.recupererActivites(path);
 		for (int i = 0; i < listeQuizs.size(); ++i) {
 			String pathNameFic = listeQuizs.get(i).getPath();
 			modele.recupererInfosQuiz(pathNameFic, listeQuizs.get(i));
 		}
 		((Fenetre) vue).afficherQuizs(listeQuizs);
-
-		/*
-		 * } else { ((Gui) vue).afficherEreurFichier(); }
-		 */
 
 	}
 
@@ -139,6 +131,7 @@ public class Controleur{
 		 */
 	}
 
+	//Génère la nouvelle sauvegarde Moodle
 	private void generateNewFile(ArrayList<LocalDateTime> listesNewDates,
 			String pathNewFile) {
 

@@ -3,15 +3,23 @@ import javax.swing.JFrame;
 import modele.Modele;
 import controleur.Controleur;
 
+/*
+ * projet : ActivitETS
+ * @author : Denis BRESSAND
+ * Date : 17/12/2015
+ * 
+ * Main Class
+ */
+
 public class Main {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
+		/*
+		 * Démarre l'appli
+		 */
 		Modele modele = new Modele();
 		Fenetre vue = new Fenetre();
-		//Gui vue = new Gui();
-		// View view = new View("-");
 		Controleur controller = new Controleur(modele, vue);
 		controller.control();
 

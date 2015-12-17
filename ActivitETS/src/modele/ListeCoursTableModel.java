@@ -22,6 +22,15 @@ import activites.Cours;
 import activites.Quiz;
 import utils.DateFormattedListCellRenderer;
 
+/*
+ * projet : ActivitETS
+ * @author : Denis BRESSAND
+ * Date : 17/12/2015
+ * 
+ * Model de la table contenant la liste des cours dans la fenêtre principale
+ */
+
+
 public class ListeCoursTableModel extends AbstractTableModel {
 
 	private ArrayList<Cours> listeCours;
@@ -135,14 +144,6 @@ public class ListeCoursTableModel extends AbstractTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		/*if (columnIndex == 4) {
-			calendarDebut.setTime((Date) aValue);
-		} else if (columnIndex == 5) {
-			calendarFin.setTime((Date) aValue);
-		}
-		if (columnIndex == 3) {
-			quiz = (Quiz) aValue;
-		}*/
 		
 		switch(columnIndex) {
 		case 0:
@@ -173,8 +174,6 @@ public class ListeCoursTableModel extends AbstractTableModel {
 	public void refreshDeltas(Object calendar) {
 		
 		System.out.println();
-		//this.calendarDebut = calendar;
-		//this.calendarFin = calendarF;
 		fireTableDataChanged();
 	}
 

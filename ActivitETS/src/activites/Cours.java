@@ -3,6 +3,15 @@ package activites;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 
+/*
+ * projet : ActivitETS
+ * @author : Denis BRESSAND
+ * Date : 17/12/2015
+ * 
+ * Objet Cours
+ */
+
+
 public class Cours implements Comparable<Cours> {
 
 	private LocalDateTime dateStart;

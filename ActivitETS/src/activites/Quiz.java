@@ -8,7 +8,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class Quiz {
+/*
+ * projet : ActivitETS
+ * @author : Denis BRESSAND
+ * Date : 17/12/2015
+ * 
+ * Objet Quiz qui hérite de Activite
+ */
+
+
+public class Quiz extends Activite {
 
 	
 	private int id;
@@ -38,13 +47,6 @@ public class Quiz {
 		this.coursFin = coursFin;
 	}
 	
-	/*public Quiz(int id, String nom, String resume, Calendar dateStart, Calendar dateStop) {
-		//super(nom, nomFichier);
-		id =id;
-		resume = resume;
-		dateStart = dateStart;
-		dateStop = dateStop;
-	}*/
 
 	public int getId() {
 		return id;
