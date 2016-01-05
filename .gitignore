@@ -1,0 +1,15 @@
+*.class
+.classpath
+.project
+.settings
+bin
+
+
+# Package Files #
+*.jar
+*.war
+*.ear
+.idea
+*.iml
+nbproject/
+/target
