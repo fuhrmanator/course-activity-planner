@@ -10,8 +10,6 @@ import java.io.IOException;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.TransferHandler;
-import javax.swing.TransferHandler.DropLocation;
-import javax.swing.TransferHandler.TransferSupport;
 
 public class CellDataTransferable implements Transferable {
 
@@ -54,7 +52,7 @@ public class CellDataTransferable implements Transferable {
 
 }
 
-public class TransferHelper extends TransferHandler {
+class TransferHelper extends TransferHandler {
 
 	private static final long serialVersionUID = 1L;
 
@@ -97,7 +95,7 @@ public class TransferHelper extends TransferHandler {
 				// Get the Transferable, we need to check
 				// the constraints
 				Transferable t = support.getTransferable();
-				CellData cd = (CellData) t.getTransferData(CELL_DATA_FLAVOR);
+				CellData cd = (CellData) t.getTransferData(CellDataTransferable.CELL_DATA_FLAVOR);
 				// Make sure we're not dropping onto ourselves...
 				if (cd.getTable() == target) {
 					// Do the columns match...?
@@ -128,7 +126,7 @@ public class TransferHelper extends TransferHandler {
 			try {
 				// Get the Transferable at the heart of it all
 				Transferable t = support.getTransferable();
-				CellData cd = (CellData) t.getTransferData(CELL_DATA_FLAVOR);
+				CellData cd = (CellData) t.getTransferData(CellDataTransferable.CELL_DATA_FLAVOR);
 				if (cd.getTable() == target) {
 					if (cd.swapValuesWith(dropRow, dropCol)) {
 						imported = true;
@@ -140,49 +138,6 @@ public class TransferHelper extends TransferHandler {
 
 		}
 		return imported;
-	}
-}
-
-public class CellData {
-	private final Object value;
-	private final int col;
-	private final JTable table;
-	private final int row;
-
-	public CellData(JTable source) {
-		this.col = source.getSelectedColumn();
-		this.row = source.getSelectedRow();
-		this.value = source.getValueAt(row, col);
-		this.table = source;
-	}
-
-	public int getColumn() {
-		return col;
-	}
-
-	public Object getValue() {
-		return value;
-	}
-
-	public JTable getTable() {
-		return table;
-	}
-
-	public boolean swapValuesWith(int targetRow, int targetCol) {
-
-		boolean swapped = false;
-
-		if (targetCol == col) {
-
-			Object exportValue = table.getValueAt(targetRow, targetCol);
-			table.setValueAt(value, targetRow, targetCol);
-			table.setValueAt(exportValue, row, col);
-			swapped = true;
-
-		}
-
-		return swapped;
-
 	}
 
 }
