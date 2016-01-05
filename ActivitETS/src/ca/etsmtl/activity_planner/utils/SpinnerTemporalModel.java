@@ -1,4 +1,4 @@
-package utils;
+package ca.etsmtl.activity_planner.utils;
 
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;

@@ -1,32 +1,19 @@
-package modele;
+package ca.etsmtl.activity_planner.modele;
 
-import java.awt.Component;
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
-import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JSpinner;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.SpinnerNumberModel;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 
-import activites.Cours;
-import activites.Quiz;
-import utils.DateFormattedListCellRenderer;
+import ca.etsmtl.activity_planner.activites.Cours;
+import ca.etsmtl.activity_planner.activites.Quiz;
 
 /*
  * projet : ActivitETS
  * @author : Denis BRESSAND
  * Date : 17/12/2015
- * 
+ *
  * Model de la table contenant la liste des cours dans la fenêtre principale
  */
 
@@ -123,28 +110,29 @@ public class ListeCoursTableModel extends AbstractTableModel {
 			} else {
 				value = Calendar.getInstance().getTime();
 			}
-			
+
 			break;
 		case 5:
 			if(calendarFin != null) {
 				value = calendarFin.getTime();
 			} else {
-				
+
 				value = Calendar.getInstance().getTime();
 			}
-			
+
 			break;
 		}
 		return value;
 	}
 
+	@Override
 	public boolean isCellEditable(int row, int column) {
 		return true;
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		
+
 		switch(columnIndex) {
 		case 0:
 			break;
@@ -170,9 +158,9 @@ public class ListeCoursTableModel extends AbstractTableModel {
 		this.listeQuizs = new ArrayList<Quiz>(listeQuizs);
 		fireTableDataChanged();
 	}
-	
+
 	public void refreshDeltas(Object calendar) {
-		
+
 		System.out.println();
 		fireTableDataChanged();
 	}

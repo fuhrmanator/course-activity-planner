@@ -1,4 +1,4 @@
-package activites;
+package ca.etsmtl.activity_planner.activites;
 
 import java.time.LocalDateTime;
 import java.util.TimeZone;

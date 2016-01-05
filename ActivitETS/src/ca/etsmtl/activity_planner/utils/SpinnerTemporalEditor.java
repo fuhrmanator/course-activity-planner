@@ -1,4 +1,4 @@
-package utils;
+package ca.etsmtl.activity_planner.utils;
 
 import java.text.ParseException;
 import java.time.format.DateTimeFormatter;

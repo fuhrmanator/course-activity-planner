@@ -1,27 +1,19 @@
-package gui;
+package ca.etsmtl.activity_planner.gui;
 
-import javax.swing.JFrame;
-import javax.swing.JFileChooser;
-import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.table.DefaultTableCellRenderer;
-
-import java.awt.GridBagLayout;
-
-import javax.swing.JSplitPane;
-
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -34,48 +26,51 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DropMode;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JLabel;
-
-import activites.Cours;
-import activites.Quiz;
-
-import java.awt.Font;
-
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.TransferHandler;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DropMode;
-import javax.swing.JCheckBox;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import org.jdatepicker.impl.JDatePanelImpl;
 import org.jdatepicker.impl.JDatePickerImpl;
 import org.jdatepicker.impl.UtilDateModel;
 
-import utils.*;
-import modele.ListeCoursTableModel;
-import modele.Modele;
+import ca.etsmtl.activity_planner.activites.Cours;
+import ca.etsmtl.activity_planner.activites.Quiz;
+import ca.etsmtl.activity_planner.modele.ListeCoursTableModel;
+import ca.etsmtl.activity_planner.modele.Modele;
+import ca.etsmtl.activity_planner.utils.DateFormattedListCellRenderer;
+import ca.etsmtl.activity_planner.utils.DateLabelFormatter;
+import ca.etsmtl.activity_planner.utils.TableRenderer;
 import net.miginfocom.swing.MigLayout;
-
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /*
  * projet : ActivitETS
  * @author : Denis BRESSAND
  * Date : 17/12/2015
- * 
+ *
  * Vue principale
  */
 
@@ -651,7 +646,7 @@ public class Fenetre extends JFrame {
 	}
 
 	public static final DataFlavor CELL_DATA_FLAVOR = createConstant(CellData.class, "application/x-java-celldata");
-	
+
 	static protected DataFlavor createConstant(Class clazz, String name) {
 		try {
 			return new DataFlavor(clazz, name);
@@ -660,10 +655,10 @@ public class Fenetre extends JFrame {
 			return null;
 		}
 	}
-	
+
 	public class CellDataTransferable implements Transferable {
 
-		
+
 		private CellData cellData;
 
 		public CellDataTransferable(CellData cellData) {
@@ -691,7 +686,7 @@ public class Fenetre extends JFrame {
 			return cellData;
 		}
 
-		
+
 
 	}
 

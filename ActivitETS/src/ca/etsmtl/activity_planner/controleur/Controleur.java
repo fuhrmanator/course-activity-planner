@@ -1,28 +1,24 @@
-package controleur;
+package ca.etsmtl.activity_planner.controleur;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
 import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
-import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import activites.Activite;
-import activites.Cours;
-import activites.Quiz;
-import gui.Fenetre;
-import modele.Modele;
+import ca.etsmtl.activity_planner.activites.Cours;
+import ca.etsmtl.activity_planner.activites.Quiz;
+import ca.etsmtl.activity_planner.gui.Fenetre;
+import ca.etsmtl.activity_planner.modele.Modele;
 
 /*
  * projet : ActivitETS
  * @author : Denis BRESSAND
  * Date : 17/12/2015
- * 
+ *
  * Controleur de l'architecture MVC
  */
 
@@ -53,7 +49,7 @@ public class Controleur{
 				afficherInfos();
 			}
 		});
-		
+
 		//Importer les cours depuis un .ics et les afficher
 		((Fenetre) vue).getMenuCalendrier().addActionListener(new AbstractAction() {
 
@@ -63,7 +59,7 @@ public class Controleur{
 				listeCours = modele.recupererCours(pathCalendrier);
 				((Fenetre) vue).afficherListeCours(listeCours, listeQuizs);
 				modele.syncCoursQuizs(listeCours, listeQuizs);
-				
+
 				((Fenetre) vue).syncCoursQuizs(listeCours, listeQuizs);
 			}
 		});
@@ -77,37 +73,37 @@ public class Controleur{
 						System.exit(0);
 					}
 				});
-		
+
 		//COmpresser les activités dans une nouvelle sauvegarde .mbz compatible Moodle
 		((Fenetre) vue).getMenuCompresser().addActionListener(new AbstractAction() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				modele.createNewMBZ("MoodleBackup.taz.gz");
 				((Fenetre) vue).afficherFicCompresseOK();
 			}
 		});
-		
+
 		//Synchroniser les quizs avec les cours
 		((Fenetre) vue).getBtnSyncCoursQuizs().addActionListener(new AbstractAction() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 				modele.syncCoursQuizs(listeCours, listeQuizs);
-				
+
 				((Fenetre) vue).syncCoursQuizs(listeCours, listeQuizs);
 			}
 		});
-		
-		
+
+
 		((Fenetre) vue).getBtnSetDeltas().addActionListener(new AbstractAction() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
-				
+
+
 			}
 		});
 

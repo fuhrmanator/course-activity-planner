@@ -1,4 +1,4 @@
-package utils;
+package ca.etsmtl.activity_planner.utils;
 
 import java.awt.Component;
 

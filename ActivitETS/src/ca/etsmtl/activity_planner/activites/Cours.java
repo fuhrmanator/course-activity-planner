@@ -1,4 +1,4 @@
-package activites;
+package ca.etsmtl.activity_planner.activites;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -7,7 +7,7 @@ import java.util.Comparator;
  * projet : ActivitETS
  * @author : Denis BRESSAND
  * Date : 17/12/2015
- * 
+ *
  * Objet Cours
  */
 
