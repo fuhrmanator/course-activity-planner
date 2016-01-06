@@ -2,15 +2,20 @@
 import os
 
 
-def get_quizes(moodle_archive_path):
-    moodle_activities_path = os.path.join(moodle_archive_path, 'activities')
-    if not os.path.isdir(moodle_activities_path):
-        print('Invalid directory')
-        exit(1)
+class MoodleCourse():
+    """Describes a complete moodle course from an archive on the disk"""
+    def __init__(self, moodle_archive_path):
+        self.path = moodle_archive_path
 
-    activities = os.listdir(moodle_activities_path)
+    def get_quizes(self):
+        moodle_activities_path = os.path.join(self.path, 'activities')
 
-    return [f for f in activities if f.startswith('quiz')]
+        if not os.path.isdir(moodle_activities_path):
+            print('Invalid directory')
+            return
+
+        activities = os.listdir(moodle_activities_path)
+        return [f for f in activities if f.startswith('quiz')]
 
 
 def main():
