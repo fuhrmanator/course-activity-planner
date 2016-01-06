@@ -10,6 +10,12 @@
 Tool for instructors to plan course activities and synchronize the data with syllabus, LMS, etc.
 
 ### Run unit tests
-* `cp ActivitETS/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz ActivitETS/test-data/`
-* `(cd ActivitETS/test-data/ && tar -xf  ActivitETS/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz)`
-* `./test.py`
+* Copy the archive in the test-data folder:
+
+`cp ActivitETS/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz python/test-data/`
+* Extract the contents of the archive in the test-data directory:
+
+`cd python/test-data && tar -xf  test-data/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz`
+* Run the test suite:
+
+`cd ../ && ./test.py`
