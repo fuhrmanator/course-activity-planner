@@ -8,3 +8,8 @@
 
 # course-activity-planner
 Tool for instructors to plan course activities and synchronize the data with syllabus, LMS, etc.
+
+### Run unit tests
+* `cp ActivitETS/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz ActivitETS/test-data/`
+* `(cd ActivitETS/test-data/ && tar -xf  ActivitETS/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz)`
+* `./test.py`
