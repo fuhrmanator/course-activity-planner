@@ -7,6 +7,10 @@ moodle_archive_path = '../../test-data'
 
 class TestDetectActivities(unittest.TestCase):
 
+    def test_bad_archive_path(self):
+        """Test constructor with an invalid path"""
+        self.assertRaises(Exception, MoodleCourse, 'invalid_path')
+
     def test_get_quiz_count(self):
         course = MoodleCourse(moodle_archive_path)
         actual = course.get_quizes()
