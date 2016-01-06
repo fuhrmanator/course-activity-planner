@@ -2,7 +2,7 @@
 import unittest
 from course_planner import MoodleCourse
 
-moodle_archive_path = '../../test-data'
+moodle_archive_path = 'test-data'
 
 
 class TestDetectActivities(unittest.TestCase):
