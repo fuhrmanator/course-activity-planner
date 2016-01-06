@@ -13,14 +13,14 @@ class TestDetectActivities(unittest.TestCase):
 
     def test_get_quiz_count(self):
         course = MoodleCourse(moodle_archive_path)
-        actual = course.get_quizes()
+        actual = course.get_quizzes()
         self.assertEqual(3, len(actual))
 
-    def test_get_quizes(self):
+    def test_get_quizzes(self):
         course = MoodleCourse(moodle_archive_path)
         expected = ['quiz_146935', 'quiz_146936', 'quiz_146939']
 
-        actual = course.get_quizes()
+        actual = course.get_quizzes()
         self.assertEqual(expected, sorted(actual))
 
     def test_get_quiz_by_module_id(self):

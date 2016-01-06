@@ -27,15 +27,15 @@ class MoodleCourse():
         if not os.path.isdir(self.activities_path):
             raise Exception('Invalid directory')
 
-    def get_quizes(self):
+    def get_quizzes(self):
         activities = os.listdir(self.activities_path)
         return [f for f in activities if f.startswith('quiz')]
 
     def get_quiz_by_module_id(self, module_id):
         """Gets a quiz from it's ID"""
-        quizes = self.get_quizes()
+        quizzes = self.get_quizzes()
 
-        for quiz_path in quizes:
+        for quiz_path in quizzes:
             if quiz_path == 'quiz_%s' % module_id:
                 return MoodleQuiz(os.path.join(self.activities_path, quiz_path))
 
