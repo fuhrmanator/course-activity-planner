@@ -10,7 +10,7 @@ moodle_archive_path = '\
 ../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
 
 
-class TestDetectActivities(unittest.TestCase):
+class TestQuiz(unittest.TestCase):
 
     def setUp(self):
         self.tmp_path = tempfile.mkdtemp()
@@ -19,6 +19,7 @@ class TestDetectActivities(unittest.TestCase):
             tar_file.extractall(self.tmp_path)
 
     def tearDown(self):
+        # TODO test on windows
         shutil.rmtree(self.tmp_path)
 
     def test_bad_archive_path(self):
@@ -51,6 +52,26 @@ class TestDetectActivities(unittest.TestCase):
         self.assertEqual('test de remise', quiz['name'])
         self.assertEqual('1451709900', quiz['timeopen'])
         self.assertEqual('1454301900', quiz['timeclose'])
+
+    def test_set_quiz_dates(self):
+        course = MoodleCourse(self.tmp_path)
+        quiz = course.get_quiz_by_module_id('146935')
+
+        self.assertEqual('1451709900', quiz['timeopen'])
+        self.assertEqual('1454301900', quiz['timeclose'])
+
+        quiz['timeopen'] = '42424242'
+        quiz['timeclose'] = '4242424242'
+
+        self.assertEqual('42424242', quiz['timeopen'])
+        self.assertEqual('4242424242', quiz['timeclose'])
+
+    def test_set_invalid_key_raises_exception(self):
+        course = MoodleCourse(self.tmp_path)
+        quiz = course.get_quiz_by_module_id('146935')
+
+        with self.assertRaises(Exception):
+            quiz['invalid_key'] = 'some data'
 
 
 if __name__ == "__main__":

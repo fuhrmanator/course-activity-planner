@@ -17,6 +17,11 @@ class MoodleQuiz():
             return self.quiz.attrib[k]
         return self.quiz.find(k).text
 
+    def __setitem__(self, k, v):
+        if k == 'id' and 'id' in self.quiz.attrib:
+            self.quiz.attrib[k] = v
+        self.quiz.find(k).text = v
+
     def write(self, path):
         self.activity.write(path, short_empty_elements=False, encoding='UTF-8',
                             xml_declaration=True)
