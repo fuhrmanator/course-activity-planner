@@ -9,13 +9,22 @@
 # course-activity-planner
 Tool for instructors to plan course activities and synchronize the data with syllabus, LMS, etc.
 
+### Setup
+* Setup a python virtualenv
+``` 
+cd python && virtualenv env 
+```
+
 ### Run unit tests
-* Copy the archive in the test-data folder:
-
-`cp ActivitETS/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz python/test-data/`
-* Extract the contents of the archive in the test-data directory:
-
-`cd python/test-data && tar -xf  test-data/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz`
-* Run the test suite:
-
-`cd ../ && ./test.py`
+* Activate the python virtualenv
+```
+. env/bin/activate
+```
+* Install the dependencies
+```
+pip install -r requirements.txt
+```
+* Run the test suite
+```
+./test.py
+```
