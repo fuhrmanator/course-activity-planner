@@ -51,7 +51,17 @@ class MoodleCourse():
 
 
 def main():
-    pass
+    from icalendar import Calendar
+
+    with open('../ActivitETS/basic.ics', 'rb') as g:
+        gcal = Calendar.from_ical(g.read())
+        for component in gcal.walk():
+            if component.name == "VEVENT":
+                print(component.get('summary'))
+                print(component.get('dtstart'))
+                print(component.get('dtend'))
+                print(component.get('dtstamp'))
+
 
 if __name__ == "__main__":
     main()
