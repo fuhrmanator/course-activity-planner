@@ -26,5 +26,9 @@ pip install -r requirements.txt
 ```
 * Run the test suite
 ```
-./test.py
+nosetests *.py
+```
+* Optionally, you can get a coverage report
+```
+nosetest --with-cov --cov-report html--cov-config .coveragerc test.py
 ```
