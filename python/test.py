@@ -1,21 +1,25 @@
 #!/usr/bin/env python3
+import os
 import unittest
 import tarfile
 import shutil
 import tempfile
+import arrow
+
+from ics import Calendar
 
 from course_planner import MoodleCourse
-
-moodle_archive_path = '\
-../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
 
 
 class TestQuiz(unittest.TestCase):
 
+    moodle_archive_path = '\
+../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
+
     def setUp(self):
         self.tmp_path = tempfile.mkdtemp()
 
-        with tarfile.open(moodle_archive_path) as tar_file:
+        with tarfile.open(self.moodle_archive_path) as tar_file:
             tar_file.extractall(self.tmp_path)
 
     def tearDown(self):
@@ -73,6 +77,35 @@ class TestQuiz(unittest.TestCase):
         with self.assertRaises(Exception):
             quiz['invalid_key'] = 'some data'
 
+
+class TestCalendarParsing(unittest.TestCase):
+
+    calendar_path = '../ActivitETS/basic.ics'
+
+    def setUp(self):
+        self.tmp_file = tempfile.mktemp()
+
+        with open(self.calendar_path, 'r') as cal_file:
+            cal_content = cal_file.readlines()
+            self.calendar = Calendar(cal_content)
+
+    def tearDown(self):
+        if os.path.isfile(self.tmp_file):
+            os.remove(self.tmp_file)
+
+    def test_event_count(self):
+        self.assertEqual(13, len(self.calendar.events))
+
+    def test_event_getters(self):
+        self.assertEqual(1430328600, self.calendar.events[0].begin.timestamp)
+
+        expected = arrow.Arrow(2015, 7, 29, 21, 0, 0)
+        self.assertEqual(expected, self.calendar.events[12].end)
+
+        index = 0
+        for event in self.calendar.events:
+            self.assertEqual('LOG210-01 Séance {0:02d}'.format(index + 1),
+                             self.calendar.events[index].name)
 
 if __name__ == "__main__":
     unittest.main()
