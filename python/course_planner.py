@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 
 
 class MoodleQuiz():
-    """Describes a MoodleQuiz with basic information"""
+    """Describes an XML Moodle quiz with key based access"""
     def __init__(self, path):
         self.activity = ET.parse(os.path.join(path, 'quiz.xml'))
 
@@ -28,7 +28,8 @@ class MoodleQuiz():
 
 
 class MoodleCourse():
-    """Describes a complete moodle course from an archive on the disk"""
+    """\
+    Describes a complete Moodle course from an unpacked archive on the disk"""
     def __init__(self, moodle_archive_path):
         self.path = moodle_archive_path
         self.activities_path = os.path.join(self.path, 'activities')
@@ -41,7 +42,7 @@ class MoodleCourse():
         return [f for f in activities if f.startswith('quiz')]
 
     def get_quiz_by_module_id(self, module_id):
-        """Gets a quiz from it's ID"""
+        """Gets a quiz from its module ID"""
         quizzes = self.get_quizzes()
 
         for quiz_path in quizzes:
