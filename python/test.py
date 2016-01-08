@@ -6,9 +6,7 @@ import shutil
 import tempfile
 import arrow
 
-from ics import Calendar
-
-from course_planner import MoodleCourse
+from course_planner import MoodleCourse, CalendarReader, Seminar, Practica
 
 
 class TestQuiz(unittest.TestCase):
@@ -80,32 +78,36 @@ class TestQuiz(unittest.TestCase):
 
 class TestCalendarParsing(unittest.TestCase):
 
-    calendar_path = '../ActivitETS/basic.ics'
+    calendar_path = '../ActivitETS/basic_with_tps.ics'
 
     def setUp(self):
-        self.tmp_file = tempfile.mktemp()
+        self.calendar = CalendarReader(self.calendar_path)
+        # self.tmp_file = tempfile.mktemp()
 
-        with open(self.calendar_path, 'r') as cal_file:
-            cal_content = cal_file.readlines()
-            self.calendar = Calendar(cal_content)
-
-    def tearDown(self):
-        if os.path.isfile(self.tmp_file):
-            os.remove(self.tmp_file)
+    # def tearDown(self):
+    #     if os.path.isfile(self.tmp_file):
+    #         os.remove(self.tmp_file)
 
     def test_event_count(self):
-        self.assertEqual(13, len(self.calendar.events))
+        meetings = self.calendar.get_all_meetings()
+        self.assertEqual(13, len(meetings[Seminar]))
+        self.assertEqual(2, len(meetings[Practica]))
 
-    def test_event_getters(self):
-        self.assertEqual(1430328600, self.calendar.events[0].begin.timestamp)
+        seminars = self.calendar.get_meetings_by_type(Seminar)
+        practicas = self.calendar.get_meetings_by_type(Practica)
+        self.assertEqual(13, len(seminars))
+        self.assertEqual(2, len(practicas))
 
-        expected = arrow.Arrow(2015, 7, 29, 21, 0, 0)
-        self.assertEqual(expected, self.calendar.events[12].end)
-
-        index = 0
-        for event in self.calendar.events:
-            self.assertEqual('LOG210-01 Séance {0:02d}'.format(index + 1),
-                             self.calendar.events[index].name)
+    # def test_event_getters(self):
+    #     self.assertEqual(1430328600, self.calendar.events[0].begin.timestamp)
+    #
+    #     expected = arrow.Arrow(2015, 7, 29, 21, 0, 0)
+    #     self.assertEqual(expected, self.calendar.events[12].end)
+    #
+    #     index = 0
+    #     for event in self.calendar.events:
+    #         self.assertEqual('LOG210-01 Séance {0:02d}'.format(index + 1),
+    #                          self.calendar.events[index].name)
 
 if __name__ == "__main__":
     unittest.main()
