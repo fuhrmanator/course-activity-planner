@@ -6,16 +6,24 @@ import xml.etree.ElementTree as ET
 from ics import Calendar as iCalendar
 
 
-class Seminar():
-    def __init__(self, arg):
-        super(Seminar, self).__init__()
-        self.arg = arg
+class GenericMeeting():
+    def __init__(self, meeting_type_id, calendar_event):
+        """`meeting_type_id` is the id of the meeting in it's own type
+        `calendar_event` is encaplusated
+        """
+
+        self.meeting_type_id = meeting_type_id
+        self.calendar_event = calendar_event
 
 
-class Practica():
-    def __init__(self, arg):
-        super(Seminar, self).__init__()
-        self.arg = arg
+class Seminar(GenericMeeting):
+    def __init__(self, *args, **kwargs):
+        GenericMeeting.__init__(self, *args, **kwargs)
+
+
+class Practica(GenericMeeting):
+    def __init__(self, *args, **kwargs):
+        GenericMeeting.__init__(self, *args, **kwargs)
 
 
 class CalendarReader():
@@ -42,8 +50,10 @@ class CalendarReader():
 
         for meeting in self.calendar.events:
             for candidate_class, regex in self.candidates.items():
-                if regex.search(meeting.name):
-                    generic_meetings[candidate_class].append(meeting)
+                r = regex.search(meeting.name)
+                if r:
+                    meeting_instance = candidate_class(r.groups(0), meeting)
+                    generic_meetings[candidate_class].append(meeting_instance)
 
         return generic_meetings
 
@@ -54,7 +64,10 @@ class CalendarReader():
 
         for meeting in self.calendar.events:
             if self.candidates[candidate].search(meeting.name):
-                generic_meetings.append(meeting)
+                r = self.candidates[candidate].search(meeting.name)
+                if r:
+                    meeting_instance = candidate(r.groups(0), meeting)
+                    generic_meetings.append(meeting_instance)
 
         return generic_meetings
 

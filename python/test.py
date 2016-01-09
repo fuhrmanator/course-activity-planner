@@ -98,16 +98,16 @@ class TestCalendarParsing(unittest.TestCase):
         self.assertEqual(13, len(seminars))
         self.assertEqual(2, len(practicas))
 
-    # def test_event_getters(self):
-    #     self.assertEqual(1430328600, self.calendar.events[0].begin.timestamp)
-    #
-    #     expected = arrow.Arrow(2015, 7, 29, 21, 0, 0)
-    #     self.assertEqual(expected, self.calendar.events[12].end)
-    #
-    #     index = 0
-    #     for event in self.calendar.events:
-    #         self.assertEqual('LOG210-01 Séance {0:02d}'.format(index + 1),
-    #                          self.calendar.events[index].name)
+    def test_event_getters(self):
+        seminars = self.calendar.get_meetings_by_type(Seminar)
+        self.assertEqual(1430328600, seminars[0].calendar_event.begin.timestamp)
+
+        expected = arrow.Arrow(2015, 7, 29, 21, 0, 0)
+        self.assertEqual(expected, seminars[12].calendar_event.end)
+
+        for i, s in enumerate(seminars):
+            self.assertEqual('LOG210-01 Séance {0:02d}'.format(i + 1),
+                             s.calendar_event.name)
 
 if __name__ == "__main__":
     unittest.main()
