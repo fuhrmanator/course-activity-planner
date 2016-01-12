@@ -30,7 +30,7 @@ class CalendarReader():
     """Reads iCalendar and returns generic meetings"""
 
     # Association of the meeting classes and their regex in the calendar
-    candidates = {Seminar: re.compile(r'Séance ([0-9]{1,2})$'),
+    candidates = {Seminar: re.compile(r'Cours magistral ([0-9]{1,2})$'),
                   Practica: re.compile(r'TP ([0-9]{1,2})$')}
 
     def __init__(self, calendar_path):

@@ -78,35 +78,30 @@ class TestQuiz(unittest.TestCase):
 
 class TestCalendarParsing(unittest.TestCase):
 
-    calendar_path = '../ActivitETS/basic_with_tps.ics'
+    calendar_path = '../ActivitETS/multi-fr.ics'
 
     def setUp(self):
         self.calendar = CalendarReader(self.calendar_path)
-        # self.tmp_file = tempfile.mktemp()
-
-    # def tearDown(self):
-    #     if os.path.isfile(self.tmp_file):
-    #         os.remove(self.tmp_file)
 
     def test_event_count(self):
         meetings = self.calendar.get_all_meetings()
         self.assertEqual(13, len(meetings[Seminar]))
-        self.assertEqual(2, len(meetings[Practica]))
+        self.assertEqual(13, len(meetings[Practica]))
 
         seminars = self.calendar.get_meetings_by_type(Seminar)
         practicas = self.calendar.get_meetings_by_type(Practica)
         self.assertEqual(13, len(seminars))
-        self.assertEqual(2, len(practicas))
+        self.assertEqual(13, len(practicas))
 
     def test_event_getters(self):
         seminars = self.calendar.get_meetings_by_type(Seminar)
-        self.assertEqual(1430328600, seminars[0].calendar_event.begin.timestamp)
+        self.assertEqual(1389009600, seminars[0].calendar_event.begin.timestamp)
 
-        expected = arrow.Arrow(2015, 7, 29, 21, 0, 0)
+        expected = arrow.Arrow(2014, 4, 7, 12, 0, 0)
         self.assertEqual(expected, seminars[12].calendar_event.end)
 
         for i, s in enumerate(seminars):
-            self.assertEqual('LOG210-01 Séance {0:02d}'.format(i + 1),
+            self.assertEqual('log210 Cours magistral %d' % (i + 1),
                              s.calendar_event.name)
 
 if __name__ == "__main__":
