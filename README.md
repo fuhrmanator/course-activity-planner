@@ -14,7 +14,7 @@ Tool for instructors to plan course activities and synchronize the data with syl
 ### Setup
 * Setup a python virtualenv
 ```
-cd python && virtualenv env
+cd python && virtualenv-3.4 env
 ```
 
 ### Run unit tests
@@ -28,9 +28,9 @@ pip install -r requirements.txt
 ```
 * Run the test suite
 ```
-nosetests *.py
+nosetests
 ```
 * Optionally, you can get a coverage report
 ```
-nosetests --with-cov --cov-report html --cov-config .coveragerc test.py
+nosetests --with-coverage
 ```

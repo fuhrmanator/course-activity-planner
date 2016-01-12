@@ -1,6 +1,0 @@
-[run]
-source = 
-    course_planner.py
-omit = 
-    env/*
-    test.py
