@@ -5,6 +5,8 @@ This project is affiliated with the [Maison du logiciel libre (ML<sup>2</sup>)](
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [course-activity-planner](#course-activity-planner)
+    - [Setup](#setup)
+    - [Run unit tests](#run-unit-tests)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
