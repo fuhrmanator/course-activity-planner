@@ -7,12 +7,7 @@ from ics import Calendar as iCalendar
 
 
 class GenericMeeting():
-    def __init__(self, meeting_type_id, calendar_event):
-        """`meeting_type_id` is the id of the meeting in it's own type
-        `calendar_event` is encaplusated
-        """
-
-        self.meeting_type_id = meeting_type_id
+    def __init__(self, calendar_event):
         self.calendar_event = calendar_event
 
 
@@ -52,7 +47,7 @@ class CalendarReader():
             for candidate_class, regex in self.candidates.items():
                 r = regex.search(meeting.name)
                 if r:
-                    meeting_instance = candidate_class(r.groups(0), meeting)
+                    meeting_instance = candidate_class(meeting)
                     generic_meetings[candidate_class].append(meeting_instance)
 
         return generic_meetings
@@ -66,7 +61,7 @@ class CalendarReader():
             if self.candidates[candidate].search(meeting.name):
                 r = self.candidates[candidate].search(meeting.name)
                 if r:
-                    meeting_instance = candidate(r.groups(0), meeting)
+                    meeting_instance = candidate(meeting)
                     generic_meetings.append(meeting_instance)
 
         return generic_meetings
