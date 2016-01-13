@@ -36,7 +36,7 @@ class InterpreterTest(unittest.TestCase):
         self.assertRaises(
             Exception, self.interpreter._split_line, 'Q1S1FS2S')
 
-    def test_split_event(self):
+    def test_split_events_line(self):
         self.assertEqual(['Q1', 'S1F', 'S2S'],
                          self.interpreter._split_line('Q1 S1F S2S'))
 
@@ -58,3 +58,14 @@ class InterpreterTest(unittest.TestCase):
 
         event = self.interpreter._detect_event_class_and_id('S4')
         self.assertEqual((Seminar, 4), event)
+
+    def test_get_modifiers(self):
+        mods = self.interpreter._get_modifiers('S1F+1D@23:59')
+
+        at_end = mods[0]
+        self.assertEqual(True, at_end)
+
+        mods = self.interpreter._get_modifiers('S1S+1D@23:59')
+
+        at_end = mods[0]
+        self.assertEqual(False, at_end)
