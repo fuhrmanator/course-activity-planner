@@ -3,7 +3,7 @@ import tarfile
 import shutil
 import tempfile
 
-from datetime import timedelta, datetime, time
+from datetime import timedelta, time
 
 from interpreter import Interpreter
 from course_planner import CalendarReader, MoodleCourse, MoodleQuiz, Seminar, \
