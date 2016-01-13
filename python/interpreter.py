@@ -1,5 +1,7 @@
 import re
 
+from datetime import timedelta, datetime
+
 from course_planner import MoodleQuiz, Seminar, Practica
 
 
@@ -33,14 +35,14 @@ class Interpreter():
             raise Exception('Invalid syntax while splitting events.')
         return parts
 
-    def _get_modifiers(self, string):
+    def _get_modifiers_as_string(self, string):
         """Returns tuple (at_end, relative_modifier, time_modifier)
 
         at_end: True if the modifiers should be applied to the end of the
                 event. False if the modifiers should be applied to the start
                 of the event.
 
-        relative_modifier: The delta to apply to the event start or end as a <
+        relative_modifier: The delta to apply to the event start or end as a
                            string. Supports +/- d/h/m for days, hours, minutes.
                            ex: '-1d', '+15m', '+4h'
 
@@ -53,9 +55,13 @@ class Interpreter():
             raise Exception('Invalid syntax while parsing modifiers.')
 
         at_end = r.groupdict()['end'] == 'F'
-
         relative_modifier = r.groupdict()['rel']
-
         time_modifier = r.groupdict()['time']
 
         return (at_end, relative_modifier, time_modifier)
+
+    def _interpret_time_modifier(self, time_modifier_str):
+        return datetime.strptime(time_modifier_str, "%H:%M").time()
+
+    def _interpret_relative_modifier(self, relative_modifier_str):
+        pass
