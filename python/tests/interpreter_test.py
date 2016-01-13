@@ -59,13 +59,18 @@ class InterpreterTest(unittest.TestCase):
         event = self.interpreter._detect_event_class_and_id('S4')
         self.assertEqual((Seminar, 4), event)
 
-    def test_get_modifiers(self):
+    def test_get_at_end_modifiers(self):
+        # Implicit finish
         mods = self.interpreter._get_modifiers('S1F+1D@23:59')
-
         at_end = mods[0]
         self.assertEqual(True, at_end)
 
+        # Implicit start
         mods = self.interpreter._get_modifiers('S1S+1D@23:59')
+        at_end = mods[0]
+        self.assertEqual(False, at_end)
 
+        # Explicit start
+        mods = self.interpreter._get_modifiers('S1S+1D@23:59')
         at_end = mods[0]
         self.assertEqual(False, at_end)
