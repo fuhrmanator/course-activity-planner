@@ -123,3 +123,32 @@ class InterpreterTest(unittest.TestCase):
         mods = self.interpreter._get_modifiers('S1-13243m@23:59')
         relative_modifier = mods[1]
         self.assertEqual('-13243m', relative_modifier)
+
+    def test_get_time_modifier(self):
+        mods = self.interpreter._get_modifiers('S1')
+        time_modifier = mods[2]
+        self.assertEqual(None, time_modifier)
+
+        mods = self.interpreter._get_modifiers('S1F')
+        time_modifier = mods[2]
+        self.assertEqual(None, time_modifier)
+
+        mods = self.interpreter._get_modifiers('S1F@10:59')
+        time_modifier = mods[2]
+        self.assertEqual('10:59', time_modifier)
+
+        mods = self.interpreter._get_modifiers('S1F-1d')
+        time_modifier = mods[2]
+        self.assertEqual(None, time_modifier)
+
+        mods = self.interpreter._get_modifiers('S1F+1D@23:59')
+        time_modifier = mods[2]
+        self.assertEqual('23:59', time_modifier)
+
+        mods = self.interpreter._get_modifiers('S1S+1h@22:11')
+        time_modifier = mods[2]
+        self.assertEqual('22:11', time_modifier)
+
+        mods = self.interpreter._get_modifiers('S1-13243m@3:01')
+        time_modifier = mods[2]
+        self.assertEqual('3:01', time_modifier)
