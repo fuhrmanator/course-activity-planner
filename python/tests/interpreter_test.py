@@ -2,6 +2,7 @@ import unittest
 import tarfile
 import shutil
 import tempfile
+import arrow
 
 from datetime import timedelta, time
 
@@ -135,13 +136,13 @@ class InterpreterTest(unittest.TestCase):
         time_modifier = mods[2]
         self.assertEqual(None, time_modifier)
 
-        mods = self.interpreter._get_modifiers_as_string('S1F@10:59')
-        time_modifier = mods[2]
-        self.assertEqual('10:59', time_modifier)
-
         mods = self.interpreter._get_modifiers_as_string('S1F-1d')
         time_modifier = mods[2]
         self.assertEqual(None, time_modifier)
+
+        mods = self.interpreter._get_modifiers_as_string('S1F@10:59')
+        time_modifier = mods[2]
+        self.assertEqual('10:59', time_modifier)
 
         mods = self.interpreter._get_modifiers_as_string('S1F+1D@23:59')
         time_modifier = mods[2]
@@ -196,3 +197,24 @@ class InterpreterTest(unittest.TestCase):
         self.assertEqual(
             timedelta(minutes=106),
             self.interpreter._interpret_relative_modifier('106m'))
+
+    def test_build_new_date_from_event(self):
+        expected = arrow.get('1000000060').datetime
+        actual = self.interpreter._get_new_datetime(
+            arrow.get('1000000000').datetime, timedelta(minutes=1), None)
+        self.assertEqual(expected, actual)
+
+        expected = arrow.get('1000000000').datetime
+        actual = self.interpreter._get_new_datetime(
+            arrow.get('1000000120').datetime, timedelta(minutes=-2), None)
+        self.assertEqual(expected, actual)
+
+        expected = arrow.get('1000010800').datetime
+        actual = self.interpreter._get_new_datetime(
+            arrow.get('1000000000').datetime, timedelta(hours=3), None)
+        self.assertEqual(expected, actual)
+
+        expected = arrow.get('1000000000').datetime
+        actual = self.interpreter._get_new_datetime(
+            arrow.get('1000086400').datetime, timedelta(days=-1), None)
+        self.assertEqual(expected, actual)

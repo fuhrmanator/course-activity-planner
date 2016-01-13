@@ -84,3 +84,11 @@ class Interpreter():
             if r.groupdict()['minutes'] else 0
 
         return timedelta(days=days, hours=hours, minutes=minutes)
+
+    def _get_new_datetime(self, datetime, relative_mod, time_mod):
+        """Build new datetime from relative and time modifiers."""
+        new_datetime = datetime + relative_mod
+
+        if time_mod:
+            return datetime.combine(new_datetime, time_mod)
+        return new_datetime
