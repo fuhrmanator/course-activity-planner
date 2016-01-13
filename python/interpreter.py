@@ -87,8 +87,10 @@ class Interpreter():
 
     def _get_new_datetime(self, datetime, relative_mod, time_mod):
         """Build new datetime from relative and time modifiers."""
-        new_datetime = datetime + relative_mod
+        if relative_mod:
+            datetime += relative_mod
 
         if time_mod:
-            return datetime.combine(new_datetime, time_mod)
-        return new_datetime
+            return datetime.replace(hour=time_mod.hour, minute=time_mod.minute)
+
+        return datetime

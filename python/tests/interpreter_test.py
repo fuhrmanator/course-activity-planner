@@ -218,3 +218,20 @@ class InterpreterTest(unittest.TestCase):
         actual = self.interpreter._get_new_datetime(
             arrow.get('1000086400').datetime, timedelta(days=-1), None)
         self.assertEqual(expected, actual)
+
+        expected = arrow.get(2000, 1, 1, 2, 5).datetime
+        actual = self.interpreter._get_new_datetime(
+            arrow.get(2000, 1, 1).datetime, None, time(hour=2, minute=5))
+        self.assertEqual(expected, actual)
+
+        expected = arrow.get(2000, 1, 2, 2, 5).datetime
+        actual = self.interpreter._get_new_datetime(
+            arrow.get(2000, 1, 1, 0, 0, 0).datetime, timedelta(days=1),
+            time(hour=2, minute=5))
+        self.assertEqual(expected, actual)
+
+        expected = arrow.get(1999, 12, 31, 23, 55).datetime
+        actual = self.interpreter._get_new_datetime(
+            arrow.get(2000, 1, 1, 0, 0).datetime, timedelta(days=-1),
+            time(hour=23, minute=55))
+        self.assertEqual(expected, actual)
