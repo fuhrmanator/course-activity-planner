@@ -59,18 +59,67 @@ class InterpreterTest(unittest.TestCase):
         event = self.interpreter._detect_event_class_and_id('S4')
         self.assertEqual((Seminar, 4), event)
 
-    def test_get_at_end_modifiers(self):
-        # Implicit finish
+    def test_get_at_end_modifier(self):
+        # Implicit start
+        mods = self.interpreter._get_modifiers('S1')
+        relative_modifier = mods[0]
+        self.assertEqual(False, relative_modifier)
+
+        # Explicit finish
+        mods = self.interpreter._get_modifiers('S1F')
+        relative_modifier = mods[0]
+        self.assertEqual(True, relative_modifier)
+
+        # Explicit finish
+        mods = self.interpreter._get_modifiers('S1F@23:59')
+        relative_modifier = mods[0]
+        self.assertEqual(True, relative_modifier)
+
+        # Implicit start
+        mods = self.interpreter._get_modifiers('S1-1d')
+        relative_modifier = mods[0]
+        self.assertEqual(False, relative_modifier)
+
+        # Explicit finish
         mods = self.interpreter._get_modifiers('S1F+1D@23:59')
         at_end = mods[0]
         self.assertEqual(True, at_end)
-
-        # Implicit start
-        mods = self.interpreter._get_modifiers('S1S+1D@23:59')
-        at_end = mods[0]
-        self.assertEqual(False, at_end)
 
         # Explicit start
         mods = self.interpreter._get_modifiers('S1S+1D@23:59')
         at_end = mods[0]
         self.assertEqual(False, at_end)
+
+        # Implicit start
+        mods = self.interpreter._get_modifiers('S1+1D@23:59')
+        at_end = mods[0]
+        self.assertEqual(False, at_end)
+
+    def test_get_relative_modifier(self):
+        mods = self.interpreter._get_modifiers('S1')
+        relative_modifier = mods[1]
+        self.assertEqual(None, relative_modifier)
+
+        mods = self.interpreter._get_modifiers('S1F')
+        relative_modifier = mods[1]
+        self.assertEqual(None, relative_modifier)
+
+        mods = self.interpreter._get_modifiers('S1F@23:59')
+        relative_modifier = mods[1]
+        self.assertEqual(None, relative_modifier)
+
+        mods = self.interpreter._get_modifiers('S1F-1d')
+        relative_modifier = mods[1]
+        self.assertEqual('-1d', relative_modifier)
+
+        mods = self.interpreter._get_modifiers('S1F+1D@23:59')
+        relative_modifier = mods[1]
+        self.assertEqual('+1D', relative_modifier)
+
+        mods = self.interpreter._get_modifiers('S1S+1h@23:59')
+        relative_modifier = mods[1]
+        self.assertEqual('+1h', relative_modifier)
+
+        mods = self.interpreter._get_modifiers('S1-13243m@23:59')
+        relative_modifier = mods[1]
+        self.assertEqual('-13243m', relative_modifier)

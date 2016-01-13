@@ -37,17 +37,23 @@ class Interpreter():
                 of the event.
 
         relative_modifier: The delta to apply to the event start or end.
-                           ex: -1d
+                           Supports +/- d/h/m for days, hours, minutes.
+                           ex: '-1d', '+15m', '+4h'
 
         time_modifier: None or a modifier of the final time. Must be applied
                        last.
                        ex: @23:55
         """
-        regex = re.compile(r'^[qsp]([0-9]{1,2})([sf]?)', re.IGNORECASE)
+        regex = re.compile(
+            r'^[qsp][0-9]{1,2}(?P<end>[sf])?(?P<rel>[+-][0-9]+[dmh])?' +
+            r'(?:\@(?P<time>[0-9]{1,2}\:[0-9]{1,2}))?$', re.IGNORECASE)
+
         r = regex.search(string)
         if not r:
             raise Exception('Invalid syntax while parsing modifiers.')
 
-        at_end = r.groups()[1] == 'F'
+        at_end = r.groupdict()['end'] == 'F'
 
-        return (at_end, None, None)
+        relative_modifier = r.groupdict()['rel']
+
+        return (at_end, relative_modifier, None)
