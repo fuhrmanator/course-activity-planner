@@ -11,6 +11,10 @@ class Interpreter():
         r'^[qsp][0-9]{1,2}(?P<end>[sf])?(?P<rel>[+-][0-9]+[dmh])?' +
         r'(?:\@(?P<time>[0-9]{1,2}\:[0-9]{1,2}))?$', re.IGNORECASE)
 
+    timedelta_regex = re.compile(
+        r'^(?P<neg>\-)?(:?(?P<days>[0-9])+d)?(:?(?P<hours>[0-9]+)h)?' +
+        r'(:?(?P<minutes>[0-9]+)m)?$', re.IGNORECASE)
+
     candidates = {
         MoodleQuiz: re.compile(r'^[q]([0-9]{1,2})([sf]?)$', re.IGNORECASE),
         Seminar: re.compile(r'^[s]([0-9]{1,2})([sf]?)$', re.IGNORECASE),
@@ -64,4 +68,19 @@ class Interpreter():
         return datetime.strptime(time_modifier_str, "%H:%M").time()
 
     def _interpret_relative_modifier(self, relative_modifier_str):
-        pass
+        r = self.timedelta_regex.search(relative_modifier_str)
+        if not r:
+            raise Exception('Error while parsing timedelta.')
+
+        negative_modifier = -1 if r.groupdict()['neg'] else 1
+
+        days = int(r.groupdict()['days']) * negative_modifier \
+            if r.groupdict()['days'] else 0
+
+        hours = int(r.groupdict()['hours']) * negative_modifier \
+            if r.groupdict()['hours'] else 0
+
+        minutes = int(r.groupdict()['minutes']) * negative_modifier \
+            if r.groupdict()['minutes'] else 0
+
+        return timedelta(days=days, hours=hours, minutes=minutes)

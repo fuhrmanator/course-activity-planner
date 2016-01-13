@@ -155,7 +155,7 @@ class InterpreterTest(unittest.TestCase):
         time_modifier = mods[2]
         self.assertEqual('3:01', time_modifier)
 
-    def test_interpret_relative_modifier(self):
+    def test_interpret_time_modifier(self):
         self.assertEqual(
             time(hour=3, minute=1),
             self.interpreter._interpret_time_modifier('3:01'))
@@ -171,3 +171,28 @@ class InterpreterTest(unittest.TestCase):
         self.assertEqual(
             time(hour=1, minute=1),
             self.interpreter._interpret_time_modifier('01:1'))
+
+    def test_interpret_relative_modifier(self):
+        self.assertEqual(
+            timedelta(days=1),
+            self.interpreter._interpret_relative_modifier('1d'))
+
+        self.assertEqual(
+            timedelta(days=-2),
+            self.interpreter._interpret_relative_modifier('-2d'))
+
+        self.assertEqual(
+            timedelta(hours=123),
+            self.interpreter._interpret_relative_modifier('0123h'))
+
+        self.assertEqual(
+            timedelta(hours=-23),
+            self.interpreter._interpret_relative_modifier('-23h'))
+
+        self.assertEqual(
+            timedelta(minutes=-50),
+            self.interpreter._interpret_relative_modifier('-050m'))
+
+        self.assertEqual(
+            timedelta(minutes=106),
+            self.interpreter._interpret_relative_modifier('106m'))
