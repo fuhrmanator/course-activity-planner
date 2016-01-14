@@ -6,7 +6,7 @@ import arrow
 
 from datetime import timedelta, time
 
-from interpreter import Interpreter
+from interpreter import Interpreter, AbsoluteTimeModifierException
 from course_planner import CalendarReader, MoodleCourse, MoodleQuiz, Seminar, \
     Practica
 
@@ -172,6 +172,19 @@ class InterpreterTest(unittest.TestCase):
         self.assertEqual(
             time(hour=1, minute=1),
             self.interpreter._interpret_time_modifier('01:1'))
+
+    def test_interpret_invalid_time_modifier(self):
+        self.assertRaises(
+            AbsoluteTimeModifierException,
+            self.interpreter._interpret_time_modifier, '24:00')
+
+        self.assertRaises(
+            AbsoluteTimeModifierException,
+            self.interpreter._interpret_time_modifier, '23:60')
+
+        self.assertRaises(
+            AbsoluteTimeModifierException,
+            self.interpreter._interpret_time_modifier, '12:63')
 
     def test_interpret_relative_modifier(self):
         self.assertEqual(

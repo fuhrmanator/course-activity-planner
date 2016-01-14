@@ -5,6 +5,16 @@ from datetime import timedelta, datetime
 from course_planner import MoodleQuiz, Seminar, Practica
 
 
+class AbsoluteTimeModifierException(Exception):
+    """Raised if the absolute time has an invalid time format (24:00)"""
+    def __init__(self):
+        self.message = '\
+Invalid absolute time modifier. Could not interpret value.'
+
+    def __str__(self):
+        return repr(self.message)
+
+
 class Interpreter():
 
     modifiers_regex = re.compile(
@@ -65,7 +75,10 @@ class Interpreter():
         return (at_end, relative_modifier_str, time_modifier_str)
 
     def _interpret_time_modifier(self, time_modifier_str):
-        return datetime.strptime(time_modifier_str, "%H:%M").time()
+        try:
+            return datetime.strptime(time_modifier_str, '%H:%M').time()
+        except Exception:
+            raise AbsoluteTimeModifierException()
 
     def _interpret_relative_modifier(self, relative_modifier_str):
         r = self.timedelta_regex.search(relative_modifier_str)
