@@ -12,6 +12,8 @@ This project is affiliated with the [Maison du logiciel libre (ML<sup>2</sup>)](
 
 # course-activity-planner
 ![Build status](https://travis-ci.org/jdupl/course-activity-planner.svg?branch=master)
+[![Coverage Status](https://coveralls.io/repos/jdupl/course-activity-planner/badge.svg?branch=master&service=github)](https://coveralls.io/github/jdupl/course-activity-planner?branch=master)
+
 
 Tool for instructors to plan course activities and synchronize the data with syllabus, LMS, etc.
 
