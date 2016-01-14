@@ -11,6 +11,8 @@ This project is affiliated with the [Maison du logiciel libre (ML<sup>2</sup>)](
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # course-activity-planner
+![Build status](https://travis-ci.org/jdupl/course-activity-planner.svg?branch=master)
+
 Tool for instructors to plan course activities and synchronize the data with syllabus, LMS, etc.
 
 ### Setup
