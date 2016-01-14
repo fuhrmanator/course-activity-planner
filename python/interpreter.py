@@ -34,6 +34,17 @@ class Interpreter():
     def __init__(self, meetings, course):
         self.meetings = meetings
         self.course = course
+        self.meetings[MoodleQuiz] = []
+        for e in course._get_quizzes():
+            self.meetings[MoodleQuiz].append(e)
+
+    def get_new_event(self, string):
+        print(self.meetings[MoodleQuiz])
+
+        tokens = self._split_line(string)
+        event_clazz, event_id = self._detect_event_class_and_id(tokens[0])
+        print(event_clazz, event_id)
+        return self.meetings[event_clazz][event_id]
 
     def _detect_event_class_and_id(self, string):
         """Returns a tuple of the class and the meeting id."""
