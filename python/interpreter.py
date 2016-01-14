@@ -40,17 +40,17 @@ class Interpreter():
         return parts
 
     def _get_modifiers_as_string(self, string):
-        """Returns tuple (at_end, relative_modifier, time_modifier)
+        """Returns tuple (at_end, relative_modifier_str, time_modifier_str)
 
         at_end: True if the modifiers should be applied to the end of the
                 event. False if the modifiers should be applied to the start
                 of the event.
 
-        relative_modifier: The delta to apply to the event start or end as a
+        relative_modifier_str: The delta to apply to the event start or end as a
                            string. Supports +/- d/h/m for days, hours, minutes.
                            ex: '-1d', '+15m', '+4h'
 
-        time_modifier: None or a modifier of the final time as a string.
+        time_modifier_str: None or a modifier of the final time as a string.
                        Must be applied last.
                        ex: @23:55
         """
@@ -59,10 +59,10 @@ class Interpreter():
             raise Exception('Invalid syntax while parsing modifiers.')
 
         at_end = r.groupdict()['end'] == 'F'
-        relative_modifier = r.groupdict()['rel']
-        time_modifier = r.groupdict()['time']
+        relative_modifier_str = r.groupdict()['rel']
+        time_modifier_str = r.groupdict()['time']
 
-        return (at_end, relative_modifier, time_modifier)
+        return (at_end, relative_modifier_str, time_modifier_str)
 
     def _interpret_time_modifier(self, time_modifier_str):
         return datetime.strptime(time_modifier_str, "%H:%M").time()

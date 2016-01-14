@@ -199,24 +199,24 @@ class InterpreterTest(unittest.TestCase):
             self.interpreter._interpret_relative_modifier('106m'))
 
     def test_build_new_date_from_event(self):
-        expected = arrow.get('1000000060').datetime
+        expected = arrow.get(2000, 1, 1, 0, 1).datetime
         actual = self.interpreter._get_new_datetime(
-            arrow.get('1000000000').datetime, timedelta(minutes=1), None)
+            arrow.get(2000, 1, 1).datetime, timedelta(minutes=1), None)
         self.assertEqual(expected, actual)
 
-        expected = arrow.get('1000000000').datetime
+        expected = arrow.get(2000, 1, 1).datetime
         actual = self.interpreter._get_new_datetime(
-            arrow.get('1000000120').datetime, timedelta(minutes=-2), None)
+            arrow.get(2000, 1, 1, 0, 2).datetime, timedelta(minutes=-2), None)
         self.assertEqual(expected, actual)
 
-        expected = arrow.get('1000010800').datetime
+        expected = arrow.get(2000, 1, 1, 3).datetime
         actual = self.interpreter._get_new_datetime(
-            arrow.get('1000000000').datetime, timedelta(hours=3), None)
+            arrow.get(2000, 1, 1).datetime, timedelta(hours=3), None)
         self.assertEqual(expected, actual)
 
-        expected = arrow.get('1000000000').datetime
+        expected = arrow.get(1999, 12, 31).datetime
         actual = self.interpreter._get_new_datetime(
-            arrow.get('1000086400').datetime, timedelta(days=-1), None)
+            arrow.get(2000, 1, 1).datetime, timedelta(days=-1), None)
         self.assertEqual(expected, actual)
 
         expected = arrow.get(2000, 1, 1, 2, 5).datetime
@@ -232,6 +232,6 @@ class InterpreterTest(unittest.TestCase):
 
         expected = arrow.get(1999, 12, 31, 23, 55).datetime
         actual = self.interpreter._get_new_datetime(
-            arrow.get(2000, 1, 1, 0, 0).datetime, timedelta(days=-1),
+            arrow.get(2000, 1, 1).datetime, timedelta(days=-1),
             time(hour=23, minute=55))
         self.assertEqual(expected, actual)
