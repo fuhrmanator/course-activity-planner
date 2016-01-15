@@ -250,11 +250,30 @@ class InterpreterTest(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_get_subject(self):
-        actual = self.interpreter.get_subject('Q1 S1 S1F')['id']
+        tokens = self.interpreter._split_line('Q1 S1 S1F')
+        actual = self.interpreter._parse_subject(tokens)['id']
         self.assertEqual('4271', actual)
 
-        actual = self.interpreter.get_subject('Q2 S1 S1F')['id']
+        tokens = self.interpreter._split_line('Q2 S1 S1F')
+        actual = self.interpreter._parse_subject(tokens)['id']
         self.assertEqual('4272', actual)
 
-        actual = self.interpreter.get_subject('Q3 S1 S1F')['id']
+        tokens = self.interpreter._split_line('Q3 S1 S1F')
+        actual = self.interpreter._parse_subject(tokens)['id']
         self.assertEqual('4273', actual)
+
+    def test_get_subject_with_applied_modifiers(self):
+        # TODO modify end dates
+        # TODO fix timezones !
+
+        expected = arrow.get(2014, 1, 6, 17).datetime  # timezone adjusted
+        actual = self.interpreter.apply('Q1 S1 S1F')
+        self.assertEqual(expected, actual.get_start_datetime())
+
+        expected = arrow.get(2014, 1, 13, 17).datetime  # timezone adjusted
+        actual = self.interpreter.apply('Q1 S2 S3F')
+        self.assertEqual(expected, actual.get_start_datetime())
+
+        expected = arrow.get(2014, 1, 20, 18).datetime  # timezone adjusted
+        actual = self.interpreter.apply('Q1 S3F S4F')
+        self.assertEqual(expected, actual.get_start_datetime())

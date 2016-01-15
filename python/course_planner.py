@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import os
 import re
+import time
+import arrow
 import xml.etree.ElementTree as ET
 
 from ics import Calendar as iCalendar
@@ -9,6 +11,15 @@ from ics import Calendar as iCalendar
 class GenericMeeting():
     def __init__(self, calendar_event):
         self.calendar_event = calendar_event
+
+    def get_start_datetime(self):
+        return self.calendar_event.begin.datetime
+
+    def get_end_datetime(self):
+        return self.calendar_event.end.datetime
+
+    def set_start_datetime(self, datetime):
+        self.calendar_event.begin = datetime
 
 
 class Quiz(GenericMeeting):
@@ -92,6 +103,19 @@ class MoodleEvent():
         if k == 'id' or k == 'moduleid':
             raise Exception('Not allowed')
         self.event.find(k).text = v
+
+    def set_start_datetime(self, datetime):
+        datetime = int(time.mktime(datetime.timetuple()))
+        print('from', self.event.find('timeopen').text, 'to ', datetime)
+        self.__setitem__('timeopen', datetime)
+
+    def get_start_datetime(self):
+        epoch = self.event.find('timeopen').text
+        return arrow.get(epoch).datetime
+
+    def get_end_datetime(self):
+        epoch = self.event.find('timeclose').text
+        return arrow.get(epoch).datetime
 
     # def write(self, path):
     #   self.activity.write(path, short_empty_elements=False, encoding='UTF-8',

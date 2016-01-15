@@ -35,10 +35,38 @@ class Interpreter():
         self.meetings = meetings
         self.course = course
 
-    def get_subject(self, string):
+    def apply(self, string):
+        tokens = self._split_line(string)
+
+        subject = self._get_event_from_token(tokens[0])
+
+        # start date
+        modifiers = self._get_modifiers_as_string(tokens[1])
+        start_event = self._get_event_from_token(tokens[1])
+
+        start_datetime = start_event.get_start_datetime()
+        if modifiers[0]:  # at_end
+            start_datetime = start_event.get_end_datetime()
+
+        relative_mod = self._interpret_relative_modifier(modifiers[1])
+        time_mod = self._interpret_time_modifier(modifiers[2])
+
+        new_start_date = self._get_new_datetime(
+            start_datetime, relative_mod, time_mod)
+        subject.set_start_datetime(new_start_date)
+
+        return subject
+
+    def _get_event_from_token(self, token):
+        event_clazz, event_id = self._detect_event_class_and_id(token)
+        if event_clazz == MoodleQuiz:
+            return self.course.get_activity_by_type_and_num(
+                event_clazz, event_id)
+        return self.meetings[event_clazz][event_id - 1]
+
+    def _parse_subject(self, tokens):
         """Returns the event described by the first token of string
         """
-        tokens = self._split_line(string)
         event_clazz, event_id = self._detect_event_class_and_id(tokens[0])
         return self.course.get_activity_by_type_and_num(event_clazz, event_id)
 
@@ -82,12 +110,17 @@ class Interpreter():
         return (at_end, relative_modifier_str, time_modifier_str)
 
     def _interpret_time_modifier(self, time_modifier_str):
+        if not time_modifier_str:
+            return
         try:
             return datetime.strptime(time_modifier_str, '%H:%M').time()
         except Exception:
             raise AbsoluteTimeModifierException()
 
     def _interpret_relative_modifier(self, relative_modifier_str):
+        if not relative_modifier_str:
+            return
+
         r = self.timedelta_regex.search(relative_modifier_str)
         if not r:
             raise Exception('Error while parsing timedelta.')
