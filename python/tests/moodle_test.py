@@ -2,9 +2,6 @@ import unittest
 import tarfile
 import shutil
 import tempfile
-import os
-
-import xml.etree.ElementTree as ET
 
 from course_planner import MoodleCourse, MoodleQuiz
 
@@ -47,47 +44,57 @@ class TestQuiz(unittest.TestCase):
         for i, x in enumerate([146935, 146936, 146939]):
             self.assertEqual(x, activities[i]['moduleid'])
 
-    # def test_get_quizzes(self):
-    #     course = MoodleCourse(self.tmp_path)
-    #     expected = ['146935', '146936', '146939']
-    #
-    #     actual = course._get_quizzes_module_id()
-    #     self.assertEqual(expected, sorted(actual))
+    def test_activities_are_sorted(self):
+        course = MoodleCourse(self.tmp_path)
 
-    # def test_get_quiz_by_relative_num(self):
-    #     course = MoodleCourse(self.tmp_path)
-    #     expected = '4271'
-    #
-    #     actual = course.get_activity_by_type_and_num(MoodleQuiz, 1)['id']
-    #     self.assertEqual(expected, actual)
+        for i, x in enumerate([146935, 146936, 146939]):
+            self.assertEqual(x, course.activities[MoodleQuiz][i]['moduleid'])
 
-    # def test_get_quiz_by_module_id_get_data(self):
-    #     course = MoodleCourse(self.tmp_path)
-    #     quiz = course.get_quiz_by_module_id('146935')
-    #
-    #     self.assertEqual('test de remise', quiz['name'])
-    #     self.assertEqual('1451709900', quiz['timeopen'])
-    #     self.assertEqual('1454301900', quiz['timeclose'])
-    #
-    # def test_set_quiz_dates(self):
-    #     course = MoodleCourse(self.tmp_path)
-    #     quiz = course.get_quiz_by_module_id('146935')
-    #
-    #     self.assertEqual('1451709900', quiz['timeopen'])
-    #     self.assertEqual('1454301900', quiz['timeclose'])
-    #
-    #     quiz['timeopen'] = '42424242'
-    #     quiz['timeclose'] = '4242424242'
-    #
-    #     self.assertEqual('42424242', quiz['timeopen'])
-    #     self.assertEqual('4242424242', quiz['timeclose'])
-    #
-    # def test_set_invalid_key_raises_exception(self):
-    #     course = MoodleCourse(self.tmp_path)
-    #     quiz = course.get_quiz_by_module_id('146935')
-    #
-    #     with self.assertRaises(Exception):
-    #         quiz['invalid_key'] = 'some data'
+    def test_get_quiz_by_relative_num(self):
+        course = MoodleCourse(self.tmp_path)
+
+        actual = course.get_activity_by_type_and_num(MoodleQuiz, 1)['id']
+        self.assertEqual('4271', actual)
+
+        actual = course.get_activity_by_type_and_num(MoodleQuiz, 2)['id']
+        self.assertEqual('4272', actual)
+
+        actual = course.get_activity_by_type_and_num(MoodleQuiz, 3)['id']
+        self.assertEqual('4273', actual)
+
+    def test_get_data_from_quiz(self):
+        course = MoodleCourse(self.tmp_path)
+        quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
+
+        self.assertEqual('test de remise', quiz['name'])
+        self.assertEqual('1451709900', quiz['timeopen'])
+        self.assertEqual('1454301900', quiz['timeclose'])
+
+    def test_set_quiz_dates(self):
+        course = MoodleCourse(self.tmp_path)
+        quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
+
+        self.assertEqual('1451709900', quiz['timeopen'])
+        self.assertEqual('1454301900', quiz['timeclose'])
+
+        quiz['timeopen'] = '42424242'
+        quiz['timeclose'] = '4242424242'
+
+        self.assertEqual('42424242', quiz['timeopen'])
+        self.assertEqual('4242424242', quiz['timeclose'])
+
+    def test_set_invalid_key_raises_exception(self):
+        course = MoodleCourse(self.tmp_path)
+        quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
+
+        with self.assertRaises(Exception):
+            quiz['invalid_key'] = 'some data'
+
+        with self.assertRaises(Exception):
+            quiz['id'] = 'some data'
+
+        with self.assertRaises(Exception):
+            quiz['moduleid'] = 'some data'
 
 
 if __name__ == "__main__":

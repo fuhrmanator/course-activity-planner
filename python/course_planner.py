@@ -89,10 +89,8 @@ class MoodleEvent():
         return self.event.find(k).text
 
     def __setitem__(self, k, v):
-        if k == 'id' and 'id' in self.event.attrib:
-            self.event.attrib[k] = v
-        if k == 'moduleid':
-            raise Exception('Not implemented')
+        if k == 'id' or k == 'moduleid':
+            raise Exception('Not allowed')
         self.event.find(k).text = v
 
     # def write(self, path):
@@ -118,6 +116,9 @@ class MoodleCourse():
         self.backup = ET.parse(self.fullpath)
 
         self._load_activities_and_section_order()
+
+    def get_activity_by_type_and_num(self, type, relative_number):
+        return self.activities[type][relative_number - 1]
 
     def _load_section_order(self):
         """"Read the activity sequence from sections.xml.
@@ -150,22 +151,19 @@ class MoodleCourse():
             directory = a.find('directory').text
 
             if module_name not in self.modname_to_class:
-                print('ignoring ', module_name)
-                continue
+                continue  # Ignore incomptatible activity
 
             clazz = self.modname_to_class[module_name]
             activities[clazz].append(clazz(os.path.join(self.path, directory)))
+
+        for activity_type, items in activities.items():
+            activities[activity_type] = self._sort_activity_type(items)
+
         return activities
 
     def _sort_activity_type(self, activities):
         return sorted(activities, key=lambda activity:
                       self.section_order.index(activity['moduleid']))
-
-    def load_quiz_from_xml(self, xml):
-        pass
-
-    def get_activity_by_type_and_num(self, type, relative_number):
-        pass
 
 
 def main():
