@@ -249,7 +249,12 @@ class InterpreterTest(unittest.TestCase):
             time(hour=23, minute=55))
         self.assertEqual(expected, actual)
 
-    # def test_get_new_event(self):
-    #     expected = arrow.get(2000, 1, 1, 0, 0).datetime
-    #     actual = self.interpreter.get_new_event('Q1 S1 S1F')
-    #     self.assertEqual(expected, actual)
+    def test_get_subject(self):
+        actual = self.interpreter.get_subject('Q1 S1 S1F')['id']
+        self.assertEqual('4271', actual)
+
+        actual = self.interpreter.get_subject('Q2 S1 S1F')['id']
+        self.assertEqual('4272', actual)
+
+        actual = self.interpreter.get_subject('Q3 S1 S1F')['id']
+        self.assertEqual('4273', actual)

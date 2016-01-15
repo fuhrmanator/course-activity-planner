@@ -35,13 +35,12 @@ class Interpreter():
         self.meetings = meetings
         self.course = course
 
-    def get_new_event(self, string):
-        print(self.course.activities[MoodleQuiz])
-
+    def get_subject(self, string):
+        """Returns the event described by the first token of string
+        """
         tokens = self._split_line(string)
         event_clazz, event_id = self._detect_event_class_and_id(tokens[0])
-        print(event_clazz, event_id)
-        return self.course.activities[event_clazz][event_id]
+        return self.course.get_activity_by_type_and_num(event_clazz, event_id)
 
     def _detect_event_class_and_id(self, string):
         """Returns a tuple of the class and the meeting id."""
