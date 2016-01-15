@@ -5,6 +5,7 @@ import time
 import arrow
 import xml.etree.ElementTree as ET
 
+from dateutil import tz
 from ics import Calendar as iCalendar
 
 
@@ -106,16 +107,15 @@ class MoodleEvent():
 
     def set_start_datetime(self, datetime):
         datetime = int(time.mktime(datetime.timetuple()))
-        print('from', self.event.find('timeopen').text, 'to ', datetime)
         self.__setitem__('timeopen', datetime)
 
     def get_start_datetime(self):
         epoch = self.event.find('timeopen').text
-        return arrow.get(epoch).datetime
+        return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal')).datetime
 
     def get_end_datetime(self):
         epoch = self.event.find('timeclose').text
-        return arrow.get(epoch).datetime
+        return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal')).datetime
 
     # def write(self, path):
     #   self.activity.write(path, short_empty_elements=False, encoding='UTF-8',

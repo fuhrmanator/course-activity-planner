@@ -1,9 +1,11 @@
+import os
 import unittest
 import tarfile
 import shutil
 import tempfile
 import arrow
 
+from dateutil import tz
 from datetime import timedelta, time
 
 from interpreter import Interpreter, AbsoluteTimeModifierException
@@ -18,6 +20,7 @@ class InterpreterTest(unittest.TestCase):
 ../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
 
     def setUp(self):
+        os.environ['TZ'] = 'America/Montreal'
         # Setup calendar
         calendar = CalendarReader(self.calendar_path)
 
@@ -264,16 +267,17 @@ class InterpreterTest(unittest.TestCase):
 
     def test_get_subject_with_applied_modifiers(self):
         # TODO modify end dates
-        # TODO fix timezones !
+        expected = arrow.get(
+            2014, 1, 6, 12, tzinfo=tz.gettz('America/Montreal')).datetime
+        actual = self.interpreter.apply('Q1 S1 S1F').get_start_datetime()
+        self.assertEqual(expected, actual)
 
-        expected = arrow.get(2014, 1, 6, 17).datetime  # timezone adjusted
-        actual = self.interpreter.apply('Q1 S1 S1F')
-        self.assertEqual(expected, actual.get_start_datetime())
+        expected = arrow.get(
+            2014, 1, 13, 12, tzinfo=tz.gettz('America/Montreal')).datetime
+        actual = self.interpreter.apply('Q1 S2 S3F').get_start_datetime()
+        self.assertEqual(expected, actual)
 
-        expected = arrow.get(2014, 1, 13, 17).datetime  # timezone adjusted
-        actual = self.interpreter.apply('Q1 S2 S3F')
-        self.assertEqual(expected, actual.get_start_datetime())
-
-        expected = arrow.get(2014, 1, 20, 18).datetime  # timezone adjusted
-        actual = self.interpreter.apply('Q1 S3F S4F')
-        self.assertEqual(expected, actual.get_start_datetime())
+        expected = arrow.get(
+            2014, 1, 20, 13, tzinfo=tz.gettz('America/Montreal')).datetime
+        actual = self.interpreter.apply('Q1 S3F S4F').get_start_datetime()
+        self.assertEqual(expected, actual)
