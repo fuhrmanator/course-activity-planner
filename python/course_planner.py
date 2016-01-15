@@ -75,20 +75,24 @@ class CalendarReader():
 class MoodleEvent():
     """Describes an XML Moodle event with key based access"""
     def __init__(self, path):
-        self.activity = ET.parse(path)
+        self.activity = ET.parse(path).getroot()
 
-        if len(self.activity.getroot()) != 1:
+        if len(self.activity) != 1:
             raise Exception('An activity can only have one event.')
-        self.event = self.activity.getroot()[0]
+        self.event = self.activity[0]
 
     def __getitem__(self, k):
         if k == 'id':
             return self.event.attrib[k]
+        if k == 'moduleid':
+            return int(self.activity.attrib[k])
         return self.event.find(k).text
 
     def __setitem__(self, k, v):
         if k == 'id' and 'id' in self.event.attrib:
             self.event.attrib[k] = v
+        if k == 'moduleid':
+            raise Exception('Not implemented')
         self.event.find(k).text = v
 
     # def write(self, path):
@@ -102,14 +106,6 @@ class MoodleQuiz(MoodleEvent):
         super().__init__(os.path.join(path, 'quiz.xml'))
 
 
-class MoodleAcivityIndex():
-    def __init__(self, module_id, section_id, module_name, directory):
-        self.module_id = module_id
-        self.section_id = section_id
-        self.module_name = module_name
-        self.directory = directory
-
-
 class MoodleCourse():
     """\
     Describes a complete Moodle course from an unpacked archive on the disk"""
@@ -118,11 +114,6 @@ class MoodleCourse():
 
     def __init__(self, moodle_archive_path):
         self.path = moodle_archive_path
-        self.activities = {}
-        self.activities_seq = {}
-        for clazz in self.modname_to_class.values():
-            self.activities[clazz] = []
-
         self.fullpath = os.path.join(self.path, 'moodle_backup.xml')
         self.backup = ET.parse(self.fullpath)
 
@@ -141,7 +132,17 @@ class MoodleCourse():
         return [int(num) for num in section.find('sequence').text.split(',')]
 
     def _load_activities_and_section_order(self):
-        section_order = self._load_section_order()
+        if len(self.backup.getroot().find('information').find('contents').
+                find('sections')) > 1:
+            raise Exception('Not implemented')
+
+        self.section_order = self._load_section_order()
+        self.activities = self._load_activites()
+
+    def _load_activites(self):
+        activities = {}
+        for clazz in self.modname_to_class.values():
+            activities[clazz] = []
 
         for a in self.backup.getroot().find('information').find('contents'). \
                 find('activities'):
@@ -153,29 +154,18 @@ class MoodleCourse():
                 continue
 
             clazz = self.modname_to_class[module_name]
-            self.activities[clazz].append(
-                clazz(os.path.join(self.path, directory)))
+            activities[clazz].append(clazz(os.path.join(self.path, directory)))
+        return activities
 
-        if len(self.backup.getroot().find('information').find('contents').
-                find('sections')) > 1:
-            raise Exception('Not implemented')
-
-    def get_quiz_by_relative_num(self, number):
-        return self.quizzes[number - 1]
-
-    # def get_quiz_by_module_id(self, module_id):
-    #     for quiz in self.quizzes:
-    #         if quiz['id'] == module_id:
-    #             return quiz
+    def _sort_activity_type(self, activities):
+        return sorted(activities, key=lambda activity:
+                      self.section_order.index(activity['moduleid']))
 
     def load_quiz_from_xml(self, xml):
         pass
 
-    def _load_quizzes(self):
-        quizzes = []
-        for quiz_path in self._get_quizzes():
-            quizzes.append(
-                MoodleQuiz(os.path.join(self.activities_path, quiz_path)))
+    def get_activity_by_type_and_num(self, type, relative_number):
+        pass
 
 
 def main():

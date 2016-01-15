@@ -36,8 +36,16 @@ class TestQuiz(unittest.TestCase):
 
     def test_load_activities(self):
         course = MoodleCourse(self.tmp_path)
-        actual = course.activities[MoodleQuiz]
+        actual = course._load_activites()[MoodleQuiz]
         self.assertEqual(3, len(actual))
+
+    def test_sort_activity_type(self):
+        course = MoodleCourse(self.tmp_path)
+        activities = course._load_activites()[MoodleQuiz]
+        activities = course._sort_activity_type(activities)
+
+        for i, x in enumerate([146935, 146936, 146939]):
+            self.assertEqual(x, activities[i]['moduleid'])
 
     # def test_get_quizzes(self):
     #     course = MoodleCourse(self.tmp_path)
@@ -50,7 +58,7 @@ class TestQuiz(unittest.TestCase):
     #     course = MoodleCourse(self.tmp_path)
     #     expected = '4271'
     #
-    #     actual = course.get_quiz_by_relative_num(1)['id']
+    #     actual = course.get_activity_by_type_and_num(MoodleQuiz, 1)['id']
     #     self.assertEqual(expected, actual)
 
     # def test_get_quiz_by_module_id_get_data(self):
