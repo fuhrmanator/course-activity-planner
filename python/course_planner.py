@@ -106,8 +106,9 @@ class MoodleEvent():
         self.event.find(k).text = v
 
     def set_start_datetime(self, datetime):
-        datetime = int(time.mktime(datetime.timetuple()))
-        self.__setitem__('timeopen', datetime)
+        datetime = arrow.get(datetime)
+        print(datetime)
+        self.__setitem__('timeopen', datetime.timestamp)
 
     def get_start_datetime(self):
         epoch = self.event.find('timeopen').text
