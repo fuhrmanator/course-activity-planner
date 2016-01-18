@@ -43,10 +43,8 @@ class Interpreter():
         modifiers = self._get_modifiers_as_string(tokens[1])
         start_event = self._get_event_from_token(tokens[1])
 
-        start_datetime = start_datetime = start_event.get_end_datetime() \
+        start_datetime = start_event.get_end_datetime() \
             if modifiers[0] else start_event.get_start_datetime()
-
-        print('got start_datetime:', start_datetime, 'from event', start_event)
 
         relative_mod = self._interpret_relative_modifier(modifiers[1])
         time_mod = self._interpret_time_modifier(modifiers[2])
@@ -54,8 +52,9 @@ class Interpreter():
         new_start_date = self._get_new_datetime(
             start_datetime, relative_mod, time_mod)
 
-        print('got new_start_date:', new_start_date)
         subject.set_start_datetime(new_start_date)
+
+        # TODO set end date
 
         return subject
 

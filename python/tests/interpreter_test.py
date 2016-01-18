@@ -9,8 +9,8 @@ from dateutil import tz
 from datetime import timedelta, time
 
 from interpreter import Interpreter, AbsoluteTimeModifierException
-from course_planner import CalendarReader, MoodleCourse, MoodleQuiz, Seminar, \
-    Practica
+from course_planner import MoodleCourse, MoodleQuiz, Seminar, Practica
+from calendar_reader import CalendarReader
 
 
 class InterpreterTest(unittest.TestCase):
@@ -268,16 +268,17 @@ class InterpreterTest(unittest.TestCase):
     def test_get_subject_with_applied_modifiers(self):
         # TODO modify end dates
         expected = arrow.get(
-            2014, 1, 6, 12, tzinfo=tz.gettz('America/Montreal')).datetime
+            2014, 1, 6, 7, tzinfo=tz.gettz('America/Montreal')).datetime
+
         actual = self.interpreter.apply('Q1 S1 S1F').get_start_datetime()
         self.assertEqual(expected, actual)
 
         expected = arrow.get(
-            2014, 1, 13, 12, tzinfo=tz.gettz('America/Montreal')).datetime
+            2014, 1, 13, 7, tzinfo=tz.gettz('America/Montreal')).datetime
         actual = self.interpreter.apply('Q1 S2 S3F').get_start_datetime()
         self.assertEqual(expected, actual)
 
         expected = arrow.get(
-            2014, 1, 20, 13, tzinfo=tz.gettz('America/Montreal')).datetime
+            2014, 1, 20, 8, tzinfo=tz.gettz('America/Montreal')).datetime
         actual = self.interpreter.apply('Q1 S3F S4F').get_start_datetime()
         self.assertEqual(expected, actual)

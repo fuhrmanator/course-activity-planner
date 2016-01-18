@@ -1,7 +1,10 @@
 import unittest
 import arrow
 
-from course_planner import CalendarReader, Seminar, Practica
+from dateutil import tz
+
+from course_planner import Seminar, Practica, GenericMeeting
+from calendar_reader import CalendarReader
 
 
 class TestCalendarParsing(unittest.TestCase):
@@ -25,8 +28,12 @@ class TestCalendarParsing(unittest.TestCase):
         seminars = self.calendar.get_meetings_by_type(Seminar)
         self.assertEqual(1389009600, seminars[0].calendar_event.begin.timestamp)
 
-        expected = arrow.Arrow(2014, 4, 7, 12, 0, 0)
-        self.assertEqual(expected, seminars[12].calendar_event.end)
+        expected = arrow.get(
+            2014, 4, 7, 8, 0, 0, tzinfo=tz.gettz('America/Montreal')).datetime
+
+        meeting = GenericMeeting(seminars[12].calendar_event)
+        actual = meeting.get_end_datetime()
+        self.assertEqual(expected, actual)
 
         for i, s in enumerate(seminars):
             self.assertEqual('log210 Cours magistral %d' % (i + 1),

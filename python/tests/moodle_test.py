@@ -2,6 +2,9 @@ import unittest
 import tarfile
 import shutil
 import tempfile
+import arrow
+
+from dateutil import tz
 
 from course_planner import MoodleCourse, MoodleQuiz
 
@@ -62,27 +65,6 @@ class TestQuiz(unittest.TestCase):
         actual = course.get_activity_by_type_and_num(MoodleQuiz, 3)['id']
         self.assertEqual('4273', actual)
 
-    def test_get_data_from_quiz(self):
-        course = MoodleCourse(self.tmp_path)
-        quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
-
-        self.assertEqual('test de remise', quiz['name'])
-        self.assertEqual('1451709900', quiz['timeopen'])
-        self.assertEqual('1454301900', quiz['timeclose'])
-
-    def test_set_quiz_dates(self):
-        course = MoodleCourse(self.tmp_path)
-        quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
-
-        self.assertEqual('1451709900', quiz['timeopen'])
-        self.assertEqual('1454301900', quiz['timeclose'])
-
-        quiz['timeopen'] = '42424242'
-        quiz['timeclose'] = '4242424242'
-
-        self.assertEqual('42424242', quiz['timeopen'])
-        self.assertEqual('4242424242', quiz['timeclose'])
-
     def test_set_invalid_key_raises_exception(self):
         course = MoodleCourse(self.tmp_path)
         quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
@@ -95,6 +77,50 @@ class TestQuiz(unittest.TestCase):
 
         with self.assertRaises(Exception):
             quiz['moduleid'] = 'some data'
+
+
+class TestMoodleEvent(unittest.TestCase):
+
+    moodle_archive_path = '\
+../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
+
+    def setUp(self):
+        self.tmp_path = tempfile.mkdtemp()
+
+        with tarfile.open(self.moodle_archive_path) as tar_file:
+            tar_file.extractall(self.tmp_path)
+
+    def tearDown(self):
+        # TODO test on windows
+        shutil.rmtree(self.tmp_path)
+
+    def test_get_data_from_event(self):
+        course = MoodleCourse(self.tmp_path)
+        quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
+
+        self.assertEqual('test de remise', quiz['name'])
+        self.assertEqual('1451709900', quiz['timeopen'])
+        self.assertEqual('1454301900', quiz['timeclose'])
+
+    def test_set_event_start_date(self):
+        course = MoodleCourse(self.tmp_path)
+        quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
+
+        dt = arrow.get(
+            2014, 1, 6, 12, tzinfo=tz.gettz('America/Montreal')).datetime
+        quiz.set_start_datetime(dt)
+
+        self.assertEqual(1389027600, quiz['timeopen'])
+
+    def test_get_event_start_date(self):
+        course = MoodleCourse(self.tmp_path)
+        quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
+
+        quiz['timeopen'] = 1389027600
+        dt = arrow.get(
+            2014, 1, 6, 12, tzinfo=tz.gettz('America/Montreal')).datetime
+
+        self.assertEqual(dt, quiz.get_start_datetime())
 
 
 if __name__ == "__main__":
