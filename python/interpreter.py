@@ -35,28 +35,28 @@ class Interpreter():
         self.meetings = meetings
         self.course = course
 
-    def apply(self, string):
+    def get_new_event_from_string(self, string):
         tokens = self._split_line(string)
-        subject = self._get_event_from_token(tokens[0])
+        event = self._get_event_from_token(tokens[0])
 
-        # start date
-        modifiers = self._get_modifiers_as_string(tokens[1])
-        start_event = self._get_event_from_token(tokens[1])
+        event.set_start_datetime(self._get_datetime_from_token(tokens[1]))
+        event.set_end_datetime(self._get_datetime_from_token(tokens[2]))
 
-        start_datetime = start_event.get_end_datetime() \
-            if modifiers[0] else start_event.get_start_datetime()
+        return event
+
+    def _get_datetime_from_token(self, token):
+        modifiers = self._get_modifiers_as_string(token)
+        event = self._get_event_from_token(token)
+
+        datetime = event.get_end_datetime() \
+            if modifiers[0] else event.get_start_datetime()
 
         relative_mod = self._interpret_relative_modifier(modifiers[1])
         time_mod = self._interpret_time_modifier(modifiers[2])
 
-        new_start_date = self._get_new_datetime(
-            start_datetime, relative_mod, time_mod)
+        new_datetime = self._get_new_datetime(datetime, relative_mod, time_mod)
 
-        subject.set_start_datetime(new_start_date)
-
-        # TODO set end date
-
-        return subject
+        return new_datetime
 
     def _get_event_from_token(self, token):
         event_clazz, event_id = self._detect_event_class_and_id(token)

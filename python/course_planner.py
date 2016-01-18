@@ -56,6 +56,10 @@ class MoodleEvent():
             raise Exception('Not allowed')
         self.event.find(k).text = v
 
+    def set_end_datetime(self, datetime):
+        timestamp = arrow.get(datetime).to('utc').timestamp
+        self.__setitem__('timeclose', timestamp)
+
     def set_start_datetime(self, datetime):
         timestamp = arrow.get(datetime).to('utc').timestamp
         self.__setitem__('timeopen', timestamp)

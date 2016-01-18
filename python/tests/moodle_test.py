@@ -122,6 +122,26 @@ class TestMoodleEvent(unittest.TestCase):
 
         self.assertEqual(dt, quiz.get_start_datetime())
 
+    def test_set_event_end_date(self):
+        course = MoodleCourse(self.tmp_path)
+        quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
+
+        dt = arrow.get(
+            2014, 1, 6, 12, tzinfo=tz.gettz('America/Montreal')).datetime
+        quiz.set_end_datetime(dt)
+
+        self.assertEqual(1389027600, quiz['timeclose'])
+
+    def test_get_event_end_date(self):
+        course = MoodleCourse(self.tmp_path)
+        quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
+
+        quiz['timeclose'] = 1389027600
+        dt = arrow.get(
+            2014, 1, 6, 12, tzinfo=tz.gettz('America/Montreal')).datetime
+
+        self.assertEqual(dt, quiz.get_end_datetime())
+
 
 if __name__ == "__main__":
     unittest.main()

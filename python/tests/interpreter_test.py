@@ -265,20 +265,43 @@ class InterpreterTest(unittest.TestCase):
         actual = self.interpreter._parse_subject(tokens)['id']
         self.assertEqual('4273', actual)
 
-    def test_get_subject_with_applied_modifiers(self):
-        # TODO modify end dates
-        expected = arrow.get(
+    def test_get_new_event_from_string(self):
+        expected_s = arrow.get(
             2014, 1, 6, 7, tzinfo=tz.gettz('America/Montreal')).datetime
+        expected_e = arrow.get(
+            2014, 1, 6, 8, tzinfo=tz.gettz('America/Montreal')).datetime
+        actual = self.interpreter.get_new_event_from_string('Q1 S1S S1F')
+        actual_s = actual.get_start_datetime()
+        actual_e = actual.get_end_datetime()
+        self.assertEqual(expected_s, actual_s)
+        self.assertEqual(expected_e, actual_e)
 
-        actual = self.interpreter.apply('Q1 S1 S1F').get_start_datetime()
-        self.assertEqual(expected, actual)
-
-        expected = arrow.get(
+        expected_s = arrow.get(
             2014, 1, 13, 7, tzinfo=tz.gettz('America/Montreal')).datetime
-        actual = self.interpreter.apply('Q1 S2 S3F').get_start_datetime()
-        self.assertEqual(expected, actual)
-
-        expected = arrow.get(
+        expected_e = arrow.get(
             2014, 1, 20, 8, tzinfo=tz.gettz('America/Montreal')).datetime
-        actual = self.interpreter.apply('Q1 S3F S4F').get_start_datetime()
-        self.assertEqual(expected, actual)
+        actual = self.interpreter.get_new_event_from_string('Q1 S2 S3F')
+        actual_s = actual.get_start_datetime()
+        actual_e = actual.get_end_datetime()
+        self.assertEqual(expected_s, actual_s)
+        self.assertEqual(expected_e, actual_e)
+
+        expected_s = arrow.get(
+            2014, 1, 20, 8, tzinfo=tz.gettz('America/Montreal')).datetime
+        expected_e = arrow.get(
+            2014, 1, 27, 8, tzinfo=tz.gettz('America/Montreal')).datetime
+        actual = self.interpreter.get_new_event_from_string('Q1 S3F S4F')
+        actual_s = actual.get_start_datetime()
+        actual_e = actual.get_end_datetime()
+        self.assertEqual(expected_s, actual_s)
+        self.assertEqual(expected_e, actual_e)
+
+        expected_s = arrow.get(
+            2014, 1, 20, 8, tzinfo=tz.gettz('America/Montreal')).datetime
+        expected_e = arrow.get(
+            2014, 1, 27, 8, tzinfo=tz.gettz('America/Montreal')).datetime
+        actual = self.interpreter.get_new_event_from_string('Q1 S3F S4F')
+        actual_s = actual.get_start_datetime()
+        actual_e = actual.get_end_datetime()
+        self.assertEqual(expected_s, actual_s)
+        self.assertEqual(expected_e, actual_e)
