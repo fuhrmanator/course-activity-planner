@@ -151,7 +151,14 @@ class MoodleCourse():
         return sorted(activities, key=lambda activity:
                       self.section_order.index(activity['moduleid']))
 
+    def _write_activities_to_disk(self):
+        for activities in self.activities.values():
+            for activity in activities:
+                activity.write()
+
     def write(self, output_path):
+        self._write_activities_to_disk()
+
         # Moodle archives require special care !
         # Archive must be created like this `tar -cf archive.mbz *`
         ogwd = os.getcwd()

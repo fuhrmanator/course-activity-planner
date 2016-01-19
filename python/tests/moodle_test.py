@@ -197,6 +197,24 @@ class TestMoodleWriter(unittest.TestCase):
         course.write(self.tmp_output_archive)
         self.assertTrue(os.path.isfile(self.tmp_output_archive))
 
+    def test_write_activities_to_disk_saves_io(self):
+        course = MoodleCourse(self.tmp_path)
+
+        # quiz 1 is not modified
+        q1 = course.get_activity_by_type_and_num(MoodleQuiz, 1)
+        q1_before_modification_dt = os.path.getmtime(q1.path)
+
+        # quiz 2 is modified
+        q2 = course.get_activity_by_type_and_num(MoodleQuiz, 2)
+        q2.set_start_datetime(arrow.get(
+            2001, 1, 1, 1, 1, 1, tzinfo=tz.gettz('America/Montreal')).datetime)
+        q2_before_modification_dt = os.path.getmtime(q2.path)
+
+        course._write_activities_to_disk()
+        # Only quiz 2 was written on disk
+        self.assertTrue(q1_before_modification_dt == os.path.getmtime(q1.path))
+        self.assertFalse(q2_before_modification_dt == os.path.getmtime(q2.path))
+
 
 if __name__ == "__main__":
     unittest.main()
