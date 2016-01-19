@@ -151,7 +151,7 @@ class TestMoodleWriter(unittest.TestCase):
 
     def setUp(self):
         self.tmp_path = tempfile.mkdtemp()
-        self.tmp_output_archive = tempfile.mkdtemp()
+        self.tmp_output_archive = tempfile.mktemp('.mbz')
 
         with tarfile.open(self.moodle_archive_path) as tar_file:
             tar_file.extractall(self.tmp_path)
@@ -159,7 +159,8 @@ class TestMoodleWriter(unittest.TestCase):
     def tearDown(self):
         # TODO test on windows
         shutil.rmtree(self.tmp_path)
-        shutil.rmtree(self.tmp_output_archive)
+        if os.path.isfile(self.tmp_output_archive):
+            os.remove(self.tmp_output_archive)
 
     def test_write_event_has_effect_on_disk(self):
         course = MoodleCourse(self.tmp_path)

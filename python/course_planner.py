@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import arrow
+import tarfile
 import xml.etree.ElementTree as ET
 
 from dateutil import tz
@@ -145,6 +146,18 @@ class MoodleCourse():
     def _sort_activity_type(self, activities):
         return sorted(activities, key=lambda activity:
                       self.section_order.index(activity['moduleid']))
+
+    def write(self, output_path):
+        # Moodle archives require special care !
+        # Archive must be created like this `tar -cf archive.mbz *`
+        ogwd = os.getcwd()
+        os.chdir(self.path)
+
+        with tarfile.open(output_path, "w:gz") as archive:
+            for name in os.listdir(self.path):
+                archive.add(name)
+            archive.close()
+        os.chdir(ogwd)
 
 
 def main():
