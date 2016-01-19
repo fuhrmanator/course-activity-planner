@@ -39,6 +39,7 @@ class Practica(GenericMeeting):
 class MoodleEvent():
     """Describes an XML Moodle event with key based access"""
     def __init__(self, path):
+        self.modified = False
         self.path = path
         self.tree = ET.parse(path)
         self.activity = self.tree.getroot()
@@ -58,6 +59,7 @@ class MoodleEvent():
         if k == 'id' or k == 'moduleid':
             raise Exception('Not allowed')
         self.event.find(k).text = v
+        self.modified = True
 
     def set_end_datetime(self, datetime):
         timestamp = str(arrow.get(datetime).to('utc').timestamp)
@@ -76,6 +78,8 @@ class MoodleEvent():
         return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal')).datetime
 
     def write(self):
+        if not self.modified:
+            return
         self.tree.write(self.path, short_empty_elements=False, encoding='UTF-8',
                         xml_declaration=True)
 

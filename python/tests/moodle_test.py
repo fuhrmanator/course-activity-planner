@@ -162,7 +162,15 @@ class TestMoodleWriter(unittest.TestCase):
         if os.path.isfile(self.tmp_output_archive):
             os.remove(self.tmp_output_archive)
 
-    def test_write_event_has_effect_on_disk(self):
+    def test_no_modification_on_event_has_no_effect_on_disk(self):
+        course = MoodleCourse(self.tmp_path)
+        quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
+        before_modification_dt = os.path.getmtime(quiz.path)
+
+        quiz.write()
+        self.assertTrue(before_modification_dt == os.path.getmtime(quiz.path))
+
+    def test_modification_of_event_has_effect_on_disk(self):
         course = MoodleCourse(self.tmp_path)
         quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
         quiz.set_start_datetime(arrow.get(
@@ -170,10 +178,9 @@ class TestMoodleWriter(unittest.TestCase):
         before_modification_dt = os.path.getmtime(quiz.path)
 
         quiz.write()
-
         self.assertFalse(before_modification_dt == os.path.getmtime(quiz.path))
 
-        # Check data
+        # Check data is updated on disk
         course_after = MoodleCourse(self.tmp_path)
         quiz_after = course_after.get_activity_by_type_and_num(MoodleQuiz, 1)
         self.assertEqual(arrow.get(
