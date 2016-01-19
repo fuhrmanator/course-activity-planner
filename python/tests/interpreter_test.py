@@ -9,8 +9,8 @@ from dateutil import tz
 from datetime import timedelta, time
 
 from interpreter import Interpreter, AbsoluteTimeModifierException
-from course_planner import MoodleCourse, MoodleQuiz, Seminar, Practica
-from calendar_reader import CalendarReader
+from Moodle import MoodleCourse, MoodleQuiz
+from ics_calendar import CalendarReader, Seminar, Practica
 
 
 class InterpreterTest(unittest.TestCase):

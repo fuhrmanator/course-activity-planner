@@ -1,8 +1,36 @@
 import re
+import arrow
 
 from ics import Calendar as iCalendar
 
-from course_planner import Seminar, Practica
+
+class GenericMeeting():
+    def __init__(self, calendar_event):
+        self.calendar_event = calendar_event
+
+    def get_start_datetime(self):
+        return self.calendar_event.begin.to('America/Montreal').datetime
+
+    def get_end_datetime(self):
+        return self.calendar_event.end.to('America/Montreal').datetime
+
+    def set_start_datetime(self, datetime):
+        self.calendar_event.begin = arrow.get(datetime)
+
+
+class Quiz(GenericMeeting):
+    def __init__(self, *args, **kwargs):
+        GenericMeeting.__init__(self, *args, **kwargs)
+
+
+class Seminar(GenericMeeting):
+    def __init__(self, *args, **kwargs):
+        GenericMeeting.__init__(self, *args, **kwargs)
+
+
+class Practica(GenericMeeting):
+    def __init__(self, *args, **kwargs):
+        GenericMeeting.__init__(self, *args, **kwargs)
 
 
 class CalendarReader():
@@ -18,7 +46,7 @@ class CalendarReader():
             self.calendar = iCalendar(cal_content)
 
     def get_all_meetings(self):
-        """Parses events from calendar and orders them by meeting type.
+        """Parses events from ics_calendar and orders them by meeting type.
         All meetings are returned in a dict of arrays with the meeting class
         as the key.
         """

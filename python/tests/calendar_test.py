@@ -3,8 +3,7 @@ import arrow
 
 from dateutil import tz
 
-from course_planner import Seminar, Practica, GenericMeeting
-from calendar_reader import CalendarReader
+from ics_calendar import CalendarReader, Seminar, Practica, GenericMeeting
 
 
 class TestCalendarParsing(unittest.TestCase):

@@ -2,7 +2,8 @@ import re
 
 from datetime import timedelta, datetime
 
-from course_planner import MoodleQuiz, Seminar, Practica
+from moodle import MoodleQuiz
+from ics_calendar import Seminar, Practica
 
 
 class AbsoluteTimeModifierException(Exception):

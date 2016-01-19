@@ -7,7 +7,7 @@ import arrow
 
 from dateutil import tz
 
-from course_planner import MoodleCourse, MoodleQuiz
+from moodle import MoodleCourse, MoodleQuiz
 
 
 class TestQuiz(unittest.TestCase):
