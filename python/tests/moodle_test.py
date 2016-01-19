@@ -1,3 +1,4 @@
+import os
 import unittest
 import tarfile
 import shutil
@@ -110,13 +111,13 @@ class TestMoodleEvent(unittest.TestCase):
             2014, 1, 6, 12, tzinfo=tz.gettz('America/Montreal')).datetime
         quiz.set_start_datetime(dt)
 
-        self.assertEqual(1389027600, quiz['timeopen'])
+        self.assertEqual('1389027600', quiz['timeopen'])
 
     def test_get_event_start_date(self):
         course = MoodleCourse(self.tmp_path)
         quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
 
-        quiz['timeopen'] = 1389027600
+        quiz['timeopen'] = '1389027600'
         dt = arrow.get(
             2014, 1, 6, 12, tzinfo=tz.gettz('America/Montreal')).datetime
 
@@ -130,7 +131,7 @@ class TestMoodleEvent(unittest.TestCase):
             2014, 1, 6, 12, tzinfo=tz.gettz('America/Montreal')).datetime
         quiz.set_end_datetime(dt)
 
-        self.assertEqual(1389027600, quiz['timeclose'])
+        self.assertEqual('1389027600', quiz['timeclose'])
 
     def test_get_event_end_date(self):
         course = MoodleCourse(self.tmp_path)
@@ -141,6 +142,52 @@ class TestMoodleEvent(unittest.TestCase):
             2014, 1, 6, 12, tzinfo=tz.gettz('America/Montreal')).datetime
 
         self.assertEqual(dt, quiz.get_end_datetime())
+
+
+class TestMoodleWriter(unittest.TestCase):
+
+    moodle_archive_path = '\
+../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
+
+    def setUp(self):
+        self.tmp_path = tempfile.mkdtemp()
+        self.tmp_output_archive = tempfile.mkdtemp()
+
+        with tarfile.open(self.moodle_archive_path) as tar_file:
+            tar_file.extractall(self.tmp_path)
+
+    def tearDown(self):
+        # TODO test on windows
+        shutil.rmtree(self.tmp_path)
+        shutil.rmtree(self.tmp_output_archive)
+
+    def test_write_event_has_effect_on_disk(self):
+        course = MoodleCourse(self.tmp_path)
+        quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
+        quiz.set_start_datetime(arrow.get(
+            2001, 1, 1, 1, 1, 1, tzinfo=tz.gettz('America/Montreal')).datetime)
+        before_modification_dt = os.path.getmtime(quiz.path)
+
+        quiz.write()
+
+        self.assertFalse(before_modification_dt == os.path.getmtime(quiz.path))
+
+        # Check data
+        course_after = MoodleCourse(self.tmp_path)
+        quiz_after = course_after.get_activity_by_type_and_num(MoodleQuiz, 1)
+        self.assertEqual(arrow.get(
+            2001, 1, 1, 1, 1, 1, tzinfo=tz.gettz('America/Montreal')).datetime,
+            quiz_after.get_start_datetime()
+            )
+
+    def test_archive_is_repacked(self):
+        course = MoodleCourse(self.tmp_path)
+        quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
+        quiz.set_start_datetime(arrow.get(
+            2001, 1, 1, 1, 1, 1, tzinfo=tz.gettz('America/Montreal')).datetime)
+
+        course.write(self.tmp_output_archive)
+        self.assertTrue(os.path.isfile(self.tmp_output_archive))
 
 
 if __name__ == "__main__":

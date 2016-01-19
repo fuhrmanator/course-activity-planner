@@ -38,7 +38,9 @@ class Practica(GenericMeeting):
 class MoodleEvent():
     """Describes an XML Moodle event with key based access"""
     def __init__(self, path):
-        self.activity = ET.parse(path).getroot()
+        self.path = path
+        self.tree = ET.parse(path)
+        self.activity = self.tree.getroot()
 
         if len(self.activity) != 1:
             raise Exception('An activity can only have one event.')
@@ -57,25 +59,24 @@ class MoodleEvent():
         self.event.find(k).text = v
 
     def set_end_datetime(self, datetime):
-        timestamp = arrow.get(datetime).to('utc').timestamp
+        timestamp = str(arrow.get(datetime).to('utc').timestamp)
         self.__setitem__('timeclose', timestamp)
 
     def set_start_datetime(self, datetime):
-        timestamp = arrow.get(datetime).to('utc').timestamp
+        timestamp = str(arrow.get(datetime).to('utc').timestamp)
         self.__setitem__('timeopen', timestamp)
 
     def get_start_datetime(self):
         epoch = self.event.find('timeopen').text
-        # return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal')).datetime
         return arrow.get(epoch).to('America/Montreal').datetime
 
     def get_end_datetime(self):
         epoch = self.event.find('timeclose').text
         return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal')).datetime
 
-    # def write(self, path):
-    #   self.activity.write(path, short_empty_elements=False, encoding='UTF-8',
-    #                         xml_declaration=True)
+    def write(self):
+        self.tree.write(self.path, short_empty_elements=False, encoding='UTF-8',
+                        xml_declaration=True)
 
 
 class MoodleQuiz(MoodleEvent):
