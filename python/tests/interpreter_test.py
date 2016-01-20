@@ -1,4 +1,3 @@
-import os
 import unittest
 import tarfile
 import shutil
@@ -20,7 +19,6 @@ class InterpreterTest(unittest.TestCase):
 ../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
 
     def setUp(self):
-        os.environ['TZ'] = 'America/Montreal'
         # Setup calendar
         calendar = CalendarReader(self.calendar_path)
 

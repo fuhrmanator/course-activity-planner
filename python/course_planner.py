@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import os
 import tarfile
 import tempfile
 import shutil
@@ -14,8 +13,6 @@ def main():
     mbz_file = '\
 ../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
     relative_planning_file = 'planning.txt'
-
-    os.environ['TZ'] = 'America/Montreal'
 
     # Setup calendar
     calendar = CalendarReader(ics_file)
