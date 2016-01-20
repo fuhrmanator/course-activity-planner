@@ -23,13 +23,13 @@ class Interpreter():
         r'(?:\@(?P<time>[0-9]{1,2}\:[0-9]{1,2}))?$', re.IGNORECASE)
 
     timedelta_regex = re.compile(
-        r'^(?P<neg>\-)?(:?(?P<days>[0-9])+d)?(:?(?P<hours>[0-9]+)h)?' +
+        r'^(?P<neg>\-)?\+?(:?(?P<days>[0-9])+d)?(:?(?P<hours>[0-9]+)h)?' +
         r'(:?(?P<minutes>[0-9]+)m)?$', re.IGNORECASE)
 
     candidates = {
-        MoodleQuiz: re.compile(r'^[q]([0-9]{1,2})([sf]?)$', re.IGNORECASE),
-        Seminar: re.compile(r'^[s]([0-9]{1,2})([sf]?)$', re.IGNORECASE),
-        Practica: re.compile(r'^[p]([0-9]{1,2})([sf]?)$', re.IGNORECASE),
+        MoodleQuiz: re.compile(r'^[q](?P<id>[0-9]{1,2})([sf]?)', re.IGNORECASE),
+        Seminar: re.compile(r'^[s](?P<id>[0-9]{1,2})([sf]?)', re.IGNORECASE),
+        Practica: re.compile(r'^[p](?P<id>[0-9]{1,2})([sf]?)', re.IGNORECASE),
         }
 
     def __init__(self, meetings, course):
@@ -76,8 +76,8 @@ class Interpreter():
         """Returns a tuple of the class and the meeting id."""
         for clazz, regex in self.candidates.items():
             r = regex.search(string)
-            if r:
-                return (clazz, int(r.groups()[0]))
+            if r and r.groupdict()['id']:
+                return (clazz, int(r.groupdict()['id']))
 
     def _split_line(self, string):
         parts = string.split(' ')
@@ -125,7 +125,8 @@ class Interpreter():
 
         r = self.timedelta_regex.search(relative_modifier_str)
         if not r:
-            raise Exception('Error while parsing timedelta.')
+            raise Exception('Error while parsing timedelta: "%s"' %
+                            relative_modifier_str)
 
         negative_modifier = -1 if r.groupdict()['neg'] else 1
 
