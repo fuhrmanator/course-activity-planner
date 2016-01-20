@@ -8,9 +8,9 @@ from ics_calendar import Seminar, Practica
 
 class AbsoluteTimeModifierException(Exception):
     """Raised if the absolute time has an invalid time format (24:00)"""
-    def __init__(self):
+    def __init__(self, str):
         self.message = '\
-Invalid absolute time modifier. Could not interpret value.'
+Invalid absolute time modifier. Could not interpret value: "%s"' % str
 
     def __str__(self):
         return repr(self.message)
@@ -138,7 +138,7 @@ class Interpreter():
         try:
             return datetime.strptime(time_modifier_str, '%H:%M').time()
         except Exception:
-            raise AbsoluteTimeModifierException()
+            raise AbsoluteTimeModifierException(time_modifier_str)
 
     def _interpret_relative_modifier(self, relative_modifier_str):
         if not relative_modifier_str:
