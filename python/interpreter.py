@@ -16,6 +16,26 @@ Invalid absolute time modifier. Could not interpret value.'
         return repr(self.message)
 
 
+class InvalidSyntaxException(Exception):
+    """Raised if the string could not be divided"""
+    def __init__(self, str):
+        self.message = '\
+Invalid syntax while splitting events from string "%s"' % str
+
+    def __str__(self):
+        return repr(self.message)
+
+
+class InvalidModifiersException(Exception):
+    """Raised if modifiers could not be isolated"""
+    def __init__(self, str):
+        self.message = '\
+Invalid syntax while detecting modifiers from string "%s"' % str
+
+    def __str__(self):
+        return repr(self.message)
+
+
 class Interpreter():
 
     modifiers_regex = re.compile(
@@ -83,7 +103,7 @@ class Interpreter():
         parts = string.split(' ')
 
         if len(parts) != 3:
-            raise Exception('Invalid syntax while splitting events.')
+            raise InvalidSyntaxException(string)
         return parts
 
     def _get_modifiers_as_string(self, string):
@@ -104,7 +124,7 @@ class Interpreter():
         """
         r = self.modifiers_regex.search(string)
         if not r:
-            raise Exception('Invalid syntax while parsing modifiers.')
+            raise InvalidModifiersException(string)
 
         at_end = r.groupdict()['end'] == 'F'
         relative_modifier_str = r.groupdict()['rel']

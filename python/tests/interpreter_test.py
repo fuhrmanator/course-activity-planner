@@ -7,7 +7,8 @@ import arrow
 from dateutil import tz
 from datetime import timedelta, time
 
-from interpreter import Interpreter, AbsoluteTimeModifierException
+from interpreter import Interpreter, AbsoluteTimeModifierException, \
+    InvalidSyntaxException, InvalidModifiersException
 from moodle import MoodleCourse, MoodleQuiz
 from ics_calendar import CalendarReader, Seminar, Practica
 
@@ -38,7 +39,7 @@ class InterpreterTest(unittest.TestCase):
 
     def test_invalid_syntax(self):
         self.assertRaises(
-            Exception, self.interpreter._split_line, 'Q1S1FS2S')
+            InvalidSyntaxException, self.interpreter._split_line, 'Q1S1FS2S')
 
     def test_split_events_line(self):
         self.assertEqual(['Q1', 'S1F', 'S2S'],
@@ -98,6 +99,17 @@ class InterpreterTest(unittest.TestCase):
         mods = self.interpreter._get_modifiers_as_string('S1+1D@23:59')
         at_end = mods[0]
         self.assertEqual(False, at_end)
+
+    def test_parse_invalid_modifiers(self):
+        self.assertRaises(InvalidModifiersException,
+                          self.interpreter._get_modifiers_as_string,
+                          'S1+1k@23:59')
+        self.assertRaises(InvalidModifiersException,
+                          self.interpreter._get_modifiers_as_string,
+                          'S1@23:59+1m')
+        self.assertRaises(InvalidModifiersException,
+                          self.interpreter._get_modifiers_as_string,
+                          'S1-23:59@1m')
 
     def test_get_relative_modifier_as_string(self):
         mods = self.interpreter._get_modifiers_as_string('S1')
