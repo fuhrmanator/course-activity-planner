@@ -27,10 +27,10 @@ Invalid syntax while splitting events from string "%s"' % str
 
 
 class InvalidModifiersException(Exception):
-    """Raised if modifiers could not be isolated"""
+    """Raised if modifiers could not be isolated or interpreted."""
     def __init__(self, str):
         self.message = '\
-Invalid syntax while detecting modifiers from string "%s"' % str
+Invalid syntax while parsing modifiers from string "%s"' % str
 
     def __str__(self):
         return repr(self.message)
@@ -146,8 +146,7 @@ class Interpreter():
 
         r = self.timedelta_regex.search(relative_modifier_str)
         if not r:
-            raise Exception('Error while parsing timedelta: "%s"' %
-                            relative_modifier_str)
+            raise InvalidModifiersException(relative_modifier_str)
 
         negative_modifier = -1 if r.groupdict()['neg'] else 1
 
