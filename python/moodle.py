@@ -50,7 +50,6 @@ class MoodleEvent():
     def write(self):
         if not self.modified:
             return
-        print('WRTING')
         self.tree.write(self.path, short_empty_elements=False, encoding='UTF-8',
                         xml_declaration=True)
 

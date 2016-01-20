@@ -9,7 +9,7 @@ from dateutil import tz
 from datetime import timedelta, time
 
 from interpreter import Interpreter, AbsoluteTimeModifierException
-from Moodle import MoodleCourse, MoodleQuiz
+from moodle import MoodleCourse, MoodleQuiz
 from ics_calendar import CalendarReader, Seminar, Practica
 
 
