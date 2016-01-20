@@ -19,12 +19,12 @@ Invalid absolute time modifier. Could not interpret value.'
 class Interpreter():
 
     modifiers_regex = re.compile(
-        r'^[qsp][0-9]{1,2}(?P<end>[sf])?(?P<rel>[+-][0-9]+[dmh])?' +
+        r'^[qsp][0-9]{1,2}(?P<end>[sf])?(?P<rel>[+-][0-9]+[wdhm])?' +
         r'(?:\@(?P<time>[0-9]{1,2}\:[0-9]{1,2}))?$', re.IGNORECASE)
 
     timedelta_regex = re.compile(
-        r'^(?P<neg>\-)?\+?(:?(?P<days>[0-9])+d)?(:?(?P<hours>[0-9]+)h)?' +
-        r'(:?(?P<minutes>[0-9]+)m)?$', re.IGNORECASE)
+        r'^(?P<neg>\-)?\+?(:?(?P<weeks>[0-9])+w)?(:?(?P<days>[0-9])+d)?' +
+        r'(:?(?P<hours>[0-9]+)h)?(:?(?P<minutes>[0-9]+)m)?$', re.IGNORECASE)
 
     candidates = {
         MoodleQuiz: re.compile(r'^[q](?P<id>[0-9]{1,2})([sf]?)', re.IGNORECASE),
@@ -94,8 +94,9 @@ class Interpreter():
                 of the event.
 
         relative_modifier_str: The delta to apply to the event start or end as a
-                           string. Supports +/- d/h/m for days, hours, minutes.
-                           ex: '-1d', '+15m', '+4h'
+                           string. Supports +/- w/d/h/m for weeks, days,
+                           hours and minutes.
+                           ex: '-2w', '-1d', '+15m', '+4h'
 
         time_modifier_str: None or a modifier of the final time as a string.
                        Must be applied last.
@@ -130,6 +131,9 @@ class Interpreter():
 
         negative_modifier = -1 if r.groupdict()['neg'] else 1
 
+        weeks = int(r.groupdict()['weeks']) * negative_modifier \
+            if r.groupdict()['weeks'] else 0
+
         days = int(r.groupdict()['days']) * negative_modifier \
             if r.groupdict()['days'] else 0
 
@@ -139,7 +143,7 @@ class Interpreter():
         minutes = int(r.groupdict()['minutes']) * negative_modifier \
             if r.groupdict()['minutes'] else 0
 
-        return timedelta(days=days, hours=hours, minutes=minutes)
+        return timedelta(days=days, hours=hours, minutes=minutes, weeks=weeks)
 
     def _get_new_datetime(self, datetime, relative_mod, time_mod):
         """Build new datetime from relative and time modifiers."""

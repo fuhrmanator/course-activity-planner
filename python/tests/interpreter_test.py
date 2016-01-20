@@ -212,6 +212,14 @@ class InterpreterTest(unittest.TestCase):
             timedelta(minutes=106),
             self.interpreter._interpret_relative_modifier('+106m'))
 
+        self.assertEqual(
+            timedelta(weeks=-2),
+            self.interpreter._interpret_relative_modifier('-2w'))
+
+        self.assertEqual(
+            timedelta(weeks=4),
+            self.interpreter._interpret_relative_modifier('+4w'))
+
     def test_build_new_date_from_event(self):
         expected = arrow.get(2000, 1, 1, 0, 1).datetime
         actual = self.interpreter._get_new_datetime(
@@ -311,6 +319,17 @@ class InterpreterTest(unittest.TestCase):
             2014, 1, 18, 12, 23, tzinfo=tz.gettz('America/Montreal')).datetime
         actual = self.interpreter.get_new_event_from_string(
             'Q1 P1-1m P2+3d@12:23')
+        actual_s = actual.get_start_datetime()
+        actual_e = actual.get_end_datetime()
+        self.assertEqual(expected_s, actual_s)
+        self.assertEqual(expected_e, actual_e)
+
+        expected_s = arrow.get(
+            2014, 1, 1, 13, 20, tzinfo=tz.gettz('America/Montreal')).datetime
+        expected_e = arrow.get(
+            2014, 1, 18, 12, 23, tzinfo=tz.gettz('America/Montreal')).datetime
+        actual = self.interpreter.get_new_event_from_string(
+            'Q1 P1-1w@13:20 P2+3d@12:23')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)
