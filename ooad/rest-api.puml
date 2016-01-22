@@ -1,0 +1,12 @@
+@startuml
+Teacher -> System: Send MBZ file and ICS url
+System -> Teacher: Return transaction id (cookies)
+
+loop while no confirmation
+    Teacher -> System: Send text planning with transaction id (cookies)
+    Teacher <- System: Return preview as a json representation of the calendar
+end
+
+Teacher -> System: Send text planning with transaction id (cookies) with confirmation
+Teacher <- System: Return the new moodle archive
+@enduml
