@@ -37,7 +37,7 @@ Generates the Moodle course and repacks it to an MBZ file.
 
 Returns the url of the packed archive to the client.
 
-### GET /api/planning/<id>
+### GET /api/planning/\<id>
 
 This calls requires a positional URL parameter of the planning.
 
