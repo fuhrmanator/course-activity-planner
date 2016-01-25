@@ -3,8 +3,6 @@ import json
 import unittest
 import course_activity_planner
 
-from werkzeug.datastructures import MultiDict
-
 
 class AppTest(unittest.TestCase):
 
