@@ -1,4 +1,4 @@
-import requests
+import json
 import unittest
 import course_activity_planner
 
@@ -6,7 +6,7 @@ import course_activity_planner
 class AppTest(unittest.TestCase):
 
     def setUp(self):
-        self.app = course_activity_planner.app.test_client()
+        self.app = course_activity_planner.setup('test').test_client()
 
     def tearDown(self):
         pass
@@ -18,9 +18,18 @@ class AppTest(unittest.TestCase):
         self.assertEqual(
             36, len(course_activity_planner._generate_transaction_uuid()))
 
-    def test_get_cookie(self):
-        res = self.app.post('/api/planning')
+    def test_cookie_is_set_after_posting_planning(self):
+        res = self.app.post('/api/planning', data=json.dumps({'ics_url': ''}),
+                            content_type='application/json')
+
         self.assertEqual(200, res._status_code)
+        assert res.headers['Set-Cookie'] is not None
+
+    def test_cookie_is_not_set_after_bad_request(self):
+        res = self.app.post('/api/planning')
+
+        self.assertEqual(400, res._status_code)
+        assert 'Set-Cookie' not in res.headers
 
 if __name__ == '__main__':
     unittest.main()
