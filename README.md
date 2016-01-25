@@ -103,3 +103,8 @@ nosetests
 ```
 nosetests --with-coverage
 ```
+
+### Run the linter
+```
+pep8
+```
