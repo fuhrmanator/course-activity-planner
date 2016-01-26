@@ -32,6 +32,9 @@ class AppTest(unittest.TestCase):
             36, len(course_activity_planner._generate_transaction_uuid()))
 
     def test_cookie_is_set_after_posting_planning(self):
+        course_activity_planner._dl_and_save_ics_file = \
+            MagicMock(return_value='')
+
         data = json.dumps({'ics_url': self.cal_url,
                           'planning': 'some planning'})
         res = self.client.post(
