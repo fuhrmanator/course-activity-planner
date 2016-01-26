@@ -16,26 +16,20 @@ An option to download the new MBZ file will also be available.
 
 This calls requires a MBZ file and an ICS url.
 
-Creates a new planning and transaction ID.
+Creates a new planning.
 
-Returns a cookie with a unique identifier to the client.
+Returns the JSON representation to the client
 
 
-### POST /api/planning/preview
+### PUT /api/planning/\<uuid>
 
-This calls requires a text planning (post body) and the transaction id (from cookies).
+This calls requires a text planning (PUT body) and the uuid
+Updates the planning to match the request.
 
-Generates a JSON representation of the Moodle course to be displayed by the client front-end.
+### GET /api/planning/\<uuid>/preview
 
-Returns the JSON representation to the client.
+Generates a JSON representation of the Moodle course to be displayed by the front-end.
 
-### POST /api/planning/mbz
-
-This calls requires a text planning (post body) and the transaction id (from cookies).
-
-Generates the Moodle course and repacks it to an MBZ file.
-
-Returns the url of the packed archive to the client.
 
 ### GET /api/planning/\<id>
 
