@@ -1,9 +1,12 @@
 import io
 import os
+import imp
 import json
 import shutil
 import unittest
 import course_activity_planner
+
+from unittest.mock import MagicMock
 
 
 class AppTest(unittest.TestCase):
@@ -16,6 +19,7 @@ class AppTest(unittest.TestCase):
         # TODO test on windows
         if os.path.isdir(self.app.config['UPLOAD_FOLDER']):
             shutil.rmtree(self.app.config['UPLOAD_FOLDER'])
+        imp.reload(course_activity_planner)  # Reset mocks on module
 
     def test_app_is_created(self):
         self.assertTrue(self.app)
@@ -63,6 +67,20 @@ class AppTest(unittest.TestCase):
                       data=data))
         self.assertEqual(400, res._status_code)
         assert 'Set-Cookie' not in res.headers
+
+    def test_mbz_file_is_saved_after_posting_planning(self):
+        course_activity_planner._generate_transaction_uuid = \
+            MagicMock(return_value='uuid')
+
+        data = json.dumps({'ics_url': '', 'planning': 'some planning'})
+        res = self.client.post(
+            '/api/planning',
+            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                      data=data))
+
+        self.assertEqual(200, res._status_code)
+        self.assertTrue(os.path.exists('\
+/tmp/course_activity_planner_test/uuid/original_archive.mbz'))
 
 if __name__ == '__main__':
     unittest.main()

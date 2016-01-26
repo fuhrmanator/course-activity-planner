@@ -22,14 +22,20 @@ def post_planning():
     transaction_id = _generate_transaction_uuid()
     session['transaction_id'] = transaction_id
 
+    _save_file(mbz_file, transaction_id)
+
+    return jsonify({})
+
+
+def _save_file(mbz_file, transaction_id):
     mbz_filename = secure_filename(mbz_file.filename)
     mbz_folder = os.path.join(app.config['UPLOAD_FOLDER'], transaction_id)
 
     os.makedirs(mbz_folder)
     mbz_fullpath = os.path.join(mbz_folder, 'original_archive.mbz')
-    mbz_file.save(mbz_fullpath)
 
-    return jsonify({})
+    mbz_file.save(mbz_fullpath)
+    return mbz_fullpath
 
 
 def _generate_transaction_uuid():
