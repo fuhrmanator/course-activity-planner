@@ -4,7 +4,6 @@ import uuid
 import json
 import requests
 
-from werkzeug import secure_filename
 from flask import Flask, session, jsonify, request
 
 app = Flask(__name__)
@@ -32,7 +31,6 @@ def post_planning():
 
 
 def _save_mbz_file(mbz_file, transaction_id):
-    mbz_filename = secure_filename(mbz_file.filename)
     mbz_folder = os.path.join(app.config['UPLOAD_FOLDER'], transaction_id)
     if not os.path.isdir(mbz_folder):
         os.makedirs(mbz_folder)

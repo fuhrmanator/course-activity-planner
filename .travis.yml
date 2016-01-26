@@ -11,5 +11,6 @@ install:
 script:
   - nosetests --with-coverage
   - pep8
+  - flake8
 after_success:
   - coveralls
