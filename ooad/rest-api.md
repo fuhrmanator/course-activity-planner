@@ -31,7 +31,7 @@ Updates the planning to match the request.
 Generates a JSON representation of the Moodle course to be displayed by the front-end.
 
 
-### GET /api/planning/\<id>
+### GET /api/planning/\<uuid>/mbz
 
 This calls requires a positional URL parameter of the planning.
 
