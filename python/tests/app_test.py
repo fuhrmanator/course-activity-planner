@@ -68,7 +68,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post('/api/planning', data=dict(data=data))
         self.assertEqual(400, res._status_code)
 
-    def test_filea_are_saved_after_posting_planning(self):
+    def test_files_are_saved_after_posting_planning(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
 
@@ -87,7 +87,7 @@ class AppTest(unittest.TestCase):
         self.assertTrue(os.path.exists('\
 /tmp/course_activity_planner_test/uuid/original_calendar.ics'))
 
-    def test_mbz_file_is_saved_to_db(self):
+    def test_planning_is_saved_to_db(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
 

@@ -42,6 +42,10 @@ def new_planning():
     return jsonify(planning=planning.as_pub_dict())
 
 
+def _has_planning(uuid):
+    pass
+
+
 def _save_mbz_file(mbz_file, folder):
     mbz_fullpath = os.path.join(folder, 'original_archive.mbz')
     mbz_file.save(mbz_fullpath)
@@ -63,7 +67,7 @@ def _generate_planning_uuid():
     return str(uuid.uuid4())
 
 
-def _bad_request(msg=None):
+def _bad_request():
     return jsonify({'message': 'Bad request.'}), 400
 
 
