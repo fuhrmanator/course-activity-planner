@@ -20,32 +20,37 @@ def post_planning():
         return _bad_request()
 
     ics_url = req['ics_url']
+    planning = req['planning']
 
     transaction_id = _generate_transaction_uuid()
     session['transaction_id'] = transaction_id
 
-    _save_mbz_file(mbz_file, transaction_id)
-    _dl_and_save_ics_file(ics_url, transaction_id)
+    tran_folder = os.path.join(app.config['UPLOAD_FOLDER'], transaction_id)
+
+    if os.path.isdir(tran_folder):
+        raise Exception('Transaction collision. UUID4 busted ?')
+
+    os.makedirs(tran_folder)
+    _save_mbz_file(mbz_file, tran_folder)
+    _dl_and_save_ics_file(ics_url, tran_folder)
+    _save_planning(planning, tran_folder)
 
     return jsonify({})
 
 
-def _save_mbz_file(mbz_file, transaction_id):
-    mbz_folder = os.path.join(app.config['UPLOAD_FOLDER'], transaction_id)
-    if not os.path.isdir(mbz_folder):
-        os.makedirs(mbz_folder)
+def _save_planning(planning, folder):
+    pass
 
-    mbz_fullpath = os.path.join(mbz_folder, 'original_archive.mbz')
+
+def _save_mbz_file(mbz_file, folder):
+    mbz_fullpath = os.path.join(folder, 'original_archive.mbz')
     mbz_file.save(mbz_fullpath)
+
     return mbz_fullpath
 
 
-def _dl_and_save_ics_file(ics_url, transaction_id):
-    ics_folder = os.path.join(app.config['UPLOAD_FOLDER'], transaction_id)
-
-    if not os.path.isdir(ics_folder):
-        os.makedirs(ics_folder)
-    ics_fullpath = os.path.join(ics_folder, 'original_calendar.ics')
+def _dl_and_save_ics_file(ics_url, folder):
+    ics_fullpath = os.path.join(folder, 'original_calendar.ics')
 
     r = requests.get(ics_url, stream=True)
     with open(ics_fullpath, 'wb') as f:
