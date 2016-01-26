@@ -1,5 +1,7 @@
 import io
+import os
 import json
+import shutil
 import unittest
 import course_activity_planner
 
@@ -7,10 +9,13 @@ import course_activity_planner
 class AppTest(unittest.TestCase):
 
     def setUp(self):
-        self.app = course_activity_planner.setup('test').test_client()
+        self.app = course_activity_planner.setup('test')
+        self.client = self.app.test_client()
 
     def tearDown(self):
-        pass
+        # TODO test on windows
+        if os.path.isdir(self.app.config['UPLOAD_FOLDER']):
+            shutil.rmtree(self.app.config['UPLOAD_FOLDER'])
 
     def test_app_is_created(self):
         self.assertTrue(self.app)
@@ -21,7 +26,7 @@ class AppTest(unittest.TestCase):
 
     def test_cookie_is_set_after_posting_planning(self):
         data = json.dumps({'ics_url': '', 'planning': 'some planning'})
-        res = self.app.post(
+        res = self.client.post(
             '/api/planning',
             data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                       data=data))
@@ -31,13 +36,13 @@ class AppTest(unittest.TestCase):
 
     def test_cookie_is_not_set_after_bad_request(self):
         # No ICS, MBZ or planning
-        res = self.app.post('/api/planning')
+        res = self.client.post('/api/planning')
         self.assertEqual(400, res._status_code)
         assert 'Set-Cookie' not in res.headers
 
         # No ICS url
         data = json.dumps({'planning': 'some planning'})
-        res = self.app.post(
+        res = self.client.post(
             '/api/planning',
             data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                       data=data))
@@ -46,13 +51,13 @@ class AppTest(unittest.TestCase):
 
         # No MBZ
         data = json.dumps({'ics_url': '', 'planning': 'some planning'})
-        res = self.app.post('/api/planning', data=dict(data=data))
+        res = self.client.post('/api/planning', data=dict(data=data))
         self.assertEqual(400, res._status_code)
         assert 'Set-Cookie' not in res.headers
 
         # No planning
         data = json.dumps({'ics_url': ''})
-        res = self.app.post(
+        res = self.client.post(
             '/api/planning',
             data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                       data=data))

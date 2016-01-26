@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import uuid
 import json
+import os
 
+from werkzeug import secure_filename
 from flask import Flask, session, jsonify, request
 
 app = Flask(__name__)
@@ -13,11 +15,20 @@ def post_planning():
     if not req or 'ics_url' not in req or 'planning' not in req:
         return _bad_request()
 
-    f = request.files['file']
-    if not f:
+    mbz_file = request.files['file']
+    if not mbz_file:
         return _bad_request()
 
-    session['transaction_id'] = _generate_transaction_uuid()
+    transaction_id = _generate_transaction_uuid()
+    session['transaction_id'] = transaction_id
+
+    mbz_filename = secure_filename(mbz_file.filename)
+    mbz_folder = os.path.join(app.config['UPLOAD_FOLDER'], transaction_id)
+
+    os.makedirs(mbz_folder)
+    mbz_fullpath = os.path.join(mbz_folder, 'original_archive.mbz')
+    mbz_file.save(mbz_fullpath)
+
     return jsonify({})
 
 
