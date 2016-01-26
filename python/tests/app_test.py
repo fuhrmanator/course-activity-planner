@@ -20,31 +20,42 @@ class AppTest(unittest.TestCase):
             36, len(course_activity_planner._generate_transaction_uuid()))
 
     def test_cookie_is_set_after_posting_planning(self):
+        data = json.dumps({'ics_url': '', 'planning': 'some planning'})
         res = self.app.post(
             '/api/planning',
             data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                      data=json.dumps({'ics_url': ''})))
+                      data=data))
 
         self.assertEqual(200, res._status_code)
         assert res.headers['Set-Cookie'] is not None
 
     def test_cookie_is_not_set_after_bad_request(self):
-        # no ICS or MBZ
+        # No ICS, MBZ or planning
         res = self.app.post('/api/planning')
         self.assertEqual(400, res._status_code)
         assert 'Set-Cookie' not in res.headers
 
         # No ICS url
+        data = json.dumps({'planning': 'some planning'})
         res = self.app.post(
             '/api/planning',
-            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz')))
+            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                      data=data))
         self.assertEqual(400, res._status_code)
         assert 'Set-Cookie' not in res.headers
 
         # No MBZ
+        data = json.dumps({'ics_url': '', 'planning': 'some planning'})
+        res = self.app.post('/api/planning', data=dict(data=data))
+        self.assertEqual(400, res._status_code)
+        assert 'Set-Cookie' not in res.headers
+
+        # No planning
+        data = json.dumps({'ics_url': ''})
         res = self.app.post(
             '/api/planning',
-            data=dict(data=json.dumps({'ics_url': ''})))
+            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                      data=data))
         self.assertEqual(400, res._status_code)
         assert 'Set-Cookie' not in res.headers
 

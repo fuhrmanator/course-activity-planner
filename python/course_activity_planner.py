@@ -10,7 +10,7 @@ app = Flask(__name__)
 @app.route('/api/planning', methods=['POST'])
 def post_planning():
     req = json.loads(request.form['data'])
-    if not req or 'ics_url' not in req:
+    if not req or 'ics_url' not in req or 'planning' not in req:
         return _bad_request()
 
     f = request.files['file']
