@@ -11,6 +11,9 @@ from unittest.mock import MagicMock
 
 class AppTest(unittest.TestCase):
 
+    cal_url = 'https://calendar.google.com/calendar/ical/etsmtl.net_2ke' + \
+        'm5ippvlh70v7pd6oo4ed9ig%40group.calendar.google.com/public/basic.ics'
+
     def setUp(self):
         self.app = course_activity_planner.setup('test')
         self.client = self.app.test_client()
@@ -29,7 +32,8 @@ class AppTest(unittest.TestCase):
             36, len(course_activity_planner._generate_transaction_uuid()))
 
     def test_cookie_is_set_after_posting_planning(self):
-        data = json.dumps({'ics_url': '', 'planning': 'some planning'})
+        data = json.dumps({'ics_url': self.cal_url,
+                          'planning': 'some planning'})
         res = self.client.post(
             '/api/planning',
             data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
@@ -54,13 +58,14 @@ class AppTest(unittest.TestCase):
         assert 'Set-Cookie' not in res.headers
 
         # No MBZ
-        data = json.dumps({'ics_url': '', 'planning': 'some planning'})
+        data = json.dumps({'ics_url': self.cal_url,
+                          'planning': 'some planning'})
         res = self.client.post('/api/planning', data=dict(data=data))
         self.assertEqual(400, res._status_code)
         assert 'Set-Cookie' not in res.headers
 
         # No planning
-        data = json.dumps({'ics_url': ''})
+        data = json.dumps({'ics_url': self.cal_url})
         res = self.client.post(
             '/api/planning',
             data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
@@ -72,15 +77,20 @@ class AppTest(unittest.TestCase):
         course_activity_planner._generate_transaction_uuid = \
             MagicMock(return_value='uuid')
 
-        data = json.dumps({'ics_url': '', 'planning': 'some planning'})
+        data = json.dumps({'ics_url': self.cal_url,
+                          'planning': 'some planning'})
         res = self.client.post(
             '/api/planning',
             data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                       data=data))
 
         self.assertEqual(200, res._status_code)
+
         self.assertTrue(os.path.exists('\
 /tmp/course_activity_planner_test/uuid/original_archive.mbz'))
+
+        self.assertTrue(os.path.exists('\
+/tmp/course_activity_planner_test/uuid/original_calendar.ics'))
 
 if __name__ == '__main__':
     unittest.main()
