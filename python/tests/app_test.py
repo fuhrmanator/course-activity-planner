@@ -165,14 +165,17 @@ class AppTest(unittest.TestCase):
 
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'Q1 S1F S2'}),
+            data=json.dumps({'planning': 'Q1 S1 S2'}),
             headers=[('Content-Type', 'application/json')])
 
         res = self.client.get('/api/planning/uuid/preview')
         self.assertEqual(200, res._status_code)
-        actual = json.loads(res.data.decode('utf8'))
-
-        assert 'preview' in actual
+        actual = json.loads(res.data.decode('utf8'))['preview']
+        expected = [{'title': "Quiz 1 opens",
+                    'timestamp': 1389009600},
+                    {'title': "Quiz 1 closes",
+                    'timestamp': 1389614400}]
+        self.assertEqual(expected, actual)
 
 
 if __name__ == '__main__':

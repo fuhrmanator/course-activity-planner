@@ -13,7 +13,7 @@ from database import db_session, init_db, init_engine, clear_db
 
 from interpreter import Interpreter
 from moodle import MoodleCourse
-from ics_calendar import CalendarReader
+from ics_calendar import CalendarReader, Seminar, Practica
 
 
 app = Flask(__name__)
@@ -77,6 +77,7 @@ def preview_planning(uuid):
             {'message': 'Planning with uuid "%s" not found' % uuid}), 404
     calendar_path = planning.ics_fullpath
     moodle_archive_path = planning.mbz_fullpath
+    planning_txt = planning.planning_txt
 
     # Read calendar
     calendar = CalendarReader(calendar_path)
@@ -90,8 +91,18 @@ def preview_planning(uuid):
         shutil.rmtree(tmp_path)
 
     interpreter = Interpreter(calendar_meetings, course)
+    # TODO read multiple lines
+    event = interpreter.get_new_event_from_string(planning_txt)
 
-    return jsonify({'preview': [{'Q1S': ''}]}), 200
+    preview = []
+    preview.append({
+        'title': "Quiz 1 opens",
+        'timestamp': event.get_start_timestamp()})
+    preview.append({
+        'title': "Quiz 1 closes",
+        'timestamp': event.get_end_timestamp()})
+
+    return jsonify({'preview': preview}), 200
 
 
 def _generate_planning_uuid():

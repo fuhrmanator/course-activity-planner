@@ -43,9 +43,17 @@ class MoodleEvent():
         epoch = self.event.find('timeopen').text
         return arrow.get(epoch).to('America/Montreal').datetime
 
+    def get_start_timestamp(self):
+        epoch = self.event.find('timeopen').text
+        return arrow.get(epoch).to('America/Montreal').timestamp
+
     def get_end_datetime(self):
         epoch = self.event.find('timeclose').text
         return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal')).datetime
+
+    def get_end_timestamp(self):
+        epoch = self.event.find('timeclose').text
+        return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal')).timestamp
 
     def write(self):
         if not self.modified:
