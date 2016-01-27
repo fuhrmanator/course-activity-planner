@@ -170,13 +170,58 @@ class AppTest(unittest.TestCase):
 
         res = self.client.get('/api/planning/uuid/preview')
         self.assertEqual(200, res._status_code)
+
         actual = json.loads(res.data.decode('utf8'))['preview']
-        expected = [{'title': "Quiz 1 opens",
-                    'timestamp': 1389009600},
-                    {'title': "Quiz 1 closes",
-                    'timestamp': 1389614400}]
+        expected = [{'title': "Quiz 1 opens", 'timestamp': 1389009600},
+                    {'title': "Quiz 1 closes", 'timestamp': 1389614400}]
         self.assertEqual(expected, actual)
 
+        # Test multiple lines
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'Q1 S1 S2\nQ2 S2 S3'}),
+            headers=[('Content-Type', 'application/json')])
+
+        res = self.client.get('/api/planning/uuid/preview')
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['preview']
+        expected = [{'title': "Quiz 1 opens", 'timestamp': 1389009600},
+                    {'title': "Quiz 1 closes", 'timestamp': 1389614400},
+                    {'title': "Quiz 2 opens", 'timestamp': 1389614400},
+                    {'title': "Quiz 2 closes", 'timestamp': 1390219200}]
+        self.assertEqual(expected, actual)
+
+    def test_preview_planning_is_sorted(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        # Ignore ics url in request and link to local ics file
+        course_activity_planner._dl_and_save_ics_file = \
+            MagicMock(return_value=self.local_cal_path)
+        # Ignore mbz in request and link to local mbz file
+        course_activity_planner._save_mbz_file = \
+            MagicMock(return_value=self.local_mbz_path)
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                      data=json.dumps({'ics_url': 'some_url_to_be_mocked'})))
+
+        # Planning is not in chronological order
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'Q2 S1F S2\nQ1 S5 S1S'}),
+            headers=[('Content-Type', 'application/json')])
+
+        res = self.client.get('/api/planning/uuid/preview')
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['preview']
+        expected = [{'title': "Quiz 1 closes", 'timestamp': 1389009600},
+                    {'title': "Quiz 2 opens", 'timestamp': 1389013200},
+                    {'title': "Quiz 2 closes", 'timestamp': 1389614400},
+                    {'title': "Quiz 1 opens", 'timestamp': 1391428800}]
+        self.assertEqual(expected, actual)
 
 if __name__ == '__main__':
     unittest.main()

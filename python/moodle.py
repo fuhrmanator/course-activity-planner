@@ -141,8 +141,12 @@ class MoodleCourse():
         return activities
 
     def _sort_activity_type(self, activities):
-        return sorted(activities, key=lambda activity:
-                      self.section_order.index(activity['moduleid']))
+        s = sorted(activities, key=lambda activity:
+                   self.section_order.index(activity['moduleid']))
+        # Set relative id of activity
+        for i, activity in enumerate(s):
+            activity.rel_id = i + 1
+        return s
 
     def _write_activities_to_disk(self):
         for activities in self.activities.values():

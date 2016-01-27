@@ -13,7 +13,7 @@ from database import db_session, init_db, init_engine, clear_db
 
 from interpreter import Interpreter
 from moodle import MoodleCourse
-from ics_calendar import CalendarReader, Seminar, Practica
+from ics_calendar import CalendarReader
 
 
 app = Flask(__name__)
@@ -75,6 +75,7 @@ def preview_planning(uuid):
     if not planning:
         return jsonify(
             {'message': 'Planning with uuid "%s" not found' % uuid}), 404
+
     calendar_path = planning.ics_fullpath
     moodle_archive_path = planning.mbz_fullpath
     planning_txt = planning.planning_txt
@@ -83,7 +84,7 @@ def preview_planning(uuid):
     calendar = CalendarReader(calendar_path)
     calendar_meetings = calendar.get_all_meetings()
 
-    # Read Moodle course
+    # Read Moodle course from tmp folder and then delete it
     tmp_path = tempfile.mkdtemp()
     with tarfile.open(moodle_archive_path) as tar_file:
         tar_file.extractall(tmp_path)
@@ -91,18 +92,22 @@ def preview_planning(uuid):
         shutil.rmtree(tmp_path)
 
     interpreter = Interpreter(calendar_meetings, course)
-    # TODO read multiple lines
-    event = interpreter.get_new_event_from_string(planning_txt)
 
+    # Build preview
     preview = []
-    preview.append({
-        'title': "Quiz 1 opens",
-        'timestamp': event.get_start_timestamp()})
-    preview.append({
-        'title': "Quiz 1 closes",
-        'timestamp': event.get_end_timestamp()})
+    for line in planning_txt.split('\n'):
+        event = interpreter.get_new_event_from_string(line)
 
-    return jsonify({'preview': preview}), 200
+        preview.append({
+            'title': 'Quiz %d opens' % event.rel_id,
+            'timestamp': event.get_start_timestamp()})
+        preview.append({
+            'title': 'Quiz %d closes' % event.rel_id,
+            'timestamp': event.get_end_timestamp()})
+
+    # Return preview sorted by timestamp
+    return jsonify({'preview':
+                   sorted(preview, key=lambda p: p['timestamp'])}), 200
 
 
 def _generate_planning_uuid():
