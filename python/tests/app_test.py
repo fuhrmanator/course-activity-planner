@@ -13,6 +13,10 @@ class AppTest(unittest.TestCase):
 
     cal_url = 'https://calendar.google.com/calendar/ical/etsmtl.net_2ke' + \
         'm5ippvlh70v7pd6oo4ed9ig%40group.calendar.google.com/public/basic.ics'
+    local_cal_path = '../ActivitETS/multi-fr.ics'
+    local_mbz_path = '\
+../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
+
     db_path = '/tmp/test.db'
 
     def setUp(self):
@@ -38,8 +42,9 @@ class AppTest(unittest.TestCase):
             36, len(course_activity_planner._generate_planning_uuid()))
 
     def test_new_planning(self):
+        # Ignore ics url in request and link to local ics file
         course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value='')
+            MagicMock(return_value=self.local_cal_path)
 
         data = json.dumps({'ics_url': self.cal_url})
         res = self.client.post(
@@ -93,8 +98,9 @@ class AppTest(unittest.TestCase):
                           'planning': 'some planning'})
         res = self.client.post(
             '/api/planning',
-            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                      data=data))
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                data=data))
 
         self.assertEqual(200, res._status_code)
         self.assertTrue(course_activity_planner._has_planning('uuid'))
@@ -102,33 +108,31 @@ class AppTest(unittest.TestCase):
     def test_planning_is_updated(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
+        # Ignore ics url in request and link to local ics file
         course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value='')
+            MagicMock(return_value=self.local_cal_path)
 
-        data = json.dumps({'ics_url': self.cal_url})
         res = self.client.post(
             '/api/planning',
             data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                      data=data))
+                      data=json.dumps({'ics_url': self.cal_url})))
 
-        data = json.dumps({'planning': 'some text'})
         res = self.client.put(
             '/api/planning/uuid',
-            data=data,
+            data=json.dumps({'planning': 'Q1 S1F S2'}),
             headers=[('Content-Type', 'application/json')])
 
         self.assertEqual(200, res._status_code)
         actual = course_activity_planner._get_planning('uuid').planning_txt
-        self.assertEqual('some text', actual)
+        self.assertEqual('Q1 S1F S2', actual)
 
     def test_update_missing_planning(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
 
-        data = json.dumps({'planning': 'some text'})
         res = self.client.put(
             '/api/planning/uuid',
-            data=data,
+            data=json.dumps({'planning': 'some text'}),
             headers=[('Content-Type', 'application/json')])
 
         self.assertEqual(404, res._status_code)
@@ -137,13 +141,39 @@ class AppTest(unittest.TestCase):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
 
-        data = json.dumps({'planningee': 'some text'})
         res = self.client.put(
             '/api/planning/uuid',
-            data=data,
+            data=json.dumps({'planningee': 'some text'}),
             headers=[('Content-Type', 'application/json')])
 
         self.assertEqual(400, res._status_code)
+
+    def test_preview_planning(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        # Ignore ics url in request and link to local ics file
+        course_activity_planner._dl_and_save_ics_file = \
+            MagicMock(return_value=self.local_cal_path)
+        # Ignore mbz in request and link to local mbz file
+        course_activity_planner._save_mbz_file = \
+            MagicMock(return_value=self.local_mbz_path)
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                      data=json.dumps({'ics_url': 'some_url_to_be_mocked'})))
+
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'Q1 S1F S2'}),
+            headers=[('Content-Type', 'application/json')])
+
+        res = self.client.get('/api/planning/uuid/preview')
+        self.assertEqual(200, res._status_code)
+        actual = json.loads(res.data.decode('utf8'))
+
+        assert 'preview' in actual
+
 
 if __name__ == '__main__':
     unittest.main()

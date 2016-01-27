@@ -2,11 +2,19 @@
 import os
 import uuid
 import json
+import shutil
 import requests
+import tarfile
+import tempfile
 
 from flask import Flask, jsonify, request
 from models import Planning
 from database import db_session, init_db, init_engine, clear_db
+
+from interpreter import Interpreter
+from moodle import MoodleCourse
+from ics_calendar import CalendarReader
+
 
 app = Flask(__name__)
 
@@ -61,6 +69,35 @@ def update_planning(uuid):
     return jsonify({}), 200
 
 
+@app.route('/api/planning/<uuid>/preview', methods=['GET'])
+def preview_planning(uuid):
+    planning = _get_planning(uuid)
+    if not planning:
+        return jsonify(
+            {'message': 'Planning with uuid "%s" not found' % uuid}), 404
+    calendar_path = planning.ics_fullpath
+    moodle_archive_path = planning.mbz_fullpath
+
+    # Read calendar
+    calendar = CalendarReader(calendar_path)
+    calendar_meetings = calendar.get_all_meetings()
+
+    # Read Moodle course
+    tmp_path = tempfile.mkdtemp()
+    with tarfile.open(moodle_archive_path) as tar_file:
+        tar_file.extractall(tmp_path)
+        course = MoodleCourse(tmp_path)
+        shutil.rmtree(tmp_path)
+
+    interpreter = Interpreter(calendar_meetings, course)
+
+    return jsonify({'preview': [{'Q1S': ''}]}), 200
+
+
+def _generate_planning_uuid():
+    return str(uuid.uuid4())
+
+
 def _has_planning(uuid):
     return Planning.query.filter(Planning.uuid == uuid).count() > 0
 
@@ -84,10 +121,6 @@ def _dl_and_save_ics_file(ics_url, folder):
             if chunk:
                 f.write(chunk)
     return ics_fullpath
-
-
-def _generate_planning_uuid():
-    return str(uuid.uuid4())
 
 
 def _bad_request():
