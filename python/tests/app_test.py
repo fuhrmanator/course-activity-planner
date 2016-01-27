@@ -25,10 +25,10 @@ class AppTest(unittest.TestCase):
         if os.path.isdir(self.app.config['UPLOAD_FOLDER']):
             # TODO test on windows
             shutil.rmtree(self.app.config['UPLOAD_FOLDER'])
+        course_activity_planner._clear_db()
+        os.unlink(self.db_path)
 
         imp.reload(course_activity_planner)  # Reset mocks on module
-
-        os.unlink(self.db_path)
 
     def test_app_is_created(self):
         self.assertTrue(self.app)
@@ -41,8 +41,7 @@ class AppTest(unittest.TestCase):
         course_activity_planner._dl_and_save_ics_file = \
             MagicMock(return_value='')
 
-        data = json.dumps({'ics_url': self.cal_url,
-                          'planning': 'some planning'})
+        data = json.dumps({'ics_url': self.cal_url})
         res = self.client.post(
             '/api/planning',
             data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
@@ -72,24 +71,23 @@ class AppTest(unittest.TestCase):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
 
-        data = json.dumps({'ics_url': self.cal_url,
-                          'planning': 'some planning'})
+        data = json.dumps({'ics_url': self.cal_url})
         res = self.client.post(
             '/api/planning',
             data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                       data=data))
 
         self.assertEqual(200, res._status_code)
-
         self.assertTrue(os.path.exists('\
 /tmp/course_activity_planner_test/uuid/original_archive.mbz'))
-
         self.assertTrue(os.path.exists('\
 /tmp/course_activity_planner_test/uuid/original_calendar.ics'))
 
     def test_planning_is_saved_to_db(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
+        course_activity_planner._dl_and_save_ics_file = \
+            MagicMock(return_value='')
 
         data = json.dumps({'ics_url': self.cal_url,
                           'planning': 'some planning'})
@@ -99,6 +97,53 @@ class AppTest(unittest.TestCase):
                       data=data))
 
         self.assertEqual(200, res._status_code)
+        self.assertTrue(course_activity_planner._has_planning('uuid'))
+
+    def test_planning_is_updated(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        course_activity_planner._dl_and_save_ics_file = \
+            MagicMock(return_value='')
+
+        data = json.dumps({'ics_url': self.cal_url})
+        res = self.client.post(
+            '/api/planning',
+            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                      data=data))
+
+        data = json.dumps({'planning': 'some text'})
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=data,
+            headers=[('Content-Type', 'application/json')])
+
+        self.assertEqual(200, res._status_code)
+        actual = course_activity_planner._get_planning('uuid').planning_txt
+        self.assertEqual('some text', actual)
+
+    def test_update_missing_planning(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+
+        data = json.dumps({'planning': 'some text'})
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=data,
+            headers=[('Content-Type', 'application/json')])
+
+        self.assertEqual(404, res._status_code)
+
+    def test_update_planning_bad_request(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+
+        data = json.dumps({'planningee': 'some text'})
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=data,
+            headers=[('Content-Type', 'application/json')])
+
+        self.assertEqual(400, res._status_code)
 
 if __name__ == '__main__':
     unittest.main()

@@ -6,7 +6,7 @@ import requests
 
 from flask import Flask, jsonify, request
 from models import Planning
-from database import db_session, init_db, init_engine
+from database import db_session, init_db, init_engine, clear_db
 
 app = Flask(__name__)
 
@@ -14,7 +14,7 @@ app = Flask(__name__)
 @app.route('/api/planning', methods=['POST'])
 def new_planning():
     req = json.loads(request.form['data'])
-    if not req or 'ics_url' not in req or 'planning' not in req:
+    if not req or 'ics_url' not in req:
         return _bad_request()
 
     mbz_file = request.files['file']
@@ -22,28 +22,51 @@ def new_planning():
         return _bad_request()
 
     ics_url = req['ics_url']
-    planning_txt = req['planning']
 
     planning_id = _generate_planning_uuid()
 
     folder = os.path.join(app.config['UPLOAD_FOLDER'], planning_id)
     if os.path.isdir(folder):
-        raise Exception('Planning id collision. UUID4 busted ?')
+        raise Exception('Planning uuid collision. UUID4 busted ?')
     os.makedirs(folder)
 
     mbz_fullpath = _save_mbz_file(mbz_file, folder)
     ics_fullpath = _dl_and_save_ics_file(ics_url, folder)
 
-    planning = Planning(planning_id, planning_txt,
-                        ics_fullpath, mbz_fullpath)
+    planning = Planning(planning_id, '', ics_fullpath, mbz_fullpath)
     db_session.add(planning)
     db_session.commit()
 
     return jsonify(planning=planning.as_pub_dict())
 
 
+@app.route('/api/planning/<uuid>', methods=['PUT'])
+def update_planning(uuid):
+    req = request.get_json()
+
+    if not req or 'planning' not in req:
+        return _bad_request()
+
+    planning = _get_planning(uuid)
+
+    if not planning:
+        return jsonify(
+            {'message': 'Planning with uuid "%s" not found' % uuid}), 404
+
+    planning.planning_txt = req['planning']
+
+    db_session.add(planning)
+    db_session.commit()
+
+    return jsonify({}), 200
+
+
 def _has_planning(uuid):
-    pass
+    return Planning.query.filter(Planning.uuid == uuid).count() > 0
+
+
+def _get_planning(uuid):
+    return Planning.query.filter(Planning.uuid == uuid).first()
 
 
 def _save_mbz_file(mbz_file, folder):
@@ -69,6 +92,11 @@ def _generate_planning_uuid():
 
 def _bad_request():
     return jsonify({'message': 'Bad request.'}), 400
+
+
+def _clear_db():
+    db_session.rollback()
+    clear_db()
 
 
 def setup(env):
