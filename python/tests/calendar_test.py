@@ -8,7 +8,7 @@ from ics_calendar import CalendarReader, Seminar, Practica, GenericMeeting
 
 class TestCalendarParsing(unittest.TestCase):
 
-    calendar_path = '../ActivitETS/multi-fr.ics'
+    calendar_path = '../data/multi-fr.ics'
 
     def setUp(self):
         self.calendar = CalendarReader(self.calendar_path)

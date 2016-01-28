@@ -13,7 +13,7 @@ from moodle import MoodleCourse, MoodleQuiz
 class TestQuiz(unittest.TestCase):
 
     moodle_archive_path = '\
-../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
+../data/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
 
     def setUp(self):
         self.tmp_path = tempfile.mkdtemp()
@@ -83,7 +83,7 @@ class TestQuiz(unittest.TestCase):
 class TestMoodleEvent(unittest.TestCase):
 
     moodle_archive_path = '\
-../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
+../data/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
 
     def setUp(self):
         self.tmp_path = tempfile.mkdtemp()
@@ -147,7 +147,7 @@ class TestMoodleEvent(unittest.TestCase):
 class TestMoodleWriter(unittest.TestCase):
 
     moodle_archive_path = '\
-../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
+../data/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
 
     def setUp(self):
         self.tmp_path = tempfile.mkdtemp()

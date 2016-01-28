@@ -15,9 +15,9 @@ from ics_calendar import CalendarReader, Seminar, Practica
 
 class InterpreterTest(unittest.TestCase):
 
-    calendar_path = '../ActivitETS/multi-fr.ics'
+    calendar_path = '../data/multi-fr.ics'
     moodle_archive_path = '\
-../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
+../data/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
 
     def setUp(self):
         # Setup calendar

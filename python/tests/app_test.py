@@ -13,9 +13,9 @@ class AppTest(unittest.TestCase):
 
     cal_url = 'https://calendar.google.com/calendar/ical/etsmtl.net_2ke' + \
         'm5ippvlh70v7pd6oo4ed9ig%40group.calendar.google.com/public/basic.ics'
-    local_cal_path = '../ActivitETS/multi-fr.ics'
+    local_cal_path = '../data/multi-fr.ics'
     local_mbz_path = '\
-../backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
+../data/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
 
     db_path = '/tmp/test.db'
 
