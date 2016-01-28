@@ -75,5 +75,6 @@ docs/_build/
 # PyBuilder
 target/
 
+bower_components
 
 planning.txt

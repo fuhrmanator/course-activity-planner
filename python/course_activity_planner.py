@@ -7,7 +7,7 @@ import requests
 import tarfile
 import tempfile
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from models import Planning
 from database import db_session, init_db, init_engine, clear_db
 
@@ -108,6 +108,19 @@ def preview_planning(uuid):
     # Return preview sorted by timestamp
     return jsonify({'preview':
                    sorted(preview, key=lambda p: p['timestamp'])}), 200
+
+
+@app.route('/')
+def index():
+    return send_from_directory('../public', 'index.html')
+
+
+@app.route('/<path:path>')
+def static_files(path):
+    if '.' not in path:
+        return index()
+
+    return send_from_directory('../public', path)
 
 
 def _generate_planning_uuid():
