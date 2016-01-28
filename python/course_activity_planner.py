@@ -21,15 +21,13 @@ app = Flask(__name__)
 
 @app.route('/api/planning', methods=['POST'])
 def new_planning():
-    req = json.loads(request.form['data'])
-    if not req or 'ics_url' not in req:
+    ics_url = request.form['ics_url']
+    if not ics_url:
         return _bad_request()
 
     mbz_file = request.files['file']
     if not mbz_file:
         return _bad_request()
-
-    ics_url = req['ics_url']
 
     planning_id = _generate_planning_uuid()
 

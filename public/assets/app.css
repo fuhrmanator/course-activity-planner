@@ -1,0 +1,11 @@
+.drop-box {
+    margin: auto;
+    background: #F8F8F8;
+    color: #ccc;
+    border: 5px dashed #DDD;
+    line-height: 180px;
+    text-align: center
+}
+.dragover {
+    border: 5px dashed blue;
+}
