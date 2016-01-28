@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import os
 import uuid
-import json
 import shutil
 import requests
 import tarfile
