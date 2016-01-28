@@ -46,11 +46,11 @@ class AppTest(unittest.TestCase):
         course_activity_planner._dl_and_save_ics_file = \
             MagicMock(return_value=self.local_cal_path)
 
-        data = json.dumps({'ics_url': self.cal_url})
         res = self.client.post(
             '/api/planning',
-            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                      data=data))
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url=self.cal_url))
 
         self.assertEqual(200, res._status_code)
         assert 'planning' in json.loads(res.data.decode('utf8'))
@@ -63,24 +63,23 @@ class AppTest(unittest.TestCase):
         # No ICS url
         res = self.client.post(
             '/api/planning',
-            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                      data=json.dumps({})))
+            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz')))
         self.assertEqual(400, res._status_code)
 
         # No MBZ
-        data = json.dumps({'ics_url': self.cal_url})
-        res = self.client.post('/api/planning', data=dict(data=data))
+        res = self.client.post(
+            '/api/planning', data=dict(ics_url=self.cal_url))
         self.assertEqual(400, res._status_code)
 
     def test_files_are_saved_after_posting_planning(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
 
-        data = json.dumps({'ics_url': self.cal_url})
         res = self.client.post(
             '/api/planning',
-            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                      data=data))
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url=self.cal_url))
 
         self.assertEqual(200, res._status_code)
         self.assertTrue(os.path.exists('\
@@ -94,13 +93,11 @@ class AppTest(unittest.TestCase):
         course_activity_planner._dl_and_save_ics_file = \
             MagicMock(return_value='')
 
-        data = json.dumps({'ics_url': self.cal_url,
-                          'planning': 'some planning'})
         res = self.client.post(
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                data=data))
+                ics_url=self.cal_url))
 
         self.assertEqual(200, res._status_code)
         self.assertTrue(course_activity_planner._has_planning('uuid'))
@@ -114,8 +111,9 @@ class AppTest(unittest.TestCase):
 
         res = self.client.post(
             '/api/planning',
-            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                      data=json.dumps({'ics_url': self.cal_url})))
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url=self.cal_url))
 
         res = self.client.put(
             '/api/planning/uuid',
@@ -160,8 +158,9 @@ class AppTest(unittest.TestCase):
 
         res = self.client.post(
             '/api/planning',
-            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                      data=json.dumps({'ics_url': 'some_url_to_be_mocked'})))
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url='some_url_to_be_mocked'))
 
         res = self.client.put(
             '/api/planning/uuid',
@@ -204,8 +203,9 @@ class AppTest(unittest.TestCase):
 
         res = self.client.post(
             '/api/planning',
-            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                      data=json.dumps({'ics_url': 'some_url_to_be_mocked'})))
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url='some_url_to_be_mocked'))
 
         # Planning is not in chronological order
         res = self.client.put(
