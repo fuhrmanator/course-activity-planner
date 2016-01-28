@@ -80,7 +80,7 @@ Ex: `the day before Seminar 1 at 23:55` would be `S1-1d@23:55`.
 
 `S1@23:55-1d` is invalid
 
-## Setup
+## Setup back-end only
 * Setup a python virtualenv
 ```
 cd python && virtualenv-3.4 env
@@ -89,10 +89,22 @@ cd python && virtualenv-3.4 env
 ```
 . env/bin/activate
 ```
-* Install the dependencies
+* Install pip dependencies
 ```
 pip install -r requirements.txt
 ```
+* Run it
+```
+./course_activity_planner.py
+```
+
+# Setup front-end
+* Setup and run back-end
+* Install bower dependencies
+```
+cd .. && bower install
+```
+
 
 ### Run unit tests
 * Run the test suite
@@ -106,5 +118,5 @@ nosetests --with-coverage
 
 ### Run the linter
 ```
-pep8
+pep8 && flake8
 ```
