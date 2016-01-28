@@ -1,1 +1,33 @@
-{{test}}
+<div class="container">
+    <h1>Course Acitivity Planner</h1>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="drop-box" ngf-drag-over-class="dragover" ngf-select ngf-drop ng-model="file">Select file or drop here</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <p ng-show="file && file.length > 0" class="text-info text-center">Ready to upload {{file[0].name}}</p>
+        </div>
+    </div>
+    <div class="row" ng-show="file && file.length > 0">
+        <div class="col-md-12">
+            <button class="btn btn-info btn-lg center-block" ng-click="upload(file)">Upload now</button>
+        </div>
+    </div>
+
+    <div class="row" ng-show="progress">
+        <div class="progress">
+            <div class="progress-bar" style="width: {{progress}}%;"></div>
+        </div>
+    </div>
+
+    <div class="row alerts">
+        <div class="col-md-8 col-md-offset-2">
+            <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">
+                <span ng-bind-html="alert.msg"></span>
+            </alert>
+        </div>
+    </div>
+    <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
+</div>

@@ -21,6 +21,7 @@
   "dependencies": {
     "angular": "~1.4.9",
     "angular-route": "~1.4.9",
-    "bootswatch-dist": "slate"
+    "bootswatch-dist": "slate",
+    "ng-file-upload": "~11.2.3"
   }
 }
