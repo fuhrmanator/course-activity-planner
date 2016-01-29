@@ -17,19 +17,21 @@ controllers.controller('Index', function($scope, $http, Upload) {
 
       Upload.upload({
           url: 'http://localhost:5000/api/planning',
-          data: {file: file, 'ics_url': 'test'}
+          data: {file: file, 'ics_url': $scope.ics_url}
       }).progress(function (evt) {
           $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
       }).success(function (data, status, headers, config) {
-          var alert = {
-              msg: 'OK',
-              type: 'success'};
-          $scope.alerts.push(alert);
-
-          delete $scope.file;
+          if (data.planning) {
+            var alert = {
+                msg: 'Planning created with uuid ' + data.planning.uuid,
+                type: 'success'};
+            $scope.alerts.push(alert);
+            delete $scope.file;
+          }else {
+            $scope.alerts.push({msg: 'An error occurred while uploading your file.', type: 'danger'});
+          }
           delete $scope.progress;
       }).error(function (data, status, headers, config) {
-          console.log(status);
           if (status == 413) {
               $scope.alerts.push({msg: 'Your file is too big !', type: 'danger'});
           } else {

@@ -2,19 +2,16 @@
     <h1>Course Activity Planner</h1>
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
-            <div class="drop-box" ngf-drag-over-class="dragover" ngf-select ngf-drop ng-model="file">Select MBZ file or drop here</div>
+            <div class="drop-box" ngf-drag-over-class="dragover" ngf-select ngf-drop ng-model="file">
+                <p ng-hide="file" class="text-info">Select MBZ file or drop here</p>
+                <p ng-show="file" class="text-success">Ready to upload "{{file.name}}"</p>
+            </div>
         </div>
     </div>
 
     <div class="row" style="padding-top: 15px">
         <div class="col-md-4 col-md-offset-4">
             <input type="text" name="ics_url" ng-model="ics_url" class="form-control" placeholder="URL of the ical">
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <p ng-show="file" class="text-info text-center">Ready to upload "{{file.name}}"</p>
         </div>
     </div>
     <div class="row" ng-show="file">
@@ -32,7 +29,7 @@
     <div class="row alerts">
         <div class="col-md-8 col-md-offset-2">
             <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">
-                <span ng-bind-html="alert.msg"></span>
+                <span>{{alert.msg}}</span>
             </alert>
         </div>
     </div>
