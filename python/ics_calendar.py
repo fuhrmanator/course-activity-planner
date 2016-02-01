@@ -11,8 +11,14 @@ class GenericMeeting():
     def get_start_datetime(self):
         return self.calendar_event.begin.to('America/Montreal').datetime
 
+    def get_start_timestamp(self):
+        return self.calendar_event.begin.to('America/Montreal').timestamp
+
     def get_end_datetime(self):
         return self.calendar_event.end.to('America/Montreal').datetime
+
+    def get_end_timestamp(self):
+        return self.calendar_event.end.to('America/Montreal').timestamp
 
     def set_start_datetime(self, datetime):
         self.calendar_event.begin = arrow.get(datetime)

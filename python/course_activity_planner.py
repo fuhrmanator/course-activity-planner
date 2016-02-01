@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import os
 import uuid
-import shutil
 import requests
 import tarfile
 import tempfile
@@ -100,6 +99,18 @@ def preview_planning(uuid):
         preview.append({
             'title': 'Quiz %d closes' % event.rel_id,
             'timestamp': event.get_end_timestamp()})
+
+    for meeting_type in calendar_meetings:
+        clazz = meeting_type.__name__
+
+        for i, meeting in enumerate(calendar_meetings[meeting_type]):
+            rel_id = i + 1
+            preview.append({
+                'title': '%s %d opens' % (clazz, rel_id),
+                'timestamp': meeting.get_start_timestamp()})
+            preview.append({
+                'title': '%s %d closes' % (clazz, rel_id),
+                'timestamp': meeting.get_end_timestamp()})
 
     # Return preview sorted by timestamp
     return jsonify({'preview':
