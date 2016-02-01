@@ -8,10 +8,10 @@ from database import metadata, db_session
 class Planning():
     query = db_session.query_property()
 
-    def __init__(self, uuid, planning_txt, ics_fullpath, mbz_fullpath):
+    def __init__(self, uuid, planning_txt, ics_url, mbz_fullpath):
         self.uuid = uuid
         self.planning_txt = planning_txt
-        self.ics_fullpath = ics_fullpath
+        self.ics_url = ics_url
         self.mbz_fullpath = mbz_fullpath
 
     def as_pub_dict(self):
@@ -27,7 +27,7 @@ plannings = Table(
     Column('id', Integer, primary_key=True),
     Column('uuid', String),
     Column('planning_txt', String),
-    Column('ics_fullpath', String),
+    Column('ics_url', String),
     Column('mbz_fullpath', String),
     Column('created_at', DateTime, default=datetime.now),
     Column('modified_at', DateTime, onupdate=datetime.now),

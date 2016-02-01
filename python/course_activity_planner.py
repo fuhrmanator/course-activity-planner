@@ -36,9 +36,8 @@ def new_planning():
     os.makedirs(folder)
 
     mbz_fullpath = _save_mbz_file(mbz_file, folder)
-    ics_fullpath = _dl_and_save_ics_file(ics_url, folder)
 
-    planning = Planning(planning_id, '', ics_fullpath, mbz_fullpath)
+    planning = Planning(planning_id, '', ics_url, mbz_fullpath)
     db_session.add(planning)
     db_session.commit()
 
@@ -73,20 +72,20 @@ def preview_planning(uuid):
         return jsonify(
             {'message': 'Planning with uuid "%s" not found' % uuid}), 404
 
-    calendar_path = planning.ics_fullpath
     moodle_archive_path = planning.mbz_fullpath
     planning_txt = planning.planning_txt
 
-    # Read calendar
-    calendar = CalendarReader(calendar_path)
-    calendar_meetings = calendar.get_all_meetings()
+    # Make tmp directory for MBZ extraction and ics download
+    with tempfile.TemporaryDirectory() as tmp_path:
+        # Download calendar to tmp folder
+        calendar_path = _dl_and_save_ics_file(planning.ics_url, tmp_path)
+        calendar = CalendarReader(calendar_path)
+        calendar_meetings = calendar.get_all_meetings()
 
-    # Read Moodle course from tmp folder and then delete it
-    tmp_path = tempfile.mkdtemp()
-    with tarfile.open(moodle_archive_path) as tar_file:
-        tar_file.extractall(tmp_path)
-        course = MoodleCourse(tmp_path)
-        shutil.rmtree(tmp_path)
+        # Extract Moodle course to tmp folder
+        with tarfile.open(moodle_archive_path) as tar_file:
+            tar_file.extractall(tmp_path)
+            course = MoodleCourse(tmp_path)
 
     interpreter = Interpreter(calendar_meetings, course)
 

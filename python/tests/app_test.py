@@ -42,10 +42,6 @@ class AppTest(unittest.TestCase):
             36, len(course_activity_planner._generate_planning_uuid()))
 
     def test_new_planning(self):
-        # Ignore ics url in request and link to local ics file
-        course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value=self.local_cal_path)
-
         res = self.client.post(
             '/api/planning',
             data=dict(
@@ -71,7 +67,7 @@ class AppTest(unittest.TestCase):
             '/api/planning', data=dict(ics_url=self.cal_url))
         self.assertEqual(400, res._status_code)
 
-    def test_files_are_saved_after_posting_planning(self):
+    def test_mbz_file_is_saved_after_posting_planning(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
 
@@ -84,14 +80,10 @@ class AppTest(unittest.TestCase):
         self.assertEqual(200, res._status_code)
         self.assertTrue(os.path.exists('\
 /tmp/course_activity_planner_test/uuid/original_archive.mbz'))
-        self.assertTrue(os.path.exists('\
-/tmp/course_activity_planner_test/uuid/original_calendar.ics'))
 
     def test_planning_is_saved_to_db(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
-        course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value='')
 
         res = self.client.post(
             '/api/planning',
@@ -105,9 +97,6 @@ class AppTest(unittest.TestCase):
     def test_planning_is_updated(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
-        # Ignore ics url in request and link to local ics file
-        course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value=self.local_cal_path)
 
         res = self.client.post(
             '/api/planning',
