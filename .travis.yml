@@ -4,11 +4,18 @@ python:
   - "3.5"
   - "3.5-dev"
   - "nightly"
+node_js:
+  - "0.12"
 install:
+  - npm install jshint
   - pip install coveralls
   - cd python/
   - pip install -r requirements.txt
+  - cd ..
+
 script:
+  - node_modules/.bin/jshint --exclude public/bower_components public/
+  - cd python/
   - nosetests --with-coverage
   - pep8
   - flake8
