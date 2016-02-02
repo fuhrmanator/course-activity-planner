@@ -15,6 +15,10 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
             });
     };
 
+    $scope.download = function() {
+        window.open('/api/planning/'+ $scope.uuid + '/mbz', '_blank', '');
+    };
+
     $scope.refresh = function() {
         $http.get('/api/planning/'+ $scope.uuid + '/')
             .success(function(data) {

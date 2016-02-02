@@ -128,6 +128,43 @@ def preview_planning(uuid):
                    sorted(preview, key=lambda p: p['timestamp'])}), 200
 
 
+@app.route('/api/planning/<uuid>/mbz', methods=['GET'])
+def download_planning(uuid):
+    planning = _get_planning(uuid)
+    if not planning:
+        return jsonify(
+            {'message': 'Planning with uuid "%s" not found' % uuid}), 404
+
+    moodle_archive_path = planning.mbz_fullpath
+    planning_txt = planning.planning_txt
+
+    if not planning_txt:
+        return _bad_request()
+
+    # Make tmp directory for MBZ extraction and ics download
+    with tempfile.TemporaryDirectory() as tmp_path:
+        # Download calendar to tmp folder
+        calendar_path = _dl_and_save_ics_file(planning.ics_url, tmp_path)
+        calendar = CalendarReader(calendar_path)
+        calendar_meetings = calendar.get_all_meetings()
+
+        # Extract Moodle course to tmp folder
+        with tarfile.open(moodle_archive_path) as tar_file:
+            tar_file.extractall(tmp_path)
+            course = MoodleCourse(tmp_path)
+
+        interpreter = Interpreter(calendar_meetings, course)
+        for line in planning_txt.split('\n'):
+            event = interpreter.get_new_event_from_string(line)
+            course.replace_event(event)
+        folder = os.path.join(app.config['UPLOAD_FOLDER'], uuid)
+        latest_mbz_path = os.path.join(folder, 'latest.mbz')
+
+        course.write(latest_mbz_path)
+        return send_from_directory(
+            folder, 'latest.mbz', as_attachment=True)
+
+
 @app.route('/')
 def index():
     return send_from_directory('../public', 'index.html')

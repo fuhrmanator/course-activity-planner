@@ -81,6 +81,9 @@ class MoodleCourse():
 
         self._load_activities_and_section_order()
 
+    def replace_event(self, activity):
+        self.activities[type(activity)][activity.rel_id - 1] = activity
+
     def get_activity_by_type_and_num(self, type, relative_number):
         return self.activities[type][relative_number - 1]
 
