@@ -6,24 +6,40 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="planning">Plan your course:</label>
-                        <textarea class="form-control" id="planning" ng-model="planning_txt"></textarea>
+                        <textarea class="form-control" id="planning" ng-model="planning_txt" placeholder="Plan your course activities here"></textarea>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="btn-group">
-                        <button disabled class="btn btn-success center-block" ng-click="">Download</button>
-                        <button class="btn btn-info center-block" ng-click="submit()">Preview</button>
+                        <button disabled class="btn btn-success center-block" ng-click="">Save and download</button>
+                        <button class="btn btn-info center-block" ng-click="submit()">Save and preview</button>
                     </div>
                 </div>
             </div>
 
         </div>
     </div>
+    <h2>Preview</h2>
     <div class="row">
-        <div class="col-md-12">
-            <p ng-repeat="e in preview">
-                {{e.title}}
-            </p>
+        <div class="col-md-6">
+            <table class="table table-condensed table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 10em;">Date</th>
+                        <th>Event</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="e in preview">
+                        <td>
+                            {{e.timestamp | amFromUnix | amDateFormat:'YYYY-MM-DD HH:mm'}}
+                        </td>
+                        <td>
+                            {{e.title}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
     <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>

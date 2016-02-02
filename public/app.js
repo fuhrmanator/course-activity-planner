@@ -1,5 +1,6 @@
 angular.module('app', [
   'ngRoute',
+  'angularMoment',
   'app.controllers.IndexController',
   'app.controllers.PlanController',
 ]).config(['$routeProvider', '$httpProvider', function($routeProvider) {
