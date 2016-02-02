@@ -64,6 +64,15 @@ def update_planning(uuid):
     return jsonify({}), 200
 
 
+@app.route('/api/planning/<uuid>/', methods=['GET'])
+def get_planning(uuid):
+    planning = _get_planning(uuid)
+    if not planning:
+        return jsonify(
+            {'message': 'Planning with uuid "%s" not found' % uuid}), 404
+    return jsonify({'planning': planning.as_pub_dict()})
+
+
 @app.route('/api/planning/<uuid>/preview', methods=['GET'])
 def preview_planning(uuid):
     planning = _get_planning(uuid)
@@ -90,15 +99,17 @@ def preview_planning(uuid):
 
     # Build preview
     preview = []
-    for line in planning_txt.split('\n'):
-        event = interpreter.get_new_event_from_string(line)
 
-        preview.append({
-            'title': 'Quiz %d opens' % event.rel_id,
-            'timestamp': event.get_start_timestamp()})
-        preview.append({
-            'title': 'Quiz %d closes' % event.rel_id,
-            'timestamp': event.get_end_timestamp()})
+    if planning_txt:
+        for line in planning_txt.split('\n'):
+            event = interpreter.get_new_event_from_string(line)
+
+            preview.append({
+                'title': 'Quiz %d opens' % event.rel_id,
+                'timestamp': event.get_start_timestamp()})
+            preview.append({
+                'title': 'Quiz %d closes' % event.rel_id,
+                'timestamp': event.get_end_timestamp()})
 
     for meeting_type in calendar_meetings:
         clazz = meeting_type.__name__

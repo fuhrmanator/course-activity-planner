@@ -2,9 +2,8 @@ var controllers = angular.module('app.controllers.PlanController', ['ngFileUploa
 
 controllers.controller('PlanController', function($scope, $http, $location, $routeParams) {
     $scope.uuid = $routeParams.uuid;
-    console.log($scope.uuid);
 
-    $scope.preview = function() {
+    $scope.submit = function() {
         var data = {'planning' : $scope.planning_txt};
 
         $http.put('/api/planning/' + $scope.uuid, data)
@@ -17,13 +16,24 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
     };
 
     $scope.refresh = function() {
-        $http.get('/api/planning/preview/' + $scope.uuid)
+        $http.get('/api/planning/'+ $scope.uuid + '/')
             .success(function(data) {
-                $scope.preview_txt = data;
+                $scope.planning_txt = data.planning.planning_txt;
+                if (data.planning.planning_txt) {
+                    $http.get('/api/planning/'+ $scope.uuid + '/preview')
+                        .success(function(data) {
+                            $scope.preview = data.preview;
+                        })
+                        .error(function(err, status) {
+                            console.log(err, status);
+                        });
+                }
             })
             .error(function(err, status) {
                 console.log(err, status);
-            });
+        });
     };
+
+    $scope.refresh();
 
 });

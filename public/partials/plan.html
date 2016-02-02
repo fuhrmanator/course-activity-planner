@@ -1,19 +1,30 @@
 <div class="container">
     <h1>Course Activity Planner</h1>
     <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <div class="form-group">
-                <label for="planning">Plan your course:</label>
-                <textarea class="form-control" rows="5" id="planning" ng-model="planning_txt"></textarea>
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="planning">Plan your course:</label>
+                        <textarea class="form-control" id="planning" ng-model="planning_txt"></textarea>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="btn-group">
+                        <button disabled class="btn btn-success center-block" ng-click="">Download</button>
+                        <button class="btn btn-info center-block" ng-click="submit()">Preview</button>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
-    {{uuid}}
     <div class="row">
         <div class="col-md-12">
-            <button class="btn btn-info center-block" ng-click="preview()">Preview</button>
+            <p ng-repeat="e in preview">
+                {{e.title}}
+            </p>
         </div>
     </div>
-
     <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>
 </div>
