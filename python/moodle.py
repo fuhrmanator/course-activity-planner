@@ -33,27 +33,29 @@ class MoodleEvent():
 
     def set_end_datetime(self, datetime):
         timestamp = str(arrow.get(datetime).to('utc').timestamp)
-        self.__setitem__('timeclose', timestamp)
+        k = self.event_keys['close']
+        self.__setitem__(k, timestamp)
 
     def set_start_datetime(self, datetime):
         timestamp = str(arrow.get(datetime).to('utc').timestamp)
-        self.__setitem__('timeopen', timestamp)
+        k = self.event_keys['start']
+        self.__setitem__(k, timestamp)
 
     def get_start_datetime(self):
-        epoch = self.event.find('timeopen').text
-        return arrow.get(epoch).to('America/Montreal').datetime
+        return self._get_start_arrow().datetime
 
     def get_start_timestamp(self):
-        epoch = self.event.find('timeopen').text
-        return arrow.get(epoch).to('America/Montreal').timestamp
+        return self._get_start_arrow().timestamp
 
     def get_end_datetime(self):
-        epoch = self.event.find('timeclose').text
-        return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal')).datetime
+        return self._get_end_arrow().datetime
 
     def get_end_timestamp(self):
-        epoch = self.event.find('timeclose').text
-        return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal')).timestamp
+        return self._get_end_arrow().timestamp
+
+    def get_pretty_name(self):
+        """To be implemented by subclasses"""
+        raise Exception('Unimplemented')
 
     def write(self):
         if not self.modified:
@@ -61,18 +63,62 @@ class MoodleEvent():
         self.tree.write(self.path, short_empty_elements=False, encoding='UTF-8',
                         xml_declaration=True)
 
+    def _get_end_arrow(self):
+        """Returns end as arrow object"""
+        return self._get_arrow('close')
+
+    def _get_start_arrow(self):
+        """Returns end as arrow object"""
+        return self._get_arrow('start')
+
+    def _get_arrow(self, generic_event_key):
+        """Gets the arrow object representation of the start or close event.
+        generic_event_key: litteral string `start` or `close`
+        The actal key of the XML is resolved with the `event_keys` of
+        the subclasses."""
+        k = self.event_keys[generic_event_key]
+        epoch = self.event.find(k).text
+        return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal'))
+
 
 class MoodleQuiz(MoodleEvent):
     """Describes an XML Moodle quiz with key based access"""
+
+    event_keys = {
+        'start': 'timeopen',
+        'close': 'timeclose'
+    }
+
     def __init__(self, path):
         super().__init__(os.path.join(path, 'quiz.xml'))
+
+    def get_pretty_name(self):
+        return 'Quiz'
+
+
+class MoodleHomework(MoodleEvent):
+    """Describes an XML Moodle assignment (homework) with key based access"""
+
+    event_keys = {
+        'start': 'allowsubmissionsfromdate',
+        'close': 'duedate'
+    }
+
+    def __init__(self, path):
+        super().__init__(os.path.join(path, 'assign.xml'))
+
+    def get_pretty_name(self):
+        return 'Homework'
 
 
 class MoodleCourse():
     """\
     Describes a complete Moodle course from an unpacked archive on the disk"""
 
-    modname_to_class = {'quiz': MoodleQuiz}
+    modname_to_class = {
+        'quiz': MoodleQuiz,
+        'assign': MoodleHomework
+        }
 
     def __init__(self, moodle_archive_path):
         self.path = moodle_archive_path

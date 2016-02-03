@@ -103,12 +103,13 @@ def preview_planning(uuid):
     if planning_txt:
         for line in planning_txt.split('\n'):
             event = interpreter.get_new_event_from_string(line)
+            pretty_event_name = event.get_pretty_name()
 
             preview.append({
-                'title': 'Quiz %d opens' % event.rel_id,
+                'title': '%s %d opens' % (pretty_event_name, event.rel_id),
                 'timestamp': event.get_start_timestamp()})
             preview.append({
-                'title': 'Quiz %d closes' % event.rel_id,
+                'title': '%s %d closes' % (pretty_event_name, event.rel_id),
                 'timestamp': event.get_end_timestamp()})
 
     for meeting_type in calendar_meetings:

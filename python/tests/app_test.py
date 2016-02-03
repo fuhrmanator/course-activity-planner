@@ -183,7 +183,7 @@ class AppTest(unittest.TestCase):
         # Test multiple lines
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'Q1 S1 S2\nQ2 S2 P3'}),
+            data=json.dumps({'planning': 'Q1 S1 S2\nH1 S2 P3'}),
             headers=[('Content-Type', 'application/json')])
 
         res = self.client.get('/api/planning/uuid/preview')
@@ -202,14 +202,14 @@ class AppTest(unittest.TestCase):
             {'title': 'Practica 1 opens', 'timestamp': 1389182400},
             {'title': 'Practica 1 closes', 'timestamp': 1389186000},
             {'title': 'Quiz 1 closes', 'timestamp': 1389614400},
-            {'title': 'Quiz 2 opens', 'timestamp': 1389614400},
+            {'title': 'Homework 1 opens', 'timestamp': 1389614400},
             {'title': 'Seminar 2 opens', 'timestamp': 1389614400},
             {'title': 'Seminar 2 closes', 'timestamp': 1389618000},
             {'title': 'Practica 2 opens', 'timestamp': 1389787200},
             {'title': 'Practica 2 closes', 'timestamp': 1389790800},
             {'title': 'Seminar 3 opens', 'timestamp': 1390219200},
             {'title': 'Seminar 3 closes', 'timestamp': 1390222800},
-            {'title': 'Quiz 2 closes', 'timestamp': 1390392000},
+            {'title': 'Homework 1 closes', 'timestamp': 1390392000},
             {'title': 'Practica 3 opens', 'timestamp': 1390392000},
             {'title': 'Practica 3 closes', 'timestamp': 1390395600},
         ]

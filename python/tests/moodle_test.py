@@ -7,7 +7,7 @@ import arrow
 
 from dateutil import tz
 
-from moodle import MoodleCourse, MoodleQuiz
+from moodle import MoodleCourse, MoodleQuiz, MoodleHomework
 
 
 class TestQuiz(unittest.TestCase):
@@ -39,6 +39,8 @@ class TestQuiz(unittest.TestCase):
         course = MoodleCourse(self.tmp_path)
         actual = course._load_activites()[MoodleQuiz]
         self.assertEqual(3, len(actual))
+        actual = course._load_activites()[MoodleHomework]
+        self.assertEqual(1, len(actual))
 
     def test_sort_activity_type(self):
         course = MoodleCourse(self.tmp_path)
@@ -54,7 +56,7 @@ class TestQuiz(unittest.TestCase):
         for i, x in enumerate([146935, 146936, 146939]):
             self.assertEqual(x, course.activities[MoodleQuiz][i]['moduleid'])
 
-    def test_get_quiz_by_relative_num(self):
+    def test_get_activity_by_relative_num(self):
         course = MoodleCourse(self.tmp_path)
 
         actual = course.get_activity_by_type_and_num(MoodleQuiz, 1)['id']
@@ -65,6 +67,9 @@ class TestQuiz(unittest.TestCase):
 
         actual = course.get_activity_by_type_and_num(MoodleQuiz, 3)['id']
         self.assertEqual('4273', actual)
+
+        actual = course.get_activity_by_type_and_num(MoodleHomework, 1)['id']
+        self.assertEqual('5588', actual)
 
     def test_set_invalid_key_raises_exception(self):
         course = MoodleCourse(self.tmp_path)
@@ -210,10 +215,17 @@ class TestMoodleWriter(unittest.TestCase):
             2001, 1, 1, 1, 1, 1, tzinfo=tz.gettz('America/Montreal')).datetime)
         q2_before_modification_dt = os.path.getmtime(q2.path)
 
+        # Homework 1 is modified
+        h1 = course.get_activity_by_type_and_num(MoodleHomework, 1)
+        h1.set_start_datetime(arrow.get(
+            2001, 1, 1, 1, 1, 1, tzinfo=tz.gettz('America/Montreal')).datetime)
+        h1_before_modification_dt = os.path.getmtime(h1.path)
+
         course._write_activities_to_disk()
         # Only quiz 2 was written on disk
         self.assertTrue(q1_before_modification_dt == os.path.getmtime(q1.path))
         self.assertFalse(q2_before_modification_dt == os.path.getmtime(q2.path))
+        self.assertFalse(h1_before_modification_dt == os.path.getmtime(h1.path))
 
 
 if __name__ == "__main__":
