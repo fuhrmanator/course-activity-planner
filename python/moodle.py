@@ -125,7 +125,7 @@ class MoodleCourse():
         self.fullpath = os.path.join(self.path, 'moodle_backup.xml')
         self.backup = ET.parse(self.fullpath)
 
-        self._load_activities_and_section_order()
+        self._load_activities_and_sequence()
 
     def replace_event(self, activity):
         self.activities[type(activity)][activity.rel_id - 1] = activity
@@ -148,24 +148,20 @@ class MoodleCourse():
             archive.close()
         os.chdir(ogwd)
 
-    def _load_section_order(self):
-        """"Read the activity sequence from sections.xml.
+    def _load_activity_sequence(self):
+        """"Read the activity sequence from moodle_backup.xml.
         Returns a list of the module_ids in order of the course.
         """
-        section_dir = self.backup.getroot().find('information'). \
-            find('contents').find('sections')[0].find('directory').text
+        o = []
+        activities = self.backup.getroot().find('information') \
+            .find('contents').find('activities')
 
-        section_path = os.path.join(self.path, section_dir, 'section.xml')
+        for activity in activities:
+            o.append(int(activity.find('moduleid').text))
+        return o
 
-        section = ET.parse(section_path).getroot()
-        return [int(num) for num in section.find('sequence').text.split(',')]
-
-    def _load_activities_and_section_order(self):
-        if len(self.backup.getroot().find('information').find('contents').
-                find('sections')) > 1:
-            raise Exception('Not implemented')
-
-        self.section_order = self._load_section_order()
+    def _load_activities_and_sequence(self):
+        self.activity_sequence = self._load_activity_sequence()
         self.activities = self._load_activites()
 
     def _load_activites(self):
@@ -191,7 +187,7 @@ class MoodleCourse():
 
     def _sort_activity_type(self, activities):
         s = sorted(activities, key=lambda activity:
-                   self.section_order.index(activity['moduleid']))
+                   self.activity_sequence.index(activity['moduleid']))
         # Set relative id of activity
         for i, activity in enumerate(s):
             activity.rel_id = i + 1

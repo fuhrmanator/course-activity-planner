@@ -31,7 +31,7 @@ class TestQuiz(unittest.TestCase):
 
     def test_load_section_order(self):
         course = MoodleCourse(self.tmp_path)
-        actual = course._load_section_order()
+        actual = course._load_activity_sequence()
 
         self.assertEqual([146934, 146935, 146936, 146937, 146939], actual)
 
