@@ -10,7 +10,7 @@ from dateutil import tz
 from moodle import MoodleCourse, MoodleQuiz, MoodleHomework
 
 
-class TestQuiz(unittest.TestCase):
+class TestMoodleCourseSingleSection(unittest.TestCase):
 
     moodle_archive_path = '\
 ../data/backup-moodle2-course-1677-s20143-log792-09-20151102-1202-nu.mbz'
@@ -29,7 +29,7 @@ class TestQuiz(unittest.TestCase):
         """Test constructor with an invalid path"""
         self.assertRaises(Exception, MoodleCourse, 'invalid_path')
 
-    def test_load_section_order(self):
+    def test_load_activity_sequence(self):
         course = MoodleCourse(self.tmp_path)
         actual = course._load_activity_sequence()
 
@@ -83,6 +83,43 @@ class TestQuiz(unittest.TestCase):
 
         with self.assertRaises(Exception):
             quiz['moduleid'] = 'some data'
+
+
+class TestMoodleCourseMultipleSections(unittest.TestCase):
+
+    moodle_archive_path = '../data/multi-sections.mbz'
+
+    def setUp(self):
+        self.tmp_path = tempfile.mkdtemp()
+
+        with tarfile.open(self.moodle_archive_path) as tar_file:
+            tar_file.extractall(self.tmp_path)
+
+    def tearDown(self):
+        # TODO test on windows
+        shutil.rmtree(self.tmp_path)
+
+    def test_load_activity_sequence(self):
+        course = MoodleCourse(self.tmp_path)
+        actual = course._load_activity_sequence()
+
+        self.assertEqual([175721, 175723, 175724, 175720, 175722, 176000],
+                         actual)
+
+    def test_load_activities(self):
+        course = MoodleCourse(self.tmp_path)
+        actual = course._load_activites()[MoodleQuiz]
+        self.assertEqual(4, len(actual))
+        actual = course._load_activites()[MoodleHomework]
+        self.assertEqual(1, len(actual))
+
+    def test_sort_activity_type(self):
+        course = MoodleCourse(self.tmp_path)
+        activities = course._load_activites()[MoodleQuiz]
+        activities = course._sort_activity_type(activities)
+
+        for i, x in enumerate([175721, 175724, 175722, 176000]):
+            self.assertEqual(x, activities[i]['moduleid'])
 
 
 class TestMoodleEvent(unittest.TestCase):
@@ -190,8 +227,7 @@ class TestMoodleWriter(unittest.TestCase):
         quiz_after = course_after.get_activity_by_type_and_num(MoodleQuiz, 1)
         self.assertEqual(arrow.get(
             2001, 1, 1, 1, 1, 1, tzinfo=tz.gettz('America/Montreal')).datetime,
-            quiz_after.get_start_datetime()
-            )
+            quiz_after.get_start_datetime())
 
     def test_archive_is_repacked(self):
         course = MoodleCourse(self.tmp_path)
