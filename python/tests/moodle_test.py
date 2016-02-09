@@ -221,6 +221,8 @@ class TestMoodleWriter(unittest.TestCase):
 
         quiz.write()
         self.assertFalse(before_modification_dt == os.path.getmtime(quiz.path))
+        self.assertFalse(before_modification_dt == os.path.getmtime(
+            quiz.global_path + '/calendar.xml'))
 
         # Check data is updated on disk
         course_after = MoodleCourse(self.tmp_path)

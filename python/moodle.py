@@ -62,6 +62,23 @@ class MoodleEvent():
             return
         self.tree.write(self.path, short_empty_elements=False, encoding='UTF-8',
                         xml_declaration=True)
+        self._write_calendar()
+
+    def _write_calendar(self):
+        moodle_cal_path = os.path.join(self.global_path, 'calendar.xml')
+        cal_tree = ET.parse(moodle_cal_path)
+        events = cal_tree.getroot()
+
+        if len(events) > 2 or len(events) < 1:
+            raise Exception('Unimplemented')
+
+        events[0].find('timestart').text = str(self.get_start_timestamp())
+
+        if len(events) > 1:
+            events[1].find('timestart').text = str(self.get_end_timestamp())
+
+        cal_tree.write(moodle_cal_path, short_empty_elements=False,
+                       encoding='UTF-8', xml_declaration=True)
 
     def _get_end_arrow(self):
         """Returns end as arrow object"""
@@ -90,6 +107,7 @@ class MoodleQuiz(MoodleEvent):
     }
 
     def __init__(self, path):
+        self.global_path = path
         super().__init__(os.path.join(path, 'quiz.xml'))
 
     def get_pretty_name(self):
@@ -105,6 +123,7 @@ class MoodleHomework(MoodleEvent):
     }
 
     def __init__(self, path):
+        self.global_path = path
         super().__init__(os.path.join(path, 'assign.xml'))
 
     def get_pretty_name(self):
