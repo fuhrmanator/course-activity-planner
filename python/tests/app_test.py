@@ -163,12 +163,12 @@ class AppTest(unittest.TestCase):
         actual = json.loads(res.data.decode('utf8'))['inventory']
 
         expected = [
-            {'key': 'P1', 'title': 'unknown'},
-            {'key': 'P2', 'title': 'unknown'},
-            {'key': 'P3', 'title': 'unknown'},
-            {'key': 'S1', 'title': 'unknown'},
-            {'key': 'S2', 'title': 'unknown'},
-            {'key': 'S3', 'title': 'unknown'},
+            {'key': 'P1', 'title': 'log210 TP 1'},
+            {'key': 'P2', 'title': 'log210 TP 2'},
+            {'key': 'P3', 'title': 'log210 TP 3'},
+            {'key': 'S1', 'title': 'log210 Cours magistral 1'},
+            {'key': 'S2', 'title': 'log210 Cours magistral 2'},
+            {'key': 'S3', 'title': 'log210 Cours magistral 3'},
         ]
         self.assertEqual(len(actual), len(expected))
         # no order expected

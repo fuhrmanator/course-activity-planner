@@ -31,7 +31,7 @@ class GenericMeeting():
         raise Exception('Unimplemented')
 
     def get_title(self):
-        return 'unknown'
+        return self.calendar_event.name
 
 
 class Quiz(GenericMeeting):
