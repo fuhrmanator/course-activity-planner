@@ -136,6 +136,44 @@ class AppTest(unittest.TestCase):
 
         self.assertEqual(400, res._status_code)
 
+    def test_inventory(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        # Ignore ics url in request and link to local ics file
+        course_activity_planner._dl_and_save_ics_file = \
+            MagicMock(return_value=self.local_short_cal_path)
+        # Ignore mbz in request and link to local mbz file
+        course_activity_planner._save_mbz_file = \
+            MagicMock(return_value=self.local_mbz_path)
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url='some_url_to_be_mocked'))
+
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'Q1 S1 S2'}),
+            headers=[('Content-Type', 'application/json')])
+
+        res = self.client.get('/api/planning/uuid/preview')
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['inventory']
+
+        expected = [
+            {'key': 'P1', 'title': 'unknown'},
+            {'key': 'P2', 'title': 'unknown'},
+            {'key': 'P3', 'title': 'unknown'},
+            {'key': 'S1', 'title': 'unknown'},
+            {'key': 'S2', 'title': 'unknown'},
+            {'key': 'S3', 'title': 'unknown'},
+        ]
+        self.assertEqual(len(actual), len(expected))
+        # no order expected
+        assert all(x in expected for x in actual)
+
     def test_preview_planning(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')

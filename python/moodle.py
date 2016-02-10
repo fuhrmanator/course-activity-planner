@@ -64,6 +64,13 @@ class MoodleEvent():
                         xml_declaration=True)
         self._write_calendar()
 
+    def get_key(self):
+        """"Return the letter of the planning key
+        Q for Quiz, etc.
+        Must be implemented by subclasses
+        """
+        raise Exception('Unimplemented')
+
     def _write_calendar(self):
         moodle_cal_path = os.path.join(self.global_path, 'calendar.xml')
         cal_tree = ET.parse(moodle_cal_path)
@@ -118,6 +125,9 @@ class MoodleQuiz(MoodleEvent):
     def get_pretty_name(self):
         return 'Quiz'
 
+    def get_key(self):
+        return 'Q'
+
 
 class MoodleHomework(MoodleEvent):
     """Describes an XML Moodle assignment (homework) with key based access"""
@@ -133,6 +143,9 @@ class MoodleHomework(MoodleEvent):
 
     def get_pretty_name(self):
         return 'Homework'
+
+    def get_key(self):
+        return 'H'
 
 
 class MoodleCourse():

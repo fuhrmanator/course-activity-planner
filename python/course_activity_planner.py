@@ -73,32 +73,23 @@ def get_planning(uuid):
     return jsonify({'planning': planning.as_pub_dict()})
 
 
-@app.route('/api/planning/<uuid>/preview', methods=['GET'])
-def preview_planning(uuid):
-    planning = _get_planning(uuid)
-    if not planning:
-        return jsonify(
-            {'message': 'Planning with uuid "%s" not found' % uuid}), 404
+def _build_inventory(interpreter, planning_txt):
+    calendar_meetings = interpreter.meetings
+    inventory = []
 
-    moodle_archive_path = planning.mbz_fullpath
-    planning_txt = planning.planning_txt
+    for meeting_type in calendar_meetings:
+        for i, meeting in enumerate(calendar_meetings[meeting_type]):
+            rel_id = i + 1
+            inventory.append({
+                'key': '%s%d' % (meeting.get_key(), rel_id),
+                'title': meeting.get_title()})
+    return inventory
 
-    # Make tmp directory for MBZ extraction and ics download
-    with tempfile.TemporaryDirectory() as tmp_path:
-        # Download calendar to tmp folder
-        calendar_path = _dl_and_save_ics_file(planning.ics_url, tmp_path)
-        calendar = CalendarReader(calendar_path)
-        calendar_meetings = calendar.get_all_meetings()
 
-        # Extract Moodle course to tmp folder
-        with tarfile.open(moodle_archive_path) as tar_file:
-            tar_file.extractall(tmp_path)
-            course = MoodleCourse(tmp_path)
-
-    interpreter = Interpreter(calendar_meetings, course)
-
+def _build_preview(interpreter, planning_txt):
     # Build preview
     preview = []
+    calendar_meetings = interpreter.meetings
 
     if planning_txt:
         for line in planning_txt.split('\n'):
@@ -125,8 +116,36 @@ def preview_planning(uuid):
                 'timestamp': meeting.get_end_timestamp()})
 
     # Return preview sorted by timestamp
-    return jsonify({'preview':
-                   sorted(preview, key=lambda p: p['timestamp'])}), 200
+    return sorted(preview, key=lambda p: p['timestamp'])
+
+
+@app.route('/api/planning/<uuid>/preview', methods=['GET'])
+def preview_planning(uuid):
+    planning = _get_planning(uuid)
+    if not planning:
+        return jsonify(
+            {'message': 'Planning with uuid "%s" not found' % uuid}), 404
+
+    moodle_archive_path = planning.mbz_fullpath
+    planning_txt = planning.planning_txt
+
+    # Make tmp directory for MBZ extraction and ics download
+    with tempfile.TemporaryDirectory() as tmp_path:
+        # Download calendar to tmp folder
+        calendar_path = _dl_and_save_ics_file(planning.ics_url, tmp_path)
+        calendar = CalendarReader(calendar_path)
+        calendar_meetings = calendar.get_all_meetings()
+
+        # Extract Moodle course to tmp folder
+        with tarfile.open(moodle_archive_path) as tar_file:
+            tar_file.extractall(tmp_path)
+            course = MoodleCourse(tmp_path)
+
+    interpreter = Interpreter(calendar_meetings, course)
+    preview = _build_preview(interpreter, planning_txt)
+    inventory = _build_inventory(interpreter, planning_txt)
+
+    return jsonify({'preview': preview, 'inventory': inventory}), 200
 
 
 @app.route('/api/planning/<uuid>/mbz', methods=['GET'])
