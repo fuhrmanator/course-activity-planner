@@ -23,15 +23,14 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
         $http.get('/api/planning/'+ $scope.uuid + '/')
             .success(function(data) {
                 $scope.planning_txt = data.planning.planning_txt;
-                if (data.planning.planning_txt) {
-                    $http.get('/api/planning/'+ $scope.uuid + '/preview')
-                        .success(function(data) {
-                            $scope.preview = data.preview;
-                        })
-                        .error(function(err, status) {
-                            console.log(err, status);
-                        });
-                }
+                $http.get('/api/planning/'+ $scope.uuid + '/preview')
+                    .success(function(data) {
+                        $scope.preview = data.preview;
+                        $scope.inventory = data.inventory;
+                    })
+                    .error(function(err, status) {
+                        console.log(err, status);
+                    });
             })
             .error(function(err, status) {
                 console.log(err, status);
