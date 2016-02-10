@@ -73,8 +73,13 @@ class MoodleEvent():
             raise Exception('Unimplemented')
 
         events[0].find('timestart').text = str(self.get_start_timestamp())
+        events[0].find('timeduration').text = 0
 
         if len(events) > 1:
+            events[0].find('timeduration').text = str(
+                self.get_end_timestamp() - self.get_start_timestamp())
+
+            events[1].find('timeduration').text = 0
             events[1].find('timestart').text = str(self.get_end_timestamp())
 
         cal_tree.write(moodle_cal_path, short_empty_elements=False,
