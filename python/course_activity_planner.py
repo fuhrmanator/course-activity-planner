@@ -74,8 +74,9 @@ def get_planning(uuid):
 
 
 def _build_inventory(interpreter, planning_txt):
-    calendar_meetings = interpreter.meetings
     inventory = []
+    calendar_meetings = interpreter.meetings
+    moodle_activities = interpreter.course.activities
 
     for meeting_type in calendar_meetings:
         for i, meeting in enumerate(calendar_meetings[meeting_type]):
@@ -83,6 +84,13 @@ def _build_inventory(interpreter, planning_txt):
             inventory.append({
                 'key': '%s%d' % (meeting.get_key(), rel_id),
                 'title': meeting.get_title()})
+
+    for activity_type in moodle_activities:
+        for i, activity in enumerate(moodle_activities[activity_type]):
+            rel_id = i + 1
+            inventory.append({
+                'key': '%s%d' % (activity.get_key(), rel_id),
+                'title': activity.get_title()})
     return inventory
 
 

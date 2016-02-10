@@ -169,6 +169,10 @@ class AppTest(unittest.TestCase):
             {'key': 'S1', 'title': 'log210 Cours magistral 1'},
             {'key': 'S2', 'title': 'log210 Cours magistral 2'},
             {'key': 'S3', 'title': 'log210 Cours magistral 3'},
+            {'key': 'H1', 'title': 'Devoir bidon'},
+            {'key': 'Q1', 'title': 'test de remise'},
+            {'key': 'Q2', 'title': 'Premier test'},
+            {'key': 'Q3', 'title': 'Quiz Moodle Backup'},
         ]
         self.assertEqual(len(actual), len(expected))
         # no order expected

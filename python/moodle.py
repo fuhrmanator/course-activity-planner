@@ -57,6 +57,9 @@ class MoodleEvent():
         """To be implemented by subclasses"""
         raise Exception('Unimplemented')
 
+    def get_title(self):
+        return self.__getitem__('name')
+
     def write(self):
         if not self.modified:
             return
