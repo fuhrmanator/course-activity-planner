@@ -20,6 +20,13 @@
         </div>
         <div class="col-md-8">
             <h3>Available activities</h3>
+            <p>Filter by activity type</p>
+            <div class="btn-group">
+                <button ng-click="toggleInventoryKey('Q')" type="button" name="button" class="btn" ng-class="[{'btn-primary' : !invSelected('Q')}, {'btn-success' : invSelected('Q')}]">Quizzes</button>
+                <button ng-click="toggleInventoryKey('P')" type="button" name="button" class="btn" ng-class="[{'btn-primary' : !invSelected('P')}, {'btn-success' : invSelected('P')}]">Praticas</button>
+                <button ng-click="toggleInventoryKey('S')" type="button" name="button" class="btn" ng-class="[{'btn-primary' : !invSelected('S')}, {'btn-success' : invSelected('S')}]">Seminars</button>
+                <button ng-click="toggleInventoryKey('H')" type="button" name="button" class="btn" ng-class="[{'btn-primary' : !invSelected('H')}, {'btn-success' : invSelected('H')}]">Homeworks</button>
+            </div>
             <table class="table table-condensed table-bordered table-hover">
                 <thead>
                     <tr>
@@ -28,9 +35,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="e in inventory">
+                    <tr ng-repeat="e in inventory | filter: filterInventoryByKey">
                         <td>
-                            {{e.key}}
+                            {{e.key_str + e.rel_id}}
                         </td>
                         <td>
                             {{e.title}}
@@ -51,7 +58,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="e in preview">
+                    <tr ng-repeat="e in preview | filter: filterPreviewByKey">
                         <td>
                             {{e.timestamp | amFromUnix | amDateFormat:'YYYY-MM-DD HH:mm'}}
                         </td>
@@ -61,6 +68,15 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+        <div class="col-md-6">
+            <p>Filter by activity type</p>
+            <div class="btn-group">
+                <button ng-click="togglePreviewKey('Q')" type="button" name="button" class="btn" ng-class="[{'btn-primary' : !previewSelected('Q')}, {'btn-success' : previewSelected('Q')}]">Quizzes</button>
+                <button ng-click="togglePreviewKey('P')" type="button" name="button" class="btn" ng-class="[{'btn-primary' : !previewSelected('P')}, {'btn-success' : previewSelected('P')}]">Praticas</button>
+                <button ng-click="togglePreviewKey('S')" type="button" name="button" class="btn" ng-class="[{'btn-primary' : !previewSelected('S')}, {'btn-success' : previewSelected('S')}]">Seminars</button>
+                <button ng-click="togglePreviewKey('H')" type="button" name="button" class="btn" ng-class="[{'btn-primary' : !previewSelected('H')}, {'btn-success' : previewSelected('H')}]">Homeworks</button>
+            </div>
         </div>
     </div>
     <div ngf-no-file-drop>File Drag/Drop is not supported for this browser</div>

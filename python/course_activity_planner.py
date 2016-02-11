@@ -73,60 +73,6 @@ def get_planning(uuid):
     return jsonify({'planning': planning.as_pub_dict()})
 
 
-def _build_inventory(interpreter, planning_txt):
-    inventory = []
-    calendar_meetings = interpreter.meetings
-    moodle_activities = interpreter.course.activities
-
-    for meeting_type in calendar_meetings:
-        for i, meeting in enumerate(calendar_meetings[meeting_type]):
-            rel_id = i + 1
-            inventory.append({
-                'key': '%s%d' % (meeting.get_key(), rel_id),
-                'title': meeting.get_title()})
-
-    for activity_type in moodle_activities:
-        for i, activity in enumerate(moodle_activities[activity_type]):
-            rel_id = i + 1
-            inventory.append({
-                'key': '%s%d' % (activity.get_key(), rel_id),
-                'title': activity.get_title()})
-    return inventory
-
-
-def _build_preview(interpreter, planning_txt):
-    # Build preview
-    preview = []
-    calendar_meetings = interpreter.meetings
-
-    if planning_txt:
-        for line in planning_txt.split('\n'):
-            event = interpreter.get_new_event_from_string(line)
-            pretty_event_name = event.get_pretty_name()
-
-            preview.append({
-                'title': '%s %d opens' % (pretty_event_name, event.rel_id),
-                'timestamp': event.get_start_timestamp()})
-            preview.append({
-                'title': '%s %d closes' % (pretty_event_name, event.rel_id),
-                'timestamp': event.get_end_timestamp()})
-
-    for meeting_type in calendar_meetings:
-        clazz = meeting_type.__name__
-
-        for i, meeting in enumerate(calendar_meetings[meeting_type]):
-            rel_id = i + 1
-            preview.append({
-                'title': '%s %d opens' % (clazz, rel_id),
-                'timestamp': meeting.get_start_timestamp()})
-            preview.append({
-                'title': '%s %d closes' % (clazz, rel_id),
-                'timestamp': meeting.get_end_timestamp()})
-
-    # Return preview sorted by timestamp
-    return sorted(preview, key=lambda p: p['timestamp'])
-
-
 @app.route('/api/planning/<uuid>/preview', methods=['GET'])
 def preview_planning(uuid):
     planning = _get_planning(uuid)
@@ -233,6 +179,66 @@ def _dl_and_save_ics_file(ics_url, folder):
             if chunk:
                 f.write(chunk)
     return ics_fullpath
+
+
+def _build_inventory(interpreter, planning_txt):
+    inventory = []
+    calendar_meetings = interpreter.meetings
+    moodle_activities = interpreter.course.activities
+
+    for meeting_type in calendar_meetings:
+        for i, meeting in enumerate(calendar_meetings[meeting_type]):
+            rel_id = i + 1
+            inventory.append({
+                'rel_id': rel_id,
+                'key_str': meeting.get_key(),
+                'title': meeting.get_title()})
+
+    for activity_type in moodle_activities:
+        for i, activity in enumerate(moodle_activities[activity_type]):
+            rel_id = i + 1
+            inventory.append({
+                'rel_id': rel_id,
+                'key_str': activity.get_key(),
+                'title': activity.get_title()})
+    return inventory
+
+
+def _build_preview(interpreter, planning_txt):
+    # Build preview
+    preview = []
+    calendar_meetings = interpreter.meetings
+
+    if planning_txt:
+        for line in planning_txt.split('\n'):
+            event = interpreter.get_new_event_from_string(line)
+            pretty_event_name = event.get_pretty_name()
+
+            preview.append({
+                'title': '%s %d opens' % (pretty_event_name, event.rel_id),
+                'key_str': event.get_key(),
+                'timestamp': event.get_start_timestamp()})
+            preview.append({
+                'title': '%s %d closes' % (pretty_event_name, event.rel_id),
+                'key_str': event.get_key(),
+                'timestamp': event.get_end_timestamp()})
+
+    for meeting_type in calendar_meetings:
+        clazz = meeting_type.__name__
+
+        for i, meeting in enumerate(calendar_meetings[meeting_type]):
+            rel_id = i + 1
+            preview.append({
+                'title': '%s %d opens' % (clazz, rel_id),
+                'key_str': meeting.get_key(),
+                'timestamp': meeting.get_start_timestamp()})
+            preview.append({
+                'title': '%s %d closes' % (clazz, rel_id),
+                'key_str': meeting.get_key(),
+                'timestamp': meeting.get_end_timestamp()})
+
+    # Return preview sorted by timestamp
+    return sorted(preview, key=lambda p: p['timestamp'])
 
 
 def _bad_request():
