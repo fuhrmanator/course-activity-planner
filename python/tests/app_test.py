@@ -196,7 +196,7 @@ class AppTest(unittest.TestCase):
 
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'Q1 S1 S2'}),
+            data=json.dumps({'planning': 'Q1 S3F S2\nH1 p3s p3f'}),
             headers=[('Content-Type', 'application/json')])
 
         res = self.client.get('/api/planning/uuid/preview')
@@ -232,6 +232,12 @@ class AppTest(unittest.TestCase):
             {'key_str': 'P', 'title': 'Practica 3 opens',
                 'timestamp': 1390392000},
             {'key_str': 'P', 'title': 'Practica 3 closes',
+                'timestamp': 1390395600},
+            {'key_str': 'H', 'title': 'Homework 1 opens',
+                'timestamp': 1390222800},
+            {'key_str': 'H', 'title': 'Homework 1 is due',
+                'timestamp': 1390392000},
+            {'key_str': 'H', 'title': 'Homework 1 closes',
                 'timestamp': 1390395600},
         ]
         self.assertEqual(expected, actual)
