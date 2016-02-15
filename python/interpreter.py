@@ -61,6 +61,14 @@ class Interpreter():
     def get_new_event_from_string(self, string):
         tokens = self._split_line(string)
         event = self._get_event_from_token(tokens[0])
+        date_tokens = tokens[:1]
+
+        if event.minimum_dates_count < len(date_tokens) or \
+                event.maximum_dates_count < len(date_tokens):
+
+            raise Exception('Activity "%s" must have between %d and %d dates' %
+                            (event.__name__, event.minimum_dates_count,
+                             event.maximum_dates_count))
 
         event.set_start_datetime(self._get_datetime_from_token(tokens[1]))
         event.set_end_datetime(self._get_datetime_from_token(tokens[2]))
@@ -106,7 +114,7 @@ class Interpreter():
     def _split_line(self, string):
         parts = string.split(' ')
 
-        if len(parts) != 3:
+        if len(parts) < 3 or len(parts) > 4:
             raise InvalidSyntaxException(string)
         return parts
 

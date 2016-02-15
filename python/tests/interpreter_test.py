@@ -40,10 +40,24 @@ class InterpreterTest(unittest.TestCase):
     def test_invalid_syntax(self):
         self.assertRaises(
             InvalidSyntaxException, self.interpreter._split_line, 'Q1S1FS2S')
+        self.assertRaises(
+            InvalidSyntaxException, self.interpreter._split_line,
+            'Q1 S1F S2S S3S S4F')
 
     def test_split_events_line(self):
         self.assertEqual(['Q1', 'S1F', 'S2S'],
                          self.interpreter._split_line('Q1 S1F S2S'))
+
+    def test_split_events_line_wrong_date_count(self):
+        self.assertRaises(
+            Exception, self.interpreter._split_line, 'Q1 s1')
+        self.assertRaises(
+            Exception, self.interpreter._split_line,
+            'H1 S1F')
+
+    def test_split_events_multiple_date_count(self):
+        actual = self.interpreter.get_new_event_from_string('h1 s1 s2')
+        actual = self.interpreter.get_new_event_from_string('h1 s1 s2 s3')
 
     def test_detection_of_event(self):
         event = self.interpreter._detect_event_class_and_id('Q1')

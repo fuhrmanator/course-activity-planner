@@ -8,6 +8,10 @@ from dateutil import tz
 
 class MoodleEvent():
     """Describes an XML Moodle event with key based access"""
+
+    minimum_dates_count = 2
+    maximum_dates_count = 2
+
     def __init__(self, path):
         self.modified = False
         self.path = path
@@ -23,7 +27,10 @@ class MoodleEvent():
             return self.event.attrib[k]
         if k == 'moduleid':
             return int(self.activity.attrib[k])
-        return self.event.find(k).text
+        try:
+            return self.event.find(k).text
+        except Exception as e:
+            pass
 
     def __setitem__(self, k, v):
         if k == 'id' or k == 'moduleid':
@@ -134,10 +141,12 @@ class MoodleQuiz(MoodleEvent):
 
 class MoodleHomework(MoodleEvent):
     """Describes an XML Moodle assignment (homework) with key based access"""
+    maximum_dates_count = 3
 
     event_keys = {
         'start': 'allowsubmissionsfromdate',
-        'close': 'duedate'
+        'close': 'duedate',
+        'cutoff': 'cutoffdate',
     }
 
     def __init__(self, path):
