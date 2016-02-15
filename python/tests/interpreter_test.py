@@ -55,10 +55,6 @@ class InterpreterTest(unittest.TestCase):
             Exception, self.interpreter._split_line,
             'H1 S1F')
 
-    def test_split_events_multiple_date_count(self):
-        actual = self.interpreter.get_new_event_from_string('h1 s1 s2')
-        actual = self.interpreter.get_new_event_from_string('h1 s1 s2 s3')
-
     def test_detection_of_event(self):
         event = self.interpreter._detect_event_class_and_id('Q1')
         self.assertEqual((MoodleQuiz, 1), event)
@@ -370,3 +366,19 @@ class InterpreterTest(unittest.TestCase):
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)
         self.assertEqual(expected_e, actual_e)
+
+    def test_with_3_dates(self):
+        expected_s = arrow.get(
+            2014, 1, 6, 8, tzinfo=tz.gettz('America/Montreal')).datetime
+        expected_e = arrow.get(
+            2014, 1, 13, 7, tzinfo=tz.gettz('America/Montreal')).datetime
+        expected_c = arrow.get(
+            2014, 1, 13, 8, tzinfo=tz.gettz('America/Montreal')).datetime
+        actual = self.interpreter.get_new_event_from_string('h1 S1F S2S S2F')
+        actual_s = actual.get_start_datetime()
+        actual_e = actual.get_end_datetime()
+        actual_c = actual._get_datetime_at_index(2)
+
+        self.assertEqual(expected_s, actual_s)
+        self.assertEqual(expected_e, actual_e)
+        self.assertEqual(expected_c, actual_c)

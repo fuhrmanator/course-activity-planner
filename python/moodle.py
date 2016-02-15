@@ -38,27 +38,23 @@ class MoodleEvent():
         self.event.find(k).text = v
         self.modified = True
 
-    def set_end_datetime(self, datetime):
-        timestamp = str(arrow.get(datetime).to('utc').timestamp)
-        k = self.event_keys['close']
-        self.__setitem__(k, timestamp)
-
     def set_start_datetime(self, datetime):
-        timestamp = str(arrow.get(datetime).to('utc').timestamp)
-        k = self.event_keys['start']
-        self.__setitem__(k, timestamp)
+        self._set_date_at_index(datetime, 0)
+
+    def set_end_datetime(self, datetime):
+        self._set_date_at_index(datetime, 1)
 
     def get_start_datetime(self):
-        return self._get_start_arrow().datetime
+        return self._get_arrow_at_index(0).datetime
 
     def get_start_timestamp(self):
-        return self._get_start_arrow().timestamp
+        return self._get_arrow_at_index(0).timestamp
 
     def get_end_datetime(self):
-        return self._get_end_arrow().datetime
+        return self._get_arrow_at_index(1).datetime
 
     def get_end_timestamp(self):
-        return self._get_end_arrow().timestamp
+        return self._get_arrow_at_index(1).timestamp
 
     def get_pretty_name(self):
         """To be implemented by subclasses"""
@@ -102,20 +98,29 @@ class MoodleEvent():
         cal_tree.write(moodle_cal_path, short_empty_elements=False,
                        encoding='UTF-8', xml_declaration=True)
 
-    def _get_end_arrow(self):
-        """Returns end as arrow object"""
-        return self._get_arrow('close')
+    def _set_date_at_index(self, datetime, index):
+        k = self.event_keys[index]
+        timestamp = str(arrow.get(datetime).to('utc').timestamp)
+        self.__setitem__(k, timestamp)
+
+    def _get_datetime_at_index(self, index):
+        return self._get_arrow_at_index(index).datetime
+
+    def _get_timestamp_at_index(self, index):
+        return self._get_arrow_at_index(index).timestamp
 
     def _get_start_arrow(self):
         """Returns end as arrow object"""
-        return self._get_arrow('start')
+        return self._get_arrow_at_index(0)
 
-    def _get_arrow(self, generic_event_key):
+    def _get_end_arrow(self):
+        """Returns end as arrow object"""
+        return self._get_arrow_at_index(1)
+
+    def _get_arrow_at_index(self, index):
         """Gets the arrow object representation of the start or close event.
-        generic_event_key: litteral string `start` or `close`
-        The actal key of the XML is resolved with the `event_keys` of
-        the subclasses."""
-        k = self.event_keys[generic_event_key]
+        """
+        k = self.event_keys[index]
         epoch = self.event.find(k).text
         return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal'))
 
@@ -123,10 +128,10 @@ class MoodleEvent():
 class MoodleQuiz(MoodleEvent):
     """Describes an XML Moodle quiz with key based access"""
 
-    event_keys = {
-        'start': 'timeopen',
-        'close': 'timeclose'
-    }
+    event_keys = [
+        'timeopen',
+        'timeclose'
+    ]
 
     def __init__(self, path):
         self.global_path = path
@@ -143,11 +148,11 @@ class MoodleHomework(MoodleEvent):
     """Describes an XML Moodle assignment (homework) with key based access"""
     maximum_dates_count = 3
 
-    event_keys = {
-        'start': 'allowsubmissionsfromdate',
-        'close': 'duedate',
-        'cutoff': 'cutoffdate',
-    }
+    event_keys = [
+        'allowsubmissionsfromdate',
+        'duedate',
+        'cutoffdate',
+    ]
 
     def __init__(self, path):
         self.global_path = path
