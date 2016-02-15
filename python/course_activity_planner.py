@@ -211,17 +211,19 @@ def _build_preview(interpreter, planning_txt):
 
     if planning_txt:
         for line in planning_txt.split('\n'):
-            event = interpreter.get_new_event_from_string(line)
-            pretty_event_name = event.get_pretty_name()
+            activity = interpreter.get_new_event_from_string(line)
+            activity_pretty_name = activity.get_pretty_name()
 
-            preview.append({
-                'title': '%s %d opens' % (pretty_event_name, event.rel_id),
-                'key_str': event.get_key(),
-                'timestamp': event.get_start_timestamp()})
-            preview.append({
-                'title': '%s %d closes' % (pretty_event_name, event.rel_id),
-                'key_str': event.get_key(),
-                'timestamp': event.get_end_timestamp()})
+            for i, event_pretty_name, in enumerate(activity.event_pretty_names):
+                timestamp = activity._get_timestamp_at_index(i)
+                if timestamp == 0:
+                    continue
+                preview.append({
+                    'title': '%s %d %s' % (
+                        activity_pretty_name, activity.rel_id,
+                        event_pretty_name),
+                    'key_str': activity.get_key(),
+                    'timestamp': timestamp})
 
     for meeting_type in calendar_meetings:
         clazz = meeting_type.__name__

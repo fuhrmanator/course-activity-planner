@@ -196,7 +196,7 @@ class AppTest(unittest.TestCase):
 
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'Q1 S3F S2\nH1 p3s p3f'}),
+            data=json.dumps({'planning': 'Q1 S1 S2'}),
             headers=[('Content-Type', 'application/json')])
 
         res = self.client.get('/api/planning/uuid/preview')
@@ -233,16 +233,86 @@ class AppTest(unittest.TestCase):
                 'timestamp': 1390392000},
             {'key_str': 'P', 'title': 'Practica 3 closes',
                 'timestamp': 1390395600},
-            {'key_str': 'H', 'title': 'Homework 1 opens',
-                'timestamp': 1390222800},
-            {'key_str': 'H', 'title': 'Homework 1 is due',
-                'timestamp': 1390392000},
-            {'key_str': 'H', 'title': 'Homework 1 closes',
-                'timestamp': 1390395600},
         ]
         self.assertEqual(expected, actual)
 
-        # Test multiple lines
+    def test_preview_homework_3_events(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        # Ignore ics url in request and link to local ics file
+        course_activity_planner._dl_and_save_ics_file = \
+            MagicMock(return_value=self.local_short_cal_path)
+        # Ignore mbz in request and link to local mbz file
+        course_activity_planner._save_mbz_file = \
+            MagicMock(return_value=self.local_mbz_path)
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url='some_url_to_be_mocked'))
+
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'H1 S3F P3 P3F'}),
+            headers=[('Content-Type', 'application/json')])
+
+        res = self.client.get('/api/planning/uuid/preview')
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['preview']
+
+        expected = [
+            {'key_str': 'S', 'title': 'Seminar 1 opens',
+                'timestamp': 1389009600},
+            {'key_str': 'S', 'title': 'Seminar 1 closes',
+                'timestamp': 1389013200},
+            {'key_str': 'P', 'title': 'Practica 1 opens',
+                'timestamp': 1389182400},
+            {'key_str': 'P', 'title': 'Practica 1 closes',
+                'timestamp': 1389186000},
+            {'key_str': 'S', 'title': 'Seminar 2 opens',
+                'timestamp': 1389614400},
+            {'key_str': 'S', 'title': 'Seminar 2 closes',
+                'timestamp': 1389618000},
+            {'key_str': 'P', 'title': 'Practica 2 opens',
+                'timestamp': 1389787200},
+            {'key_str': 'P', 'title': 'Practica 2 closes',
+                'timestamp': 1389790800},
+            {'key_str': 'S', 'title': 'Seminar 3 opens',
+                'timestamp': 1390219200},
+            {'key_str': 'H', 'title': 'Homework 1 opens',
+                'timestamp': 1390222800},
+            {'key_str': 'S', 'title': 'Seminar 3 closes',
+                'timestamp': 1390222800},
+            {'key_str': 'P', 'title': 'Practica 3 opens',
+                'timestamp': 1390392000},
+            {'key_str': 'H', 'title': 'Homework 1 is due',
+                'timestamp': 1390392000},
+            {'key_str': 'P', 'title': 'Practica 3 closes',
+                'timestamp': 1390395600},
+            {'key_str': 'H', 'title': 'Homework 1 closes',
+                'timestamp': 1390395600},
+        ]
+        self.assertEqual(len(actual), len(expected))
+        # no order expected
+        assert all(x in expected for x in actual)
+
+    def test_preview_multiple_lines(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        # Ignore ics url in request and link to local ics file
+        course_activity_planner._dl_and_save_ics_file = \
+            MagicMock(return_value=self.local_short_cal_path)
+        # Ignore mbz in request and link to local mbz file
+        course_activity_planner._save_mbz_file = \
+            MagicMock(return_value=self.local_mbz_path)
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url='some_url_to_be_mocked'))
+
         res = self.client.put(
             '/api/planning/uuid',
             data=json.dumps({'planning': 'Q1 S1 S2\nH1 S2 P3'}),
@@ -252,10 +322,6 @@ class AppTest(unittest.TestCase):
         self.assertEqual(200, res._status_code)
 
         actual = json.loads(res.data.decode('utf8'))['preview']
-
-        for e in actual:
-            print("{'title': '%s', 'timestamp': %d}," %
-                  (e['title'], e['timestamp']))
 
         expected = [
             {'title': 'Quiz 1 opens', 'timestamp': 1389009600,
@@ -284,7 +350,7 @@ class AppTest(unittest.TestCase):
                 'key_str': 'S'},
             {'title': 'Seminar 3 closes', 'timestamp': 1390222800,
                 'key_str': 'S'},
-            {'title': 'Homework 1 closes', 'timestamp': 1390392000,
+            {'title': 'Homework 1 is due', 'timestamp': 1390392000,
                 'key_str': 'H'},
             {'title': 'Practica 3 opens', 'timestamp': 1390392000,
                 'key_str': 'P'},

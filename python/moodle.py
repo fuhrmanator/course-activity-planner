@@ -132,6 +132,11 @@ class MoodleQuiz(MoodleEvent):
         'timeopen',
         'timeclose'
     ]
+    # for preview
+    event_pretty_names = [
+        'opens',
+        'closes'
+    ]
 
     def __init__(self, path):
         self.global_path = path
@@ -152,6 +157,13 @@ class MoodleHomework(MoodleEvent):
         'allowsubmissionsfromdate',
         'duedate',
         'cutoffdate',
+    ]
+
+    # for preview
+    event_pretty_names = [
+        'opens',
+        'is due',
+        'closes'
     ]
 
     def __init__(self, path):

@@ -79,6 +79,9 @@ class Interpreter():
         modifiers = self._get_modifiers_as_string(token)
         event = self._get_event_from_token(token)
 
+        if not event:
+            return None
+
         datetime = event.get_end_datetime() \
             if modifiers[0] else event.get_start_datetime()
 
