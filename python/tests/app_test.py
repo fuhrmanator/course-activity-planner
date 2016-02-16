@@ -449,7 +449,7 @@ class AppTest(unittest.TestCase):
         actual = json.loads(res.data.decode('utf8'))['alerts']
 
         expected = [{'type': 'warning',
-                    'msg': 'Quiz 1 end before it starts.'}]
+                    'msg': 'Quiz 1 ends before it starts.'}]
         self.assertEqual(expected, actual)
 
 if __name__ == '__main__':
