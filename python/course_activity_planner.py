@@ -98,8 +98,10 @@ def preview_planning(uuid):
     interpreter = Interpreter(calendar_meetings, course)
     preview = _build_preview(interpreter, planning_txt)
     inventory = _build_inventory(interpreter, planning_txt)
+    alerts = _build_alerts_for_preview(interpreter)
 
-    return jsonify({'preview': preview, 'inventory': inventory}), 200
+    return jsonify(
+        {'preview': preview, 'inventory': inventory, 'alerts': alerts}), 200
 
 
 @app.route('/api/planning/<uuid>/mbz', methods=['GET'])
@@ -241,6 +243,18 @@ def _build_preview(interpreter, planning_txt):
 
     # Return preview sorted by timestamp
     return sorted(preview, key=lambda p: p['timestamp'])
+
+
+def _build_alerts_for_preview(interpreter):
+    alerts = []
+    for activity_type in interpreter.course.activities:
+        for activity in interpreter.course.activities[activity_type]:
+            if activity.get_start_datetime() > activity.get_end_datetime():
+                alerts.append(
+                    {'type': 'warning',
+                     'msg': '%s %d ends before it starts.' %
+                     (activity.get_pretty_name(), activity.rel_id)})
+    return alerts
 
 
 def _bad_request():

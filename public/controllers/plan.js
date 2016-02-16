@@ -4,7 +4,7 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
     $scope.uuid = $routeParams.uuid;
     $scope.invKeys = ['Q', 'P', 'S', 'H'];
     $scope.previewKeys = ['Q', 'P', 'S', 'H'];
-    $scope.alerts = [{'type' :'danger', 'msg': 'tesdt'}]
+    $scope.alerts = [];
 
     $scope.closeAlert = function(index) {
         $scope.alerts.splice(index, 1);
@@ -67,6 +67,7 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
                     .success(function(data) {
                         $scope.preview = data.preview;
                         $scope.inventory = data.inventory;
+                        $scope.alerts = data.alerts;
                     })
                     .error(function(err, status) {
                         console.log(err, status);
