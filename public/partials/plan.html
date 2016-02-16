@@ -2,6 +2,12 @@
     <h1>Course Activity Planner</h1>
     <p>Plan your activities below</p>
     <div class="row">
+        <div class="col-md-12">
+            <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
+        </div>
+    </div>
+
+    <div class="row">
         <div class="col-md-4">
             <div class="row">
                 <h3>Your text planning</h3>

@@ -4,6 +4,11 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
     $scope.uuid = $routeParams.uuid;
     $scope.invKeys = ['Q', 'P', 'S', 'H'];
     $scope.previewKeys = ['Q', 'P', 'S', 'H'];
+    $scope.alerts = [{'type' :'danger', 'msg': 'tesdt'}]
+
+    $scope.closeAlert = function(index) {
+        $scope.alerts.splice(index, 1);
+    };
 
     $scope.filterInventoryByKey = function (element) {
         return $scope.invSelected(element.key_str);
