@@ -27,10 +27,7 @@ class MoodleEvent():
             return self.event.attrib[k]
         if k == 'moduleid':
             return int(self.activity.attrib[k])
-        try:
-            return self.event.find(k).text
-        except Exception as e:
-            pass
+        return self.event.find(k).text
 
     def __setitem__(self, k, v):
         if k == 'id' or k == 'moduleid':

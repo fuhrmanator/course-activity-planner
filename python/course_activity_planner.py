@@ -9,7 +9,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from models import Planning
 from database import db_session, init_db, init_engine, clear_db
 
-from interpreter import Interpreter
+from interpreter import Interpreter, InvalidSyntaxException
 from moodle import MoodleCourse
 from ics_calendar import CalendarReader
 
@@ -93,11 +93,16 @@ def preview_planning(uuid):
             tar_file.extractall(tmp_path)
             course = MoodleCourse(tmp_path)
 
-    interpreter = Interpreter(calendar_meetings, course)
-    preview = _build_preview(interpreter, planning_txt)
-    inventory = _build_inventory(interpreter, planning_txt)
-    alerts = _build_alerts_for_preview(interpreter)
-
+    alerts = []
+    preview = None
+    inventory = None
+    try:
+        interpreter = Interpreter(calendar_meetings, course)
+        inventory = _build_inventory(interpreter, planning_txt)
+        preview = _build_preview(interpreter, planning_txt)
+        alerts = _build_alerts_for_preview(interpreter)
+    except InvalidSyntaxException as e:
+        alerts.append({'type': 'danger', 'msg': e.message})
     return jsonify(
         {'preview': preview, 'inventory': inventory, 'alerts': alerts}), 200
 
@@ -106,8 +111,7 @@ def preview_planning(uuid):
 def download_planning(uuid):
     planning = _get_planning(uuid)
     if not planning:
-        return jsonify(
-            {'message': 'Planning with uuid "%s" not found' % uuid}), 404
+        return _planning_not_found(uuid)
 
     moodle_archive_path = planning.mbz_fullpath
     planning_txt = planning.planning_txt

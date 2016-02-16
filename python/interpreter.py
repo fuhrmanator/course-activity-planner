@@ -26,11 +26,18 @@ Invalid syntax while splitting events from string "%s"' % str
         return repr(self.message)
 
 
-class InvalidModifiersException(Exception):
+class InvalidModifiersException(InvalidSyntaxException):
     """Raised if modifiers could not be isolated or interpreted."""
     def __init__(self, str):
         self.message = '\
 Invalid syntax while parsing modifiers from string "%s"' % str
+
+
+class InvalidEventIdentifier(InvalidSyntaxException):
+    """Raised if events could not be linked to content."""
+    def __init__(self, str):
+        self.message = '\
+Unknown event id "%s". Please use keys from available activities.' % str
 
     def __str__(self):
         return repr(self.message)
@@ -96,10 +103,13 @@ class Interpreter():
         event_clazz, event_id = self._detect_event_class_and_id(token)
 
         # TODO: find a more elegant solution
-        if event_clazz == MoodleQuiz or event_clazz == MoodleHomework:
-            return self.course.get_activity_by_type_and_num(
-                event_clazz, event_id)
-        return self.meetings[event_clazz][event_id - 1]
+        try:
+            if event_clazz == MoodleQuiz or event_clazz == MoodleHomework:
+                    return self.course.get_activity_by_type_and_num(
+                        event_clazz, event_id)
+            return self.meetings[event_clazz][event_id - 1]
+        except Exception:
+            raise InvalidEventIdentifier(token)
 
     def _parse_subject(self, tokens):
         """Returns the event described by the first token of string
@@ -113,6 +123,7 @@ class Interpreter():
             r = regex.search(string)
             if r and r.groupdict()['id']:
                 return (clazz, int(r.groupdict()['id']))
+        raise InvalidEventIdentifier(string)
 
     def _split_line(self, string):
         parts = string.split(' ')
