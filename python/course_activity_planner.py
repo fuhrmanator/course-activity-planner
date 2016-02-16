@@ -68,8 +68,7 @@ def update_planning(uuid):
 def get_planning(uuid):
     planning = _get_planning(uuid)
     if not planning:
-        return jsonify(
-            {'message': 'Planning with uuid "%s" not found' % uuid}), 404
+        return _planning_not_found(uuid)
     return jsonify({'planning': planning.as_pub_dict()})
 
 
@@ -77,8 +76,7 @@ def get_planning(uuid):
 def preview_planning(uuid):
     planning = _get_planning(uuid)
     if not planning:
-        return jsonify(
-            {'message': 'Planning with uuid "%s" not found' % uuid}), 404
+        return _planning_not_found(uuid)
 
     moodle_archive_path = planning.mbz_fullpath
     planning_txt = planning.planning_txt
@@ -259,6 +257,13 @@ def _build_alerts_for_preview(interpreter):
 
 def _bad_request():
     return jsonify({'message': 'Bad request.'}), 400
+
+
+def _planning_not_found(uuid):
+    return jsonify(
+        {'alerts': [
+            {'type': 'danger',
+             'msg': 'Planning with uuid "%s" not found' % uuid}]}), 404
 
 
 def _clear_db():

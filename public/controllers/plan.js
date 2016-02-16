@@ -70,10 +70,12 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
                         $scope.alerts = data.alerts;
                     })
                     .error(function(err, status) {
+                        $scope.alerts = err.alerts;
                         console.log(err, status);
                     });
             })
             .error(function(err, status) {
+                $scope.alerts = err.alerts;
                 console.log(err, status);
         });
     };
