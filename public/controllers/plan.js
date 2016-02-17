@@ -2,8 +2,11 @@ var controllers = angular.module('app.controllers.PlanController', ['ngFileUploa
 
 controllers.controller('PlanController', function($scope, $http, $location, $routeParams) {
     $scope.uuid = $routeParams.uuid;
-    $scope.invKeys = ['Q', 'P', 'S', 'H', 'L', 'C', 'F'];
-    $scope.previewKeys = $scope.invKeys;
+    $scope.keys_name = {'Q':'Quizzes', 'P':'Practicas', 'S': 'Seminars',
+        'H': 'Homeworks', 'L':'Lessons', 'C': 'Choices', 'F': 'Feedbacks'};
+    $scope.keys = Object.keys($scope.keys_name);
+    $scope.invKeys = $scope.keys.slice(0);
+    $scope.previewKeys = $scope.keys.slice(0);
     $scope.alerts = [];
 
     $scope.closeAlert = function(index) {
@@ -26,12 +29,12 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
         $scope.toggleKey(key_str, $scope.previewKeys);
     };
 
-    $scope.toggleKey = function (key_str, keys) {
-        var index = keys.indexOf(key_str);
+    $scope.toggleKey = function (key_str, key_set) {
+        var index = key_set.indexOf(key_str);
         if (index === -1) {
-            keys.push(key_str);
+            key_set.push(key_str);
         } else {
-            keys.splice(index, 1);
+            key_set.splice(index, 1);
         }
     };
 
