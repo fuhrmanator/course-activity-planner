@@ -8,6 +8,9 @@ class GenericMeeting():
     def __init__(self, calendar_event):
         self.calendar_event = calendar_event
 
+    def is_moodle():
+        return False
+
     def get_start_datetime(self):
         return self.calendar_event.begin.to('America/Montreal').datetime
 

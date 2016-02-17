@@ -2,7 +2,8 @@ import re
 
 from datetime import timedelta, datetime
 
-from moodle import MoodleQuiz, MoodleHomework
+from moodle import MoodleQuiz, MoodleHomework, MoodleLesson, MoodleFeedback, \
+    MoodleChoice
 from ics_calendar import Seminar, Practica
 
 
@@ -55,6 +56,12 @@ class Interpreter():
 
     candidates = {
         MoodleQuiz: re.compile(r'^[q](?P<id>[0-9]{1,2})([sf]?)', re.IGNORECASE),
+        MoodleLesson: re.compile(r'^[l](?P<id>[0-9]{1,2})([sf]?)',
+                                 re.IGNORECASE),
+        MoodleChoice: re.compile(r'^[c](?P<id>[0-9]{1,2})([sf]?)',
+                                 re.IGNORECASE),
+        MoodleFeedback: re.compile(r'^[f](?P<id>[0-9]{1,2})([sf]?)',
+                                   re.IGNORECASE),
         MoodleHomework: re.compile(r'^[h](?P<id>[0-9]{1,2})([sf]?)',
                                    re.IGNORECASE),
         Seminar: re.compile(r'^[s](?P<id>[0-9]{1,2})([sf]?)', re.IGNORECASE),
@@ -100,13 +107,12 @@ class Interpreter():
         return new_datetime
 
     def _get_event_from_token(self, token):
-        event_clazz, event_id = self._detect_event_class_and_id(token)
-
         # TODO: find a more elegant solution
         try:
-            if event_clazz == MoodleQuiz or event_clazz == MoodleHomework:
-                    return self.course.get_activity_by_type_and_num(
-                        event_clazz, event_id)
+            event_clazz, event_id = self._detect_event_class_and_id(token)
+            if event_clazz.is_moodle():
+                return self.course.get_activity_by_type_and_num(
+                    event_clazz, event_id)
             return self.meetings[event_clazz][event_id - 1]
         except Exception:
             raise InvalidEventIdentifier(token)

@@ -2,8 +2,8 @@ var controllers = angular.module('app.controllers.PlanController', ['ngFileUploa
 
 controllers.controller('PlanController', function($scope, $http, $location, $routeParams) {
     $scope.uuid = $routeParams.uuid;
-    $scope.invKeys = ['Q', 'P', 'S', 'H'];
-    $scope.previewKeys = ['Q', 'P', 'S', 'H'];
+    $scope.invKeys = ['Q', 'P', 'S', 'H', 'L', 'C', 'F'];
+    $scope.previewKeys = $scope.invKeys;
     $scope.alerts = [];
 
     $scope.closeAlert = function(index) {

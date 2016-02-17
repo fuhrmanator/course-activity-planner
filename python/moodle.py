@@ -35,6 +35,9 @@ class MoodleEvent():
         self.event.find(k).text = v
         self.modified = True
 
+    def is_moodle():
+        return True
+
     def set_start_datetime(self, datetime):
         self._set_date_at_index(datetime, 0)
 
@@ -122,9 +125,7 @@ class MoodleEvent():
         return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal'))
 
 
-class MoodleQuiz(MoodleEvent):
-    """Describes an XML Moodle quiz with key based access"""
-
+class ClassicMoodleActivity(MoodleEvent):
     event_keys = [
         'timeopen',
         'timeclose'
@@ -135,6 +136,10 @@ class MoodleQuiz(MoodleEvent):
         'closes'
     ]
 
+
+class MoodleQuiz(ClassicMoodleActivity):
+    """Describes an XML Moodle quiz with key based access"""
+
     def __init__(self, path):
         self.global_path = path
         super().__init__(os.path.join(path, 'quiz.xml'))
@@ -144,6 +149,58 @@ class MoodleQuiz(MoodleEvent):
 
     def get_key(self):
         return 'Q'
+
+
+class MoodleChoice(ClassicMoodleActivity):
+    """Describes an XML Moodle choice with key based access"""
+
+    def __init__(self, path):
+        self.global_path = path
+        super().__init__(os.path.join(path, 'choice.xml'))
+
+    def get_pretty_name(self):
+        return 'Choice'
+
+    def get_key(self):
+        return 'C'
+
+
+class MoodleFeedback(ClassicMoodleActivity):
+    """Describes an XML Moodle feedback with key based access"""
+
+    def __init__(self, path):
+        self.global_path = path
+        super().__init__(os.path.join(path, 'feedback.xml'))
+
+    def get_pretty_name(self):
+        return 'Feedback'
+
+    def get_key(self):
+        return 'F'
+
+
+class MoodleLesson(MoodleEvent):
+    """Describes an XML Moodle lesson with key based access"""
+
+    event_keys = [
+        'available',
+        'deadline'
+    ]
+    # for preview
+    event_pretty_names = [
+        'opens',
+        'closes'
+    ]
+
+    def __init__(self, path):
+        self.global_path = path
+        super().__init__(os.path.join(path, 'lesson.xml'))
+
+    def get_pretty_name(self):
+        return 'Lesson'
+
+    def get_key(self):
+        return 'L'
 
 
 class MoodleHomework(MoodleEvent):
@@ -180,7 +237,10 @@ class MoodleCourse():
 
     modname_to_class = {
         'quiz': MoodleQuiz,
-        'assign': MoodleHomework
+        'assign': MoodleHomework,
+        'feedback': MoodleFeedback,
+        'lesson': MoodleLesson,
+        'choice': MoodleChoice
         }
 
     def __init__(self, moodle_archive_path):

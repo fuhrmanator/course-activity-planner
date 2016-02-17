@@ -7,7 +7,8 @@ import arrow
 
 from dateutil import tz
 
-from moodle import MoodleCourse, MoodleQuiz, MoodleHomework
+from moodle import MoodleCourse, MoodleQuiz, MoodleHomework, MoodleLesson, \
+    MoodleFeedback, MoodleChoice
 
 
 class TestMoodleCourseSingleSection(unittest.TestCase):
@@ -264,6 +265,68 @@ class TestMoodleWriter(unittest.TestCase):
         self.assertTrue(q1_before_modification_dt == os.path.getmtime(q1.path))
         self.assertFalse(q2_before_modification_dt == os.path.getmtime(q2.path))
         self.assertFalse(h1_before_modification_dt == os.path.getmtime(h1.path))
+
+
+class TestMoodleOtherActivities(unittest.TestCase):
+
+    moodle_archive_path = '../data/all-activities.mbz'
+
+    def setUp(self):
+        self.tmp_path = tempfile.mkdtemp()
+
+        with tarfile.open(self.moodle_archive_path) as tar_file:
+            tar_file.extractall(self.tmp_path)
+
+    def tearDown(self):
+        # TODO test on windows
+        shutil.rmtree(self.tmp_path)
+
+    def test_load_activities(self):
+        course = MoodleCourse(self.tmp_path)
+
+        actual = course._load_activites()[MoodleQuiz]
+        self.assertEqual(3, len(actual))
+
+        actual = course._load_activites()[MoodleHomework]
+        self.assertEqual(1, len(actual))
+
+        actual = course._load_activites()[MoodleLesson]
+        self.assertEqual(1, len(actual))
+
+        actual = course._load_activites()[MoodleFeedback]
+        self.assertEqual(1, len(actual))
+
+        actual = course._load_activites()[MoodleChoice]
+        self.assertEqual(1, len(actual))
+
+    # def test_sort_activity_type(self):
+    #     course = MoodleCourse(self.tmp_path)
+    #     activities = course._load_activites()[MoodleQuiz]
+    #     activities = course._sort_activity_type(activities)
+    #
+    #     for i, x in enumerate([146935, 146936, 146939]):
+    #         self.assertEqual(x, activities[i]['moduleid'])
+    #
+    # def test_activities_are_sorted(self):
+    #     course = MoodleCourse(self.tmp_path)
+    #
+    #     for i, x in enumerate([146935, 146936, 146939]):
+    #         self.assertEqual(x, course.activities[MoodleQuiz][i]['moduleid'])
+    #
+    # def test_get_activity_by_relative_num(self):
+    #     course = MoodleCourse(self.tmp_path)
+    #
+    #     actual = course.get_activity_by_type_and_num(MoodleQuiz, 1)['id']
+    #     self.assertEqual('4271', actual)
+    #
+    #     actual = course.get_activity_by_type_and_num(MoodleQuiz, 2)['id']
+    #     self.assertEqual('4272', actual)
+    #
+    #     actual = course.get_activity_by_type_and_num(MoodleQuiz, 3)['id']
+    #     self.assertEqual('4273', actual)
+    #
+    #     actual = course.get_activity_by_type_and_num(MoodleHomework, 1)['id']
+    #     self.assertEqual('5588', actual)
 
 
 if __name__ == "__main__":
