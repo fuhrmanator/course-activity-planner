@@ -230,6 +230,20 @@ class MoodleHomework(MoodleEvent):
     def get_key(self):
         return 'H'
 
+    def _write_calendar(self):
+        moodle_cal_path = os.path.join(self.global_path, 'calendar.xml')
+        cal_tree = ET.parse(moodle_cal_path)
+        events = cal_tree.getroot()
+
+        if len(events) != 1:
+            raise Exception('Unimplemented')
+
+        events[0].find('timestart').text = str(self.get_end_timestamp())
+        events[0].find('timeduration').text = 0
+
+        cal_tree.write(moodle_cal_path, short_empty_elements=False,
+                       encoding='UTF-8', xml_declaration=True)
+
 
 class MoodleCourse():
     """\
