@@ -230,23 +230,28 @@ def _get_preview_items_for_planning(interpreter, planning_txt):
     return preview
 
 
-def _build_preview(interpreter, planning_txt):
-    preview = _get_preview_items_for_planning(interpreter, planning_txt)
-
-    calendar_meetings = interpreter.meetings
+def _add_preview_items_for_calendar(calendar_meetings, preview_items):
     for meeting_type in calendar_meetings:
         clazz = meeting_type.__name__
 
         for i, meeting in enumerate(calendar_meetings[meeting_type]):
             rel_id = i + 1
-            preview.append({
+            preview_items.append({
                 'title': '%s %d opens' % (clazz, rel_id),
                 'key_str': meeting.get_key(),
                 'timestamp': meeting.get_start_timestamp()})
-            preview.append({
+            preview_items.append({
                 'title': '%s %d closes' % (clazz, rel_id),
                 'key_str': meeting.get_key(),
                 'timestamp': meeting.get_end_timestamp()})
+    return preview_items
+
+
+def _build_preview(interpreter, planning_txt):
+    preview = _get_preview_items_for_planning(interpreter, planning_txt)
+
+    calendar_meetings = interpreter.meetings
+    preview = _add_preview_items_for_calendar(calendar_meetings, preview)
 
     # Return preview sorted by timestamp
     return sorted(preview, key=lambda p: p['timestamp'])

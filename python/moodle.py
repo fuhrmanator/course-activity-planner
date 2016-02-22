@@ -42,7 +42,6 @@ class MoodleEvent():
     def __setitem__(self, k, v):
         if k == 'id' or k == 'moduleid':
             raise Exception('Not allowed')
-        print('setting value "%s" at key "%s"' % (v, k))
         self.event.find(k).text = v
         self.modified = True
 
