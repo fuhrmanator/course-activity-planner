@@ -85,6 +85,11 @@ class InterpreterTest(unittest.TestCase):
         relative_modifier = mods[0]
         self.assertEqual(True, relative_modifier)
 
+        # Explicit finish lowercase
+        mods = self.interpreter._get_modifiers_as_string('S1f')
+        relative_modifier = mods[0]
+        self.assertEqual(True, relative_modifier)
+
         # Explicit finish
         mods = self.interpreter._get_modifiers_as_string('S1F@23:59')
         relative_modifier = mods[0]

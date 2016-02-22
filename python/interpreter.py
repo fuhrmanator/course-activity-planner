@@ -86,7 +86,6 @@ class Interpreter():
 
         for i, token in enumerate(tokens[1:]):
             event._set_date_at_index(self._get_datetime_from_token(token), i)
-
         return event
 
     def _get_datetime_from_token(self, token):
@@ -158,7 +157,7 @@ class Interpreter():
         if not r:
             raise InvalidModifiersException(string)
 
-        at_end = r.groupdict()['end'] == 'F'
+        at_end = str(r.groupdict()['end']).upper() == 'F'
         relative_modifier_str = r.groupdict()['rel']
         time_modifier_str = r.groupdict()['time']
 

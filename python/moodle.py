@@ -9,6 +9,16 @@ from dateutil import tz
 class MoodleEvent():
     """Describes an XML Moodle event with key based access"""
 
+    event_keys = [
+        'timeopen',
+        'timeclose'
+    ]
+    # for preview
+    event_pretty_names = [
+        'opens',
+        'closes'
+    ]
+
     minimum_dates_count = 2
     maximum_dates_count = 2
 
@@ -32,6 +42,7 @@ class MoodleEvent():
     def __setitem__(self, k, v):
         if k == 'id' or k == 'moduleid':
             raise Exception('Not allowed')
+        print('setting value "%s" at key "%s"' % (v, k))
         self.event.find(k).text = v
         self.modified = True
 
@@ -125,19 +136,7 @@ class MoodleEvent():
         return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal'))
 
 
-class ClassicMoodleActivity(MoodleEvent):
-    event_keys = [
-        'timeopen',
-        'timeclose'
-    ]
-    # for preview
-    event_pretty_names = [
-        'opens',
-        'closes'
-    ]
-
-
-class MoodleQuiz(ClassicMoodleActivity):
+class MoodleQuiz(MoodleEvent):
     """Describes an XML Moodle quiz with key based access"""
 
     def __init__(self, path):
@@ -151,7 +150,7 @@ class MoodleQuiz(ClassicMoodleActivity):
         return 'Q'
 
 
-class MoodleChoice(ClassicMoodleActivity):
+class MoodleChoice(MoodleEvent):
     """Describes an XML Moodle choice with key based access"""
 
     def __init__(self, path):
@@ -165,7 +164,7 @@ class MoodleChoice(ClassicMoodleActivity):
         return 'C'
 
 
-class MoodleFeedback(ClassicMoodleActivity):
+class MoodleFeedback(MoodleEvent):
     """Describes an XML Moodle feedback with key based access"""
 
     def __init__(self, path):

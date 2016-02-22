@@ -208,10 +208,8 @@ def _build_inventory(interpreter, planning_txt):
     return inventory
 
 
-def _build_preview(interpreter, planning_txt):
-    # Build preview
+def _get_preview_items_for_planning(interpreter, planning_txt):
     preview = []
-    calendar_meetings = interpreter.meetings
 
     if planning_txt:
         for line in planning_txt.split('\n'):
@@ -220,6 +218,7 @@ def _build_preview(interpreter, planning_txt):
 
             for i, event_pretty_name, in enumerate(activity.event_pretty_names):
                 timestamp = activity._get_timestamp_at_index(i)
+
                 if timestamp == 0:
                     continue
                 preview.append({
@@ -228,7 +227,13 @@ def _build_preview(interpreter, planning_txt):
                         event_pretty_name),
                     'key_str': activity.get_key(),
                     'timestamp': timestamp})
+    return preview
 
+
+def _build_preview(interpreter, planning_txt):
+    preview = _get_preview_items_for_planning(interpreter, planning_txt)
+
+    calendar_meetings = interpreter.meetings
     for meeting_type in calendar_meetings:
         clazz = meeting_type.__name__
 
