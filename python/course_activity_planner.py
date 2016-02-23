@@ -186,14 +186,14 @@ def _dl_and_save_ics_file(ics_url, folder):
 
 
 def _build_inventory(interpreter, planning_txt):
-    inventory = {'moodle': [], 'calendar': []}
+    inventory = {'meetings': [], 'activities': []}
     calendar_meetings = interpreter.meetings
     moodle_activities = interpreter.course.activities
 
     for meeting_type in calendar_meetings:
         for i, meeting in enumerate(calendar_meetings[meeting_type]):
             rel_id = i + 1
-            inventory['calendar'].append({
+            inventory['meetings'].append({
                 'rel_id': rel_id,
                 'key_str': meeting.get_key(),
                 'title': meeting.get_title()})
@@ -201,7 +201,7 @@ def _build_inventory(interpreter, planning_txt):
     for activity_type in moodle_activities:
         for i, activity in enumerate(moodle_activities[activity_type]):
             rel_id = i + 1
-            inventory['moodle'].append({
+            inventory['activities'].append({
                 'rel_id': rel_id,
                 'key_str': activity.get_key(),
                 'title': activity.get_title()})

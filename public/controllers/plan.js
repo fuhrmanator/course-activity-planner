@@ -2,9 +2,9 @@ var controllers = angular.module('app.controllers.PlanController', ['ngFileUploa
 
 controllers.controller('PlanController', function($scope, $http, $location, $routeParams) {
     $scope.uuid = $routeParams.uuid;
-    $scope.events_name = {'P': 'Practicas', 'S': 'Seminars'};
+    $scope.meetings_name = {'P': 'Practicas', 'S': 'Seminars'};
     $scope.activities_name = {'Q':'Quizzes','H': 'Homeworks', 'L':'Lessons', 'C': 'Choices', 'F': 'Feedbacks'};
-    $scope.keys = Object.keys($scope.activities_name).concat(Object.keys($scope.events_name));
+    $scope.keys = Object.keys($scope.activities_name).concat(Object.keys($scope.meetings_name));
     $scope.invKeys = $scope.keys;
     $scope.previewKeys = $scope.keys;
     $scope.alerts = [];
@@ -80,9 +80,9 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
                         }
 
                         // Fill key count
-                        for (var variable in $scope.inventory) {
-                            for (i = 0; i < $scope.inventory[variable].length; i++) {
-                                $scope.key_counts[$scope.inventory[variable][i].key_str]++;
+                        for (var type in $scope.inventory) {
+                            for (i = 0; i < $scope.inventory[type].length; i++) {
+                                $scope.key_counts[$scope.inventory[type][i].key_str]++;
                             }
                         }
                     })

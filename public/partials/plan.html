@@ -26,7 +26,7 @@
         </div>
         <div class="col-md-4">
             <h3>Available activities</h3>
-            <p>Filter by activity type</p>
+            <p>Activities can be planned relative to meetings</p>
             <div class="btn-group">
                 <div class="btn-group" ng-repeat="(key, name) in activities_name">
                     <button ng-click="toggleInventoryKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !invSelected(key)}, {'btn-success' : invSelected(key)}]">{{name}} <span class="badge">{{key_counts[key]}}</span></button>
@@ -40,7 +40,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="e in inventory['moodle'] | filter: filterInventoryByKey">
+                    <tr ng-repeat="e in inventory['activities'] | filter: filterInventoryByKey">
                         <td>
                             {{e.key_str + e.rel_id}}
                         </td>
@@ -52,10 +52,10 @@
             </table>
         </div>
         <div class="col-md-4">
-            <h3>Available events</h3>
-            <p>Filter by event type</p>
+            <h3>Available meetings</h3>
+            <p>Meetings are defined by the actual calendar and used to plan activities.</p>
             <div class="btn-group">
-                <div class="btn-group" ng-repeat="(key, name) in events_name">
+                <div class="btn-group" ng-repeat="(key, name) in meetings_name">
                     <button ng-click="toggleInventoryKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !invSelected(key)}, {'btn-success' : invSelected(key)}]">{{name}} <span class="badge">{{key_counts[key]}}</span></button>
                 </div>
             </div>
@@ -67,7 +67,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="e in inventory['calendar'] | filter: filterInventoryByKey">
+                    <tr ng-repeat="e in inventory['meetings'] | filter: filterInventoryByKey">
                         <td>
                             {{e.key_str + e.rel_id}}
                         </td>
@@ -94,7 +94,7 @@
                 <thead>
                     <tr>
                         <th style="width: 10em;">Date</th>
-                        <th>Event</th>
+                        <th>Meeting</th>
                     </tr>
                 </thead>
                 <tbody>
