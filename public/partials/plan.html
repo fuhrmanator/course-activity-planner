@@ -24,12 +24,12 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-8">
+        <div class="col-md-4">
             <h3>Available activities</h3>
             <p>Filter by activity type</p>
             <div class="btn-group">
-                <div class="btn-group" ng-repeat="(key, name) in keys_name">
-                    <button ng-click="toggleInventoryKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !invSelected(key)}, {'btn-success' : invSelected(key)}]">{{name}}</button>
+                <div class="btn-group" ng-repeat="(key, name) in activities_name">
+                    <button ng-click="toggleInventoryKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !invSelected(key)}, {'btn-success' : invSelected(key)}]">{{name}} <span class="badge">{{key_counts[key]}}</span></button>
                 </div>
             </div>
             <table class="table table-condensed table-bordered table-hover">
@@ -40,7 +40,34 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="e in inventory | filter: filterInventoryByKey">
+                    <tr ng-repeat="e in inventory['moodle'] | filter: filterInventoryByKey">
+                        <td>
+                            {{e.key_str + e.rel_id}}
+                        </td>
+                        <td>
+                            {{e.title}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <h3>Available events</h3>
+            <p>Filter by event type</p>
+            <div class="btn-group">
+                <div class="btn-group" ng-repeat="(key, name) in events_name">
+                    <button ng-click="toggleInventoryKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !invSelected(key)}, {'btn-success' : invSelected(key)}]">{{name}} <span class="badge">{{key_counts[key]}}</span></button>
+                </div>
+            </div>
+            <table class="table table-condensed table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th style="width: 5em;">Key</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="e in inventory['calendar'] | filter: filterInventoryByKey">
                         <td>
                             {{e.key_str + e.rel_id}}
                         </td>

@@ -2,11 +2,11 @@ var controllers = angular.module('app.controllers.PlanController', ['ngFileUploa
 
 controllers.controller('PlanController', function($scope, $http, $location, $routeParams) {
     $scope.uuid = $routeParams.uuid;
-    $scope.keys_name = {'Q':'Quizzes', 'P':'Practicas', 'S': 'Seminars',
-        'H': 'Homeworks', 'L':'Lessons', 'C': 'Choices', 'F': 'Feedbacks'};
-    $scope.keys = Object.keys($scope.keys_name);
-    $scope.invKeys = $scope.keys.slice(0);
-    $scope.previewKeys = $scope.keys.slice(0);
+    $scope.events_name = {'P': 'Practicas', 'S': 'Seminars'};
+    $scope.activities_name = {'Q':'Quizzes','H': 'Homeworks', 'L':'Lessons', 'C': 'Choices', 'F': 'Feedbacks'};
+    $scope.keys = Object.keys($scope.activities_name).concat(Object.keys($scope.events_name));
+    $scope.invKeys = $scope.keys;
+    $scope.previewKeys = $scope.keys;
     $scope.alerts = [];
 
     $scope.closeAlert = function(index) {
@@ -71,6 +71,20 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
                         $scope.preview = data.preview;
                         $scope.inventory = data.inventory;
                         $scope.alerts = data.alerts;
+                        $scope.key_counts = {};
+
+                        // Init key count dict with all keys value 0
+                        for (var i = 0; i < $scope.keys.length; i++) {
+                            var key = $scope.keys[i];
+                            $scope.key_counts[key] = 0;
+                        }
+
+                        // Fill key count
+                        for (var variable in $scope.inventory) {
+                            for (i = 0; i < $scope.inventory[variable].length; i++) {
+                                $scope.key_counts[$scope.inventory[variable][i].key_str]++;
+                            }
+                        }
                     })
                     .error(function(err, status) {
                         $scope.alerts = err.alerts;
