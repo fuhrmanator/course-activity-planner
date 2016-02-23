@@ -160,23 +160,30 @@ class AppTest(unittest.TestCase):
         res = self.client.get('/api/planning/uuid/preview')
         self.assertEqual(200, res._status_code)
 
-        actual = json.loads(res.data.decode('utf8'))['inventory']
+        actual_cal = json.loads(
+            res.data.decode('utf8'))['inventory']['calendar']
+        actual_moodle = json.loads(
+            res.data.decode('utf8'))['inventory']['moodle']
 
-        expected = [
-            {'key_str': 'P', 'rel_id': 1, 'title': 'log210 TP 1'},
-            {'key_str': 'P', 'rel_id': 2, 'title': 'log210 TP 2'},
-            {'key_str': 'P', 'rel_id': 3, 'title': 'log210 TP 3'},
+        expected_cal = [
             {'key_str': 'S', 'rel_id': 1, 'title': 'log210 Cours magistral 1'},
             {'key_str': 'S', 'rel_id': 2, 'title': 'log210 Cours magistral 2'},
             {'key_str': 'S', 'rel_id': 3, 'title': 'log210 Cours magistral 3'},
+            {'key_str': 'P', 'rel_id': 1, 'title': 'log210 TP 1'},
+            {'key_str': 'P', 'rel_id': 2, 'title': 'log210 TP 2'},
+            {'key_str': 'P', 'rel_id': 3, 'title': 'log210 TP 3'},
+        ]
+        expected_moodle = [
             {'key_str': 'H', 'rel_id': 1, 'title': 'Devoir bidon'},
             {'key_str': 'Q', 'rel_id': 1, 'title': 'test de remise'},
             {'key_str': 'Q', 'rel_id': 2, 'title': 'Premier test'},
             {'key_str': 'Q', 'rel_id': 3, 'title': 'Quiz Moodle Backup'},
         ]
-        self.assertEqual(len(actual), len(expected))
+        self.assertEqual(len(actual_cal), len(expected_cal))
+        self.assertEqual(len(actual_moodle), len(expected_moodle))
         # no order expected
-        assert all(x in expected for x in actual)
+        assert all(x in expected_cal for x in actual_cal)
+        assert all(x in expected_moodle for x in actual_moodle)
 
     def test_preview_planning(self):
         course_activity_planner._generate_planning_uuid = \
