@@ -8,7 +8,7 @@ class GenericMeeting():
     def __init__(self, calendar_event):
         self.calendar_event = calendar_event
 
-    def is_moodle():
+    def is_activity():
         return False
 
     def get_start_datetime(self):

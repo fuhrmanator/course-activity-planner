@@ -44,6 +44,20 @@ Unknown event id "%s". Please use keys from available activities.' % str
         return repr(self.message)
 
 
+class InvalidSubjectException(InvalidSyntaxException):
+    """Raised if planning line contains a meeting as the subject."""
+    def __init__(self, tokens):
+        full_line = ' '.join(tokens)
+        subject = tokens[0]
+        self.message = ('Line "%s" refers to the meeting "%s"' +
+                        ' as the subject. Only activities can be planned.') % (
+                        full_line, subject
+                        )
+
+    def __str__(self):
+        return repr(self.message)
+
+
 class Interpreter():
 
     modifiers_regex = re.compile(
@@ -74,7 +88,7 @@ class Interpreter():
 
     def get_new_event_from_string(self, string):
         tokens = self._split_line(string)
-        event = self._get_event_from_token(tokens[0])
+        event = self._parse_subject(tokens)
         date_tokens_len = len(tokens) - 1
 
         if date_tokens_len < event.minimum_dates_count or \
@@ -109,7 +123,7 @@ class Interpreter():
         # TODO: find a more elegant solution
         try:
             event_clazz, event_id = self._detect_event_class_and_id(token)
-            if event_clazz.is_moodle():
+            if event_clazz.is_activity():
                 return self.course.get_activity_by_type_and_num(
                     event_clazz, event_id)
             return self.meetings[event_clazz][event_id - 1]
@@ -120,6 +134,8 @@ class Interpreter():
         """Returns the event described by the first token of string
         """
         event_clazz, event_id = self._detect_event_class_and_id(tokens[0])
+        if not event_clazz.is_activity():
+            raise InvalidSubjectException(tokens)
         return self.course.get_activity_by_type_and_num(event_clazz, event_id)
 
     def _detect_event_class_and_id(self, string):

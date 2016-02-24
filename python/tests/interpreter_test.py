@@ -8,7 +8,7 @@ from dateutil import tz
 from datetime import timedelta, time
 
 from interpreter import Interpreter, AbsoluteTimeModifierException, \
-    InvalidSyntaxException, InvalidModifiersException
+    InvalidSyntaxException, InvalidModifiersException, InvalidSubjectException
 from moodle import MoodleCourse, MoodleQuiz
 from ics_calendar import CalendarReader, Seminar, Practica
 
@@ -297,6 +297,19 @@ class InterpreterTest(unittest.TestCase):
         tokens = self.interpreter._split_line('Q3 S1 S1F')
         actual = self.interpreter._parse_subject(tokens)['id']
         self.assertEqual('4273', actual)
+
+    def test_handle_invalid_subject(self):
+        # Seminars can't be used as subject
+        tokens = self.interpreter._split_line('S1 Q1 Q1F')
+        self.assertRaises(
+            InvalidSubjectException,
+            self.interpreter._parse_subject, tokens)
+
+        # Practicas can't be used as subject
+        tokens = self.interpreter._split_line('P1 Q1 Q1F')
+        self.assertRaises(
+            InvalidSubjectException,
+            self.interpreter._parse_subject, tokens)
 
     def test_get_new_event_from_string(self):
         expected_s = arrow.get(

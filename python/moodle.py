@@ -45,7 +45,7 @@ class MoodleEvent():
         self.event.find(k).text = v
         self.modified = True
 
-    def is_moodle():
+    def is_activity():
         return True
 
     def set_start_datetime(self, datetime):
