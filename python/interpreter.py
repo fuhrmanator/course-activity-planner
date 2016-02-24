@@ -49,10 +49,10 @@ class InvalidSubjectException(InvalidSyntaxException):
     def __init__(self, tokens):
         full_line = ' '.join(tokens)
         subject = tokens[0]
-        self.message = ('Line "%s" refers to the meeting "%s"' +
-                        ' as the subject. Only activities can be planned.') % (
-                        full_line, subject
-                        )
+        self.message = \
+            ('Line "%s" refers to the meeting "%s"' +
+                ' as the subject. Only activities can be planned.') % \
+            (full_line, subject)
 
     def __str__(self):
         return repr(self.message)
