@@ -47,7 +47,7 @@ Unknown event id "%s". Please use keys from available activities.' % str
 class Interpreter():
 
     modifiers_regex = re.compile(
-        r'^[qsp][0-9]{1,2}(?P<end>[sf])?(?P<rel>[+-][0-9]+[wdhm])?' +
+        r'^[qlcfhsp][0-9]{1,2}(?P<end>[sf])?(?P<rel>[+-][0-9]+[wdhm])?' +
         r'(?:\@(?P<time>[0-9]{1,2}\:[0-9]{1,2}))?$', re.IGNORECASE)
 
     timedelta_regex = re.compile(

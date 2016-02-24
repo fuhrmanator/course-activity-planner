@@ -387,3 +387,71 @@ class InterpreterTest(unittest.TestCase):
         self.assertEqual(expected_s, actual_s)
         self.assertEqual(expected_e, actual_e)
         self.assertEqual(expected_c, actual_c)
+
+
+class InterpreterTestOtherActivities(unittest.TestCase):
+
+    calendar_path = '../data/multi-fr.ics'
+    moodle_archive_path = '../data/all-activities.mbz'
+
+    def setUp(self):
+        # Setup calendar
+        calendar = CalendarReader(self.calendar_path)
+
+        self.calendar_meetings = calendar.get_all_meetings()
+
+        # Setup Moodle course
+        self.tmp_path = tempfile.mkdtemp()
+        with tarfile.open(self.moodle_archive_path) as tar_file:
+            tar_file.extractall(self.tmp_path)
+
+        self.course = MoodleCourse(self.tmp_path)
+        self.interpreter = Interpreter(self.calendar_meetings, self.course)
+
+    def tearDown(self):
+        # TODO test on windows
+        shutil.rmtree(self.tmp_path)
+
+    def test_homework_as_start_and_end(self):
+        expected_s = arrow.get(
+            2015, 10, 1, 0, tzinfo=tz.gettz('America/Montreal')).datetime
+        expected_e = arrow.get(
+            2015, 10, 29, 0, tzinfo=tz.gettz('America/Montreal')).datetime
+        actual = self.interpreter.get_new_event_from_string('Q1 h1 h1f')
+        actual_s = actual.get_start_datetime()
+        actual_e = actual.get_end_datetime()
+        self.assertEqual(expected_s, actual_s)
+        self.assertEqual(expected_e, actual_e)
+
+    def test_lesson_as_start_and_end(self):
+        expected_s = arrow.get(
+            2016, 2, 10, 13, tzinfo=tz.gettz('America/Montreal')).datetime
+        expected_e = arrow.get(
+            2016, 2, 10, 15, tzinfo=tz.gettz('America/Montreal')).datetime
+        actual = self.interpreter.get_new_event_from_string('Q1 l1 l1f')
+        actual_s = actual.get_start_datetime()
+        actual_e = actual.get_end_datetime()
+        self.assertEqual(expected_s, actual_s)
+        self.assertEqual(expected_e, actual_e)
+
+    def test_choice_as_start_and_end(self):
+        expected_s = arrow.get(
+            2016, 2, 10, 13, tzinfo=tz.gettz('America/Montreal')).datetime
+        expected_e = arrow.get(
+            2016, 2, 10, 14, tzinfo=tz.gettz('America/Montreal')).datetime
+        actual = self.interpreter.get_new_event_from_string('Q1 c1 c1f')
+        actual_s = actual.get_start_datetime()
+        actual_e = actual.get_end_datetime()
+        self.assertEqual(expected_s, actual_s)
+        self.assertEqual(expected_e, actual_e)
+
+    def test_feedback_as_start_and_end(self):
+        expected_s = arrow.get(
+            2016, 2, 10, 13, 0, tzinfo=tz.gettz('America/Montreal')).datetime
+        expected_e = arrow.get(
+            2016, 2, 10, 13, 5, tzinfo=tz.gettz('America/Montreal')).datetime
+        actual = self.interpreter.get_new_event_from_string('Q1 f1 f1f')
+        actual_s = actual.get_start_datetime()
+        actual_e = actual.get_end_datetime()
+        self.assertEqual(expected_s, actual_s)
+        self.assertEqual(expected_e, actual_e)

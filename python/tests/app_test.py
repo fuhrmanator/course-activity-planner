@@ -159,11 +159,12 @@ class AppTest(unittest.TestCase):
 
         res = self.client.get('/api/planning/uuid/preview')
         self.assertEqual(200, res._status_code)
-
+        print(json.loads(
+            res.data.decode('utf8')))
         actual_cal = json.loads(
-            res.data.decode('utf8'))['inventory']['calendar']
+            res.data.decode('utf8'))['inventory']['meetings']
         actual_moodle = json.loads(
-            res.data.decode('utf8'))['inventory']['moodle']
+            res.data.decode('utf8'))['inventory']['activities']
 
         expected_cal = [
             {'key_str': 'S', 'rel_id': 1, 'title': 'log210 Cours magistral 1'},
