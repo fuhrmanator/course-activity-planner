@@ -1,6 +1,5 @@
 <div class="container">
     <h1>Course Activity Planner</h1>
-    <p>Plan your activities below</p>
     <div class="row">
         <div class="col-md-12">
             <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
@@ -11,6 +10,11 @@
         <div class="col-md-4">
             <div class="row">
                 <h3>Your text planning</h3>
+                <p>
+                    <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                    How to use
+                </p>
+
                 <div class="col-md-12">
                     <div class="form-group">
                         <textarea class="form-control" id="planning" ng-model="planning_txt" placeholder="Q1 S1F S2..."></textarea>
@@ -28,8 +32,8 @@
             <h3>Available activities</h3>
             <p>Activities can be planned relative to meetings</p>
             <div class="btn-group">
-                <div class="btn-group" ng-repeat="(key, name) in activities_name">
-                    <button ng-click="toggleInventoryKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !invSelected(key)}, {'btn-success' : invSelected(key)}]">{{name}} <span class="badge">{{key_counts[key]}}</span></button>
+                <div class="btn-group" ng-repeat="key in activitiesKeys">
+                    <button ng-click="toggleActivityKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !activitySelected(key)}, {'btn-success' : activitySelected(key)}]">{{key_to_name[key]}} <span class="badge">{{key_counts[key]}}</span></button>
                 </div>
             </div>
             <table class="table table-condensed table-bordered table-hover">
@@ -40,7 +44,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="e in inventory['activities'] | filter: filterInventoryByKey">
+                    <tr ng-repeat="e in inventory['activities'] | filter: filterActivityByKey">
                         <td>
                             {{e.key_str + e.rel_id}}
                         </td>
@@ -55,8 +59,8 @@
             <h3>Available meetings</h3>
             <p>Meetings are defined by the actual calendar and used to plan activities.</p>
             <div class="btn-group">
-                <div class="btn-group" ng-repeat="(key, name) in meetings_name">
-                    <button ng-click="toggleInventoryKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !invSelected(key)}, {'btn-success' : invSelected(key)}]">{{name}} <span class="badge">{{key_counts[key]}}</span></button>
+                <div class="btn-group" ng-repeat="key in meetingsKeys">
+                    <button ng-click="toggleMeetingKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !meetingSelected(key)}, {'btn-success' : meetingSelected(key)}]">{{key_to_name[key]}} <span class="badge">{{key_counts[key]}}</span></button>
                 </div>
             </div>
             <table class="table table-condensed table-bordered table-hover">
@@ -67,7 +71,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="e in inventory['meetings'] | filter: filterInventoryByKey">
+                    <tr ng-repeat="e in inventory['meetings'] | filter: filterMeetingByKey">
                         <td>
                             {{e.key_str + e.rel_id}}
                         </td>
@@ -83,8 +87,8 @@
     <div class="row">
         <div class="col-md-6">
             <p>Filter by activity type</p>
-            <div class="btn-group" ng-repeat="(key, name) in keys_name">
-                <button ng-click="togglePreviewKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !previewSelected(key)}, {'btn-success' : previewSelected(key)}]">{{name}}</button>
+            <div class="btn-group" ng-repeat="key in previewKeys">
+                <button ng-click="togglePreviewKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !previewSelected(key)}, {'btn-success' : previewSelected(key)}]">{{key_to_name[key]}}</button>
             </div>
         </div>
     </div>

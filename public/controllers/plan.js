@@ -2,31 +2,43 @@ var controllers = angular.module('app.controllers.PlanController', ['ngFileUploa
 
 controllers.controller('PlanController', function($scope, $http, $location, $routeParams) {
     $scope.uuid = $routeParams.uuid;
-    $scope.meetings_name = {'P': 'Practicas', 'S': 'Seminars'};
-    $scope.activities_name = {'Q':'Quizzes','H': 'Homeworks', 'L':'Lessons', 'C': 'Choices', 'F': 'Feedbacks'};
-    $scope.keys = Object.keys($scope.activities_name).concat(Object.keys($scope.meetings_name));
-    $scope.invKeys = $scope.keys;
-    $scope.previewKeys = $scope.keys;
+    $scope.key_to_name = {'P': 'Practicas', 'S': 'Seminars', 'Q':'Quizzes', 'H': 'Homeworks', 'L':'Lessons', 'C': 'Choices', 'F': 'Feedbacks'};
+    $scope.meetingsKeys = ['P', 'S'];
+    $scope.activitiesKeys = ['Q', 'H', 'L', 'C', 'F'];
+    $scope.previewKeys = $scope.meetingsKeys.concat($scope.activitiesKeys);
+    $scope.keys = $scope.meetingsKeys.concat($scope.activitiesKeys);
+
+    $scope.shownMeetingsKeys = $scope.meetingsKeys.slice(0);
+    $scope.shownActivitiesKeys = $scope.activitiesKeys.slice(0);
+    $scope.shownPreviewKeys = $scope.previewKeys.slice(0);
     $scope.alerts = [];
 
     $scope.closeAlert = function(index) {
         $scope.alerts.splice(index, 1);
     };
 
-    $scope.filterInventoryByKey = function (element) {
-        return $scope.invSelected(element.key_str);
+    $scope.filterActivityByKey = function (element) {
+        return $scope.activitySelected(element.key_str);
+    };
+
+    $scope.filterMeetingByKey = function (element) {
+        return $scope.meetingSelected(element.key_str);
     };
 
     $scope.filterPreviewByKey = function (element) {
         return $scope.previewSelected(element.key_str);
     };
 
-    $scope.toggleInventoryKey = function (key_str) {
-        $scope.toggleKey(key_str, $scope.invKeys);
+    $scope.toggleActivityKey = function (key_str) {
+        $scope.toggleKey(key_str, $scope.shownActivitiesKeys);
+    };
+
+    $scope.toggleMeetingKey = function (key_str) {
+        $scope.toggleKey(key_str, $scope.shownMeetingsKeys);
     };
 
     $scope.togglePreviewKey = function (key_str) {
-        $scope.toggleKey(key_str, $scope.previewKeys);
+        $scope.toggleKey(key_str, $scope.shownPreviewKeys);
     };
 
     $scope.toggleKey = function (key_str, key_set) {
@@ -38,12 +50,20 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
         }
     };
 
-    $scope.invSelected = function (key_str) {
-        return $scope.invKeys.indexOf(key_str) !== -1;
+    $scope.activitySelected = function (key_str) {
+        return $scope.isSelected(key_str, $scope.shownActivitiesKeys);
+    };
+
+    $scope.meetingSelected = function (key_str) {
+        return $scope.isSelected(key_str, $scope.shownMeetingsKeys);
     };
 
     $scope.previewSelected = function (key_str) {
-        return $scope.previewKeys.indexOf(key_str) !== -1;
+        return $scope.isSelected(key_str, $scope.shownPreviewKeys);
+    };
+
+    $scope.isSelected = function(key_str, key_set) {
+        return key_set.indexOf(key_str) !== -1;
     };
 
     $scope.submit = function() {
