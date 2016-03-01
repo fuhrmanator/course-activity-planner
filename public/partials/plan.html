@@ -5,16 +5,129 @@
             <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
         </div>
     </div>
+    <div class="modal fade" id="syntaxHelp" tabindex="-1" role="dialog" aria-labelledby="syntaxHelpLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="syntaxHelpLabel">Documentation</h4>
+          </div>
+          <div class="modal-body">
+            <div class="well well-sm">
+                <p>Course Activity Planning can use dates from meetings to plan activities.</p>
+                <p>Meetings dates can not be changed as they are fixed by the school.</p>
+            </div>
 
+            <h2>How to plan an activity relative to meetings</h2>
+            <div class="well well-sm">
+                <p>
+                    1. Find the key of the activity to plan. A list of activities is on the left on the text editor.
+                </p>
+                <p>
+                    2. Find the meetings that will indicate the start and end of the activity.
+                </p>
+                <p>
+                    3. Write in the text editor the keys as "key of the activity" "key of the first meeting" "key of the second meeting".<br>
+                </p>
+                <p>
+                    The first meeting key will indicate the start date of the activity and the second, its end/close date.
+                </p>
+
+                <p>
+                    Repeat for each activity. Each line of the planning will modify the start and end dates of an activity.
+                </p>
+            </div>
+            <h3>Exemple planning a activity relative to meetings</h3>
+            <div class="well well-sm">
+                <p>
+                    1. Quiz 1 (Q1) is to be planned
+                </p>
+                <p>
+                    2. Quiz will start at Seminar 1 (S1) and end at Seminar 2 (S2)
+                </p>
+                <p>
+                    3. The final line is written in the editor as "Q1 S1 S2"
+                </p>
+            </div>
+
+            <hr>
+
+            <h2>Referencing to the start or end of a meeting</h2>
+            <div class="well well-sm">
+                <p>Planning relative to the end of the meeting can be done by adding to suffix "F" to the meeting key.</p>
+                <p>The default behavior is to use the start of the meeting if "F" is not present. Accesing the start date can be explicit with adding the suffix "S".</p>
+            </div>
+            <h3>Exemple</h3>
+            <div class="well well-sm">
+                <p>
+                    Given Seminar 1 starting at 8:00 and ending at 10:00.
+                </p>
+                <p>
+                    Quiz 1 will start at 8:00 and end at 10:00 with the following line: "Q1 S1 S1F" (or "Q1 S1S S1F")
+                </p>
+            </div>
+
+            <hr>
+
+            <h2>Relative time deltas</h2>
+            <div class="well well-sm">
+                <p>
+                    A time delta is composed of + or - sign, an integer and one of the followings element
+                    <ul>
+                        <li>m (minutes)</li>
+                        <li>h (hours)</li>
+                        <li>d (days)</li>
+                        <li>w (weeks)</li>
+                    </ul>
+                </p>
+                This modified identifier can now be substituted in a planning line.
+            </div>
+            <h3>Exemple</h3>
+            <div class="well well-sm">
+                <p>
+                    One day before Seminar 2 is "S2-1D".
+                </p>
+                <p>
+                    Quiz 1 will start at the end of Seminar 1 and end one day before Seminar 2 with the following line: "Q1 S1F S2-1D"
+                </p>
+            </div>
+
+            <hr>
+
+            <h2>Absolute time modifier</h2>
+            <div class="well well-sm">
+                <p>
+                    It can be usefull to set exact times for opening or closing activities. Append the "@" character followed by the exact time (hh:mm) to a meeting key.
+                </p>
+                <p>
+                    This modified identifier can now be substituted in a planning line.
+                </p>
+            </div>
+            <h3>Exemple</h3>
+            <div class="well well-sm">
+                <p>
+                    The day of Seminar 2 at exactly 23:59 can be written as "S2@23:59".
+                </p>
+                <p>
+                    Quiz 1 will start at the end of Seminar 1 and end at exactly 23:59 on the day of Seminar 2 with the following line: "Q1 S1F S2@23:59"
+                </p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="row">
         <div class="col-md-4">
             <div class="row">
                 <h3>Your text planning</h3>
-                <p>
-                    <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-                    How to use
-                </p>
-
+                <div class="col-md-12">
+                    <button type="button" class="btn btn-primary btn-info" data-toggle="modal" data-target="#syntaxHelp">
+                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Syntax documentation
+                    </button>
+                </div>
                 <div class="col-md-12">
                     <div class="form-group">
                         <textarea class="form-control" id="planning" ng-model="planning_txt" placeholder="Q1 S1F S2..."></textarea>
