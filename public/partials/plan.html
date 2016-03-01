@@ -20,30 +20,26 @@
 
             <h2>How to plan an activity relative to meetings</h2>
             <div class="well well-sm">
+                <ul>
+                    <li>Find the key of the activity to plan. The list of activities is on the right on the text editor.</li>
+                    <li>Find the meetings that will indicate the start and end of the activity. The list of meetings is on the right on the text editor.</li>
+                    <li>Write in the text editor the keys as "key of the activity" "key of the first meeting" "key of the second meeting".</li>
+                </ul>
                 <p>
-                    1. Find the key of the activity to plan. A list of activities is on the left on the text editor.
-                </p>
-                <p>
-                    2. Find the meetings that will indicate the start and end of the activity.
-                </p>
-                <p>
-                    3. Write in the text editor the keys as "key of the activity" "key of the first meeting" "key of the second meeting".<br>
-                </p>
-                <p>
-                    The first meeting key will indicate the start date of the activity and the second, its end/close date.
+                    The first meeting key will indicate the start date of the activity and the second, its end date.
                 </p>
 
                 <p>
                     Repeat for each activity. Each line of the planning will modify the start and end dates of an activity.
                 </p>
             </div>
-            <h3>Exemple planning a activity relative to meetings</h3>
+            <h3>Exemple</h3>
             <div class="well well-sm">
                 <p>
                     1. Quiz 1 (Q1) is to be planned
                 </p>
                 <p>
-                    2. Quiz will start at Seminar 1 (S1) and end at Seminar 2 (S2)
+                    2. Quiz will open at Seminar 1 (S1) and close at Seminar 2 (S2)
                 </p>
                 <p>
                     3. The final line is written in the editor as "Q1 S1 S2"
@@ -63,7 +59,7 @@
                     Given Seminar 1 starting at 8:00 and ending at 10:00.
                 </p>
                 <p>
-                    Quiz 1 will start at 8:00 and end at 10:00 with the following line: "Q1 S1 S1F" (or "Q1 S1S S1F")
+                    Quiz 1 will open at 8:00 and close at 10:00 with the following line: "Q1 S1 S1F" (or "Q1 S1S S1F")
                 </p>
             </div>
 
@@ -88,7 +84,7 @@
                     One day before Seminar 2 is "S2-1D".
                 </p>
                 <p>
-                    Quiz 1 will start at the end of Seminar 1 and end one day before Seminar 2 with the following line: "Q1 S1F S2-1D"
+                    Quiz 1 will open at the end of Seminar 1 and close one day before Seminar 2: "Q1 S1F S2-1D"
                 </p>
             </div>
 
@@ -97,7 +93,7 @@
             <h2>Absolute time modifier</h2>
             <div class="well well-sm">
                 <p>
-                    It can be usefull to set exact times for opening or closing activities. Append the "@" character followed by the exact time (hh:mm) to a meeting key.
+                    Append the "@" character followed by the exact time (hh:mm) to a meeting key: "key"@hh:mm
                 </p>
                 <p>
                     This modified identifier can now be substituted in a planning line.
@@ -109,10 +105,32 @@
                     The day of Seminar 2 at exactly 23:59 can be written as "S2@23:59".
                 </p>
                 <p>
-                    Quiz 1 will start at the end of Seminar 1 and end at exactly 23:59 on the day of Seminar 2 with the following line: "Q1 S1F S2@23:59"
+                    Quiz 1 will open at the end of Seminar 1 and close at exactly 23:59 on the day of Seminar 2 with the following line: "Q1 S1F S2@23:59"
                 </p>
             </div>
           </div>
+
+          <hr>
+
+          <h2>Combining time modifier and relative modifier</h2>
+          <div class="well well-sm">
+              <p>
+                  Combining a time modifier and delta is possible. <strong>Please note that combining two deltas is not supported.</strong>
+              </p>
+              <p>
+                  "key""delta""exact time"
+              </p>
+          </div>
+          <h3>Exemple</h3>
+          <div class="well well-sm">
+              <p>
+                  The day before Seminar 2 at exactly 23:59: "S2-1D@23:59"
+              </p>
+              <p>
+                  Quiz 1 will open at the end of Seminar 1 and close the day before Seminar 2 at exactly 23:59: "Q1 S1F S2-1D23:59"
+              </p>
+          </div>
+        </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
           </div>
@@ -143,7 +161,7 @@
         </div>
         <div class="col-md-4">
             <h3>Available activities</h3>
-            <p>Activities can be planned relative to meetings</p>
+            <p>Activities are defined by the teacher and can be planned relative to meetings.</p>
             <div class="btn-group">
                 <div class="btn-group" ng-repeat="key in activitiesKeys">
                     <button ng-click="toggleActivityKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !activitySelected(key)}, {'btn-success' : activitySelected(key)}]">{{key_to_name[key]}} <span class="badge">{{key_counts[key]}}</span></button>
@@ -170,7 +188,7 @@
         </div>
         <div class="col-md-4">
             <h3>Available meetings</h3>
-            <p>Meetings are defined by the actual calendar and used to plan activities.</p>
+            <p>Meetings are defined by the school's calendar.</p>
             <div class="btn-group">
                 <div class="btn-group" ng-repeat="key in meetingsKeys">
                     <button ng-click="toggleMeetingKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !meetingSelected(key)}, {'btn-success' : meetingSelected(key)}]">{{key_to_name[key]}} <span class="badge">{{key_counts[key]}}</span></button>
