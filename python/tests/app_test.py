@@ -95,7 +95,7 @@ class AppTest(unittest.TestCase):
         self.assertEqual(200, res._status_code)
         self.assertTrue(course_activity_planner._has_planning('uuid'))
 
-    def test_planning_is_updated(self):
+    def test_planning_is_updated_in_memory(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
 
@@ -494,6 +494,36 @@ class AppTest(unittest.TestCase):
         expected = [{'type': 'warning',
                     'msg': 'Quiz 1 ends before it starts.'}]
         self.assertEqual(expected, actual)
+
+    def test_new_mbz_archive(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        # Ignore ics url in request and link to local ics file
+        course_activity_planner._dl_and_save_ics_file = \
+            MagicMock(return_value=self.local_short_cal_path)
+        # Ignore mbz in request and link to local mbz file
+        course_activity_planner._save_mbz_file = \
+            MagicMock(return_value=self.local_mbz_path)
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url=self.cal_url))
+
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'Q1 S1F S2'}),
+            headers=[('Content-Type', 'application/json')])
+
+        res = self.client.get('/api/planning/uuid/mbz')
+        self.assertEqual(200, res._status_code)
+        new_mbz_path = os.path.join(self.app.config['UPLOAD_FOLDER'],
+                                    'downloaded.mbz')
+        with open(new_mbz_path, 'wb') as f:
+            f.write(res.data)
+        # TODO check content of new mbz
+
 
 if __name__ == '__main__':
     unittest.main()
