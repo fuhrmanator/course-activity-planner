@@ -159,8 +159,7 @@ class AppTest(unittest.TestCase):
 
         res = self.client.get('/api/planning/uuid/preview')
         self.assertEqual(200, res._status_code)
-        print(json.loads(
-            res.data.decode('utf8')))
+
         actual_cal = json.loads(
             res.data.decode('utf8'))['inventory']['meetings']
         actual_moodle = json.loads(
@@ -243,6 +242,42 @@ class AppTest(unittest.TestCase):
                 'timestamp': 1390395600},
         ]
         self.assertEqual(expected, actual)
+
+    def test_preview_planning_with_invalid_ics_url(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url='http://some_invalid_url'))
+
+        res = self.client.get('/api/planning/uuid/preview')
+        self.assertEqual(400, res._status_code)
+        actual = json.loads(res.data.decode('utf8'))['alerts']
+        self.assertEqual(1, len(actual))
+        msg = actual[0]['msg']
+        self.assertEqual('Calendar file is not a valid ICS file.', msg)
+
+    def test_preview_planning_with_invalid_mbz(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        # Ignore ics url in request and link to local ics file
+        course_activity_planner._dl_and_save_ics_file = \
+            MagicMock(return_value=self.local_short_cal_path)
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url='some_url_to_be_mocked'))
+
+        res = self.client.get('/api/planning/uuid/preview')
+        self.assertEqual(400, res._status_code)
+        actual = json.loads(res.data.decode('utf8'))['alerts']
+        self.assertEqual(1, len(actual))
+        msg = actual[0]['msg']
+        self.assertEqual('MBZ file could not be read.', msg)
 
     def test_preview_homework_3_events(self):
         course_activity_planner._generate_planning_uuid = \

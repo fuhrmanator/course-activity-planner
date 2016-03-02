@@ -88,7 +88,9 @@ def preview_planning(uuid):
             calendar = CalendarReader(calendar_path)
             calendar_meetings = calendar.get_all_meetings()
         except Exception as e:
-            return jsonify(alerts=[{'type': 'danger', 'msg': e.message}]), 400
+            return jsonify(
+                alerts=[{'type': 'danger',
+                        'msg': 'Calendar file is not a valid ICS file.'}]), 400
 
         # Extract Moodle course to tmp folder
         try:
