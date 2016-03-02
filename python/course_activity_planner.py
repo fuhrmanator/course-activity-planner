@@ -35,7 +35,6 @@ def new_planning():
     os.makedirs(folder)
 
     mbz_fullpath = _save_mbz_file(mbz_file, folder)
-
     planning = Planning(planning_id, '', ics_url, mbz_fullpath)
     db_session.add(planning)
     db_session.commit()
@@ -84,14 +83,22 @@ def preview_planning(uuid):
     # Make tmp directory for MBZ extraction and ics download
     with tempfile.TemporaryDirectory() as tmp_path:
         # Download calendar to tmp folder
-        calendar_path = _dl_and_save_ics_file(planning.ics_url, tmp_path)
-        calendar = CalendarReader(calendar_path)
-        calendar_meetings = calendar.get_all_meetings()
+        try:
+            calendar_path = _dl_and_save_ics_file(planning.ics_url, tmp_path)
+            calendar = CalendarReader(calendar_path)
+            calendar_meetings = calendar.get_all_meetings()
+        except Exception as e:
+            return jsonify(alerts=[{'type': 'danger', 'msg': e.message}]), 400
 
         # Extract Moodle course to tmp folder
-        with tarfile.open(moodle_archive_path) as tar_file:
-            tar_file.extractall(tmp_path)
-            course = MoodleCourse(tmp_path)
+        try:
+            with tarfile.open(moodle_archive_path) as tar_file:
+                tar_file.extractall(tmp_path)
+                course = MoodleCourse(tmp_path)
+        except Exception:
+            return jsonify(
+                alerts=[{'type': 'danger',
+                        'msg': 'MBZ file could not be read.'}]), 400
 
     alerts = []
     preview = None

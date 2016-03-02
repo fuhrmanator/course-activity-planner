@@ -4,6 +4,15 @@ import arrow
 from ics import Calendar as iCalendar
 
 
+class InvalidCalendarFileException(Exception):
+    """Raised if the calendar file could not read"""
+    def __init__(self):
+        self.message = 'Calendar file is not a valid ICS file.'
+
+    def __str__(self):
+        return repr(self.message)
+
+
 class GenericMeeting():
     def __init__(self, calendar_event):
         self.calendar_event = calendar_event
@@ -70,8 +79,11 @@ class CalendarReader():
 
     def __init__(self, calendar_path):
         with open(calendar_path, 'r') as cal_file:
-            cal_content = cal_file.readlines()
-            self.calendar = iCalendar(cal_content)
+            try:
+                cal_content = cal_file.readlines()
+                self.calendar = iCalendar(cal_content)
+            except Exception:
+                raise InvalidCalendarFileException()
 
     def get_all_meetings(self):
         """Parses events from ics_calendar and orders them by meeting type.
