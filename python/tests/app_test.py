@@ -4,9 +4,12 @@ import imp
 import json
 import shutil
 import unittest
+import tarfile
 import course_activity_planner
 
 from unittest.mock import MagicMock
+
+from moodle import MoodleCourse, MoodleQuiz
 
 
 class AppTest(unittest.TestCase):
@@ -518,12 +521,28 @@ class AppTest(unittest.TestCase):
 
         res = self.client.get('/api/planning/uuid/mbz')
         self.assertEqual(200, res._status_code)
+
         new_mbz_path = os.path.join(self.app.config['UPLOAD_FOLDER'],
                                     'downloaded.mbz')
         with open(new_mbz_path, 'wb') as f:
             f.write(res.data)
-        # TODO check content of new mbz
 
+        tmp_archive = os.path.join(self.app.config['UPLOAD_FOLDER'],
+                                   'extracted')
+
+        with tarfile.open(new_mbz_path) as tar_file:
+            tar_file.extractall(tmp_archive)
+            course = MoodleCourse(tmp_archive)
+            quiz = course.get_activity_by_type_and_num(MoodleQuiz, 1)
+
+            expected_s = 1389013200
+            expected_e = 1389614400
+
+            actual_s = quiz.get_start_timestamp()
+            actual_e = quiz.get_end_timestamp()
+
+            self.assertEqual(expected_s, actual_s)
+            self.assertEqual(expected_e, actual_e)
 
 if __name__ == '__main__':
     unittest.main()
