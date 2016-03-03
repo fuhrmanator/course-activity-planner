@@ -104,7 +104,7 @@ class Interpreter():
 
     def _get_datetime_from_token(self, token):
         modifiers = self._get_modifiers_as_string(token)
-        event = self._get_event_from_token(token)
+        event = self._get_event_or_activity_from_token(token)
 
         if not event:
             return None
@@ -115,11 +115,9 @@ class Interpreter():
         relative_mod = self._interpret_relative_modifier(modifiers[1])
         time_mod = self._interpret_time_modifier(modifiers[2])
 
-        new_datetime = self._get_new_datetime(datetime, relative_mod, time_mod)
+        return self._get_new_datetime(datetime, relative_mod, time_mod)
 
-        return new_datetime
-
-    def _get_event_from_token(self, token):
+    def _get_event_or_activity_from_token(self, token):
         # TODO: find a more elegant solution
         try:
             event_clazz, event_id = self._detect_event_class_and_id(token)

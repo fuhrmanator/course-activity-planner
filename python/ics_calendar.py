@@ -2,6 +2,7 @@ import re
 import arrow
 
 from ics import Calendar as iCalendar
+from common import Event
 
 
 class InvalidCalendarFileException(Exception):
@@ -13,12 +14,9 @@ class InvalidCalendarFileException(Exception):
         return repr(self.message)
 
 
-class GenericMeeting():
+class GenericMeeting(Event):
     def __init__(self, calendar_event):
         self.calendar_event = calendar_event
-
-    def is_activity():
-        return False
 
     def get_start_datetime(self):
         return self.calendar_event.begin.to('America/Montreal').datetime
@@ -35,23 +33,8 @@ class GenericMeeting():
     def set_start_datetime(self, datetime):
         self.calendar_event.begin = arrow.get(datetime)
 
-    def get_key(self):
-        """"Return the letter of the planning key
-        Q for Quiz, etc.
-        Must be implemented by subclasses
-        """
-        raise Exception('Unimplemented')
-
     def get_title(self):
         return self.calendar_event.name
-
-
-class Quiz(GenericMeeting):
-    def __init__(self, *args, **kwargs):
-        GenericMeeting.__init__(self, *args, **kwargs)
-
-    def get_key(self):
-        return 'Q'
 
 
 class Seminar(GenericMeeting):

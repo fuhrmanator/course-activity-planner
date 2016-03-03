@@ -4,9 +4,10 @@ import tarfile
 import xml.etree.ElementTree as ET
 
 from dateutil import tz
+from common import Event
 
 
-class MoodleEvent():
+class MoodleActivity(Event):
     """Describes an XML Moodle event with key based access"""
 
     event_keys = [
@@ -66,10 +67,6 @@ class MoodleEvent():
     def get_end_timestamp(self):
         return self._get_arrow_at_index(1).timestamp
 
-    def get_pretty_name(self):
-        """To be implemented by subclasses"""
-        raise Exception('Unimplemented')
-
     def get_title(self):
         return self.__getitem__('name')
 
@@ -79,13 +76,6 @@ class MoodleEvent():
         self.tree.write(self.path, short_empty_elements=False, encoding='UTF-8',
                         xml_declaration=True)
         self._write_calendar()
-
-    def get_key(self):
-        """"Return the letter of the planning key
-        Q for Quiz, etc.
-        Must be implemented by subclasses
-        """
-        raise Exception('Unimplemented')
 
     def _write_calendar(self):
         moodle_cal_path = os.path.join(self.global_path, 'calendar.xml')
@@ -135,7 +125,7 @@ class MoodleEvent():
         return arrow.get(epoch, tzinfo=tz.gettz('America/Montreal'))
 
 
-class MoodleQuiz(MoodleEvent):
+class MoodleQuiz(MoodleActivity):
     """Describes an XML Moodle quiz with key based access"""
 
     def __init__(self, path):
@@ -149,7 +139,7 @@ class MoodleQuiz(MoodleEvent):
         return 'Q'
 
 
-class MoodleChoice(MoodleEvent):
+class MoodleChoice(MoodleActivity):
     """Describes an XML Moodle choice with key based access"""
 
     def __init__(self, path):
@@ -163,7 +153,7 @@ class MoodleChoice(MoodleEvent):
         return 'C'
 
 
-class MoodleFeedback(MoodleEvent):
+class MoodleFeedback(MoodleActivity):
     """Describes an XML Moodle feedback with key based access"""
 
     def __init__(self, path):
@@ -177,7 +167,7 @@ class MoodleFeedback(MoodleEvent):
         return 'F'
 
 
-class MoodleLesson(MoodleEvent):
+class MoodleLesson(MoodleActivity):
     """Describes an XML Moodle lesson with key based access"""
 
     event_keys = [
@@ -201,7 +191,7 @@ class MoodleLesson(MoodleEvent):
         return 'L'
 
 
-class MoodleHomework(MoodleEvent):
+class MoodleHomework(MoodleActivity):
     """Describes an XML Moodle assignment (homework) with key based access"""
     maximum_dates_count = 3
 

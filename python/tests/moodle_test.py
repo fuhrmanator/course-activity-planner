@@ -299,35 +299,6 @@ class TestMoodleOtherActivities(unittest.TestCase):
         actual = course._load_activites()[MoodleChoice]
         self.assertEqual(1, len(actual))
 
-    # def test_sort_activity_type(self):
-    #     course = MoodleCourse(self.tmp_path)
-    #     activities = course._load_activites()[MoodleQuiz]
-    #     activities = course._sort_activity_type(activities)
-    #
-    #     for i, x in enumerate([146935, 146936, 146939]):
-    #         self.assertEqual(x, activities[i]['moduleid'])
-    #
-    # def test_activities_are_sorted(self):
-    #     course = MoodleCourse(self.tmp_path)
-    #
-    #     for i, x in enumerate([146935, 146936, 146939]):
-    #         self.assertEqual(x, course.activities[MoodleQuiz][i]['moduleid'])
-    #
-    # def test_get_activity_by_relative_num(self):
-    #     course = MoodleCourse(self.tmp_path)
-    #
-    #     actual = course.get_activity_by_type_and_num(MoodleQuiz, 1)['id']
-    #     self.assertEqual('4271', actual)
-    #
-    #     actual = course.get_activity_by_type_and_num(MoodleQuiz, 2)['id']
-    #     self.assertEqual('4272', actual)
-    #
-    #     actual = course.get_activity_by_type_and_num(MoodleQuiz, 3)['id']
-    #     self.assertEqual('4273', actual)
-    #
-    #     actual = course.get_activity_by_type_and_num(MoodleHomework, 1)['id']
-    #     self.assertEqual('5588', actual)
-
 
 if __name__ == "__main__":
     unittest.main()
