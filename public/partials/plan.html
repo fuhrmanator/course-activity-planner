@@ -162,7 +162,7 @@
             <p>Activities are defined by the teacher and can be planned relative to meetings.</p>
             <div class="btn-group">
                 <div class="btn-group" ng-repeat="key in activitiesKeys">
-                    <button ng-click="toggleActivityKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !activitySelected(key)}, {'btn-success' : activitySelected(key)}]">{{key_to_name[key]}} <span class="badge">{{key_counts[key]}}</span></button>
+                    <button ng-click="toggleActivityKey(key)" type="button" name="button" class="btn btn-sm" ng-class="[{'btn-primary' : !activitySelected(key)}, {'btn-success' : activitySelected(key)}]"><img ng-src="assets/moodle_icons/{{key}}.svg"> {{key_to_name[key]}} <span class="badge">{{key_counts[key]}}</span></button>
                 </div>
             </div>
             <table class="table table-condensed table-bordered table-hover">
