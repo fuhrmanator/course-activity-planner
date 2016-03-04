@@ -5,12 +5,12 @@
             <uib-alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</uib-alert>
         </div>
     </div>
-    <div class="modal fade" id="syntaxHelp" tabindex="-1" role="dialog" aria-labelledby="syntaxHelpLabel">
+    <div class="modal fade" id="help" tabindex="-1" role="dialog" aria-labelledby="helpLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title" id="syntaxHelpLabel">Documentation</h4>
+            <h4 class="modal-title" id="helpLabel">Documentation</h4>
           </div>
           <div class="modal-body">
             <div class="well well-sm">
@@ -56,7 +56,7 @@
             <h3>Exemple</h3>
             <div class="well well-sm">
                 <p>
-                    Given Seminar 1 starting at 8:00 and ending at 10:00.
+                    Given Seminar 1 starting at 8:00 and finishing at 10:00.
                 </p>
                 <p>
                     Quiz 1 will open at 8:00 and close at 10:00 with the following line: "Q1 S1 S1F" (or "Q1 S1S S1F")
@@ -135,14 +135,84 @@
         </div>
       </div>
     </div>
+    <div class="modal fade" id="quickHelp" tabindex="-1" role="dialog" aria-labelledby="quickHelpLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="quickHelpLabel">Quick documentation</h4>
+          </div>
+          <div class="modal-body">
+              <div class="alert alert-info">
+                  <h4>First-time user ?</h4>
+                  <p>You should dive into the <a href="" ng-click="$('#help').focus()" class="alert-link"> full documentation</a>.</p>
+                </div>
+            <h2>How to plan an activity relative to meetings</h2>
+            <div class="well well-sm">
+                <p>
+                    Quiz 1 will open at Seminar 1 (S1) and close at Seminar 2 (S2) "Q1 S1 S2"
+                </p>
+            </div>
+            <hr>
+            <h2>Referencing to the start or end of a meeting</h2>
+            <div class="well well-sm">
+                <p>
+                    Given Seminar 1 starting at 8:00 and finishing at 10:00.
+                </p>
+                <p>
+                    Quiz 1 will open at 8:00 and close at 10:00: "Q1 S1 S1F"
+                </p>
+            </div>
+            <hr>
+            <h2>Relative time deltas</h2>
+            <div class="well well-sm">
+                <p>
+                    One day before Seminar 2: "S2-1D"
+                </p>
+                <p>
+                    One hour after Practica 3: "P2-1H"
+                </p>
+            </div>
+            <hr>
+            <h2>Absolute time modifier</h2>
+            <div class="well well-sm">
+                <p>
+                    "key"@hh:mm
+                </p>
+                <p>
+                    The day of Seminar 2 at exactly 23:59: "S2@23:59"
+                </p>
+            </div>
+          <hr>
+          <h2>Combining time modifier and relative modifier</h2>
+          <div class="well well-sm">
+              <p>
+                  <strong>Please note that combining two deltas is not supported.</strong>
+              </p>
+              <p>
+                  The day before Seminar 2 at exactly 23:59: "S2-1D@23:59"
+              </p>
+          </div>
+        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="row">
         <div class="col-md-4">
             <div class="row">
                 <h3>Your text planning</h3>
                 <div class="col-md-12">
-                    <button type="button" class="btn btn-primary btn-info" data-toggle="modal" data-target="#syntaxHelp">
-                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span> Syntax documentation
-                    </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-info" data-toggle="modal" data-target="#help">
+                            <span class="glyphicon glyphicon-book" aria-hidden="true"></span> Full documentation
+                        </button>
+                        <button type="button" class="btn btn-primary btn-info" data-toggle="modal" data-target="#quickHelp">
+                            <span class="glyphicon glyphicon-file" aria-hidden="true"></span> Quick documentation
+                        </button>
+                    </div>
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
