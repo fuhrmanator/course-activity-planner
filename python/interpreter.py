@@ -50,8 +50,7 @@ class InvalidSubjectException(InvalidSyntaxException):
         full_line = ' '.join(tokens)
         subject = tokens[0]
         self.message = 'Line "%s" refers to the meeting "%s" as the subject. \
-Lines must start with an activity followed by meetings.' % \
-            (full_line, subject)
+Lines must start with an activity followed by meetings.' % (full_line, subject)
 
     def __str__(self):
         return repr(self.message)
