@@ -3,7 +3,7 @@ var controllers = angular.module('app.controllers.PlanController', ['ngFileUploa
 controllers.controller('PlanController', function($scope, $http, $location, $routeParams) {
     $scope.uuid = $routeParams.uuid;
     $scope.key_to_name = {'P': 'Practicas', 'S': 'Seminars', 'Q':'Quizzes', 'H': 'Homeworks', 'L':'Lessons', 'C': 'Choices', 'F': 'Feedbacks'};
-    $scope.meetingsKeys = ['P', 'S'];
+    $scope.meetingsKeys = ['S', 'P'];
     $scope.activitiesKeys = ['Q', 'H', 'L', 'C', 'F'];
     $scope.previewKeys = $scope.meetingsKeys.concat($scope.activitiesKeys);
     $scope.keys = $scope.meetingsKeys.concat($scope.activitiesKeys);
