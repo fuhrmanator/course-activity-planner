@@ -29,6 +29,24 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
         return $scope.previewSelected(element.key_str);
     };
 
+    $scope.buildCondensedPreviewDict = function (elements) {
+        var condensed = {};
+
+        for (var i = 0; i < elements.length; i++) {
+            var e = elements[i];
+            var timestamp = e.timestamp;
+            // If key is shown, add to condensed preview
+            if ($scope.filterPreviewByKey(e)) {
+                // Create empty array if undefined
+                if (!(timestamp in condensed)) {
+                    condensed[timestamp] = [];
+                }
+                condensed[timestamp].push(e);
+            }
+        }
+        return condensed;
+    };
+
     $scope.toggleActivityKey = function (key_str) {
         $scope.toggleKey(key_str, $scope.shownActivitiesKeys);
     };
@@ -39,6 +57,7 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
 
     $scope.togglePreviewKey = function (key_str) {
         $scope.toggleKey(key_str, $scope.shownPreviewKeys);
+        $scope.condensedPreview = $scope.buildCondensedPreviewDict($scope.preview);
     };
 
     $scope.toggleKey = function (key_str, key_set) {
@@ -105,6 +124,8 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
                                 $scope.key_counts[$scope.inventory[type][i].key_str]++;
                             }
                         }
+                        // Build compact preview
+                        $scope.condensedPreview = $scope.buildCondensedPreviewDict(data.preview);
                     })
                     .error(function(err, status) {
                         $scope.alerts = err.alerts;

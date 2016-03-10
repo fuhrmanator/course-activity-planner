@@ -301,12 +301,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="e in preview | filter: filterPreviewByKey">
+                    <tr ng-repeat="(timestamp, elements) in condensedPreview">
                         <td>
-                            {{e.timestamp | amFromUnix | amDateFormat:'YYYY-MM-DD HH:mm'}}
+                            {{timestamp | amFromUnix | amDateFormat:'YYYY-MM-DD HH:mm'}}
                         </td>
+                        {{elements}}
                         <td>
-                            {{e.title}}
+                            <span ng-repeat="e in elements">{{e.title}} <br></span>
                         </td>
                     </tr>
                 </tbody>
