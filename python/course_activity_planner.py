@@ -142,8 +142,14 @@ def download_planning(uuid):
 
         interpreter = Interpreter(calendar_meetings, course)
         for line in planning_txt.split('\n'):
-            event = interpreter.get_new_event_from_string(line)
-            course.replace_event(event)
+            subject = interpreter.get_subject_from_line(line)
+
+            if interpreter.is_user_defined_subject(subject):
+                pass
+            else:
+                event = interpreter.get_new_event_from_string(line)
+                course.replace_event(event)
+
         folder = os.path.join(app.config['UPLOAD_FOLDER'], uuid)
         latest_mbz_path = os.path.join(folder, 'latest.mbz')
 

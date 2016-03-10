@@ -55,6 +55,11 @@ class InterpreterTest(unittest.TestCase):
             Exception, self.interpreter._split_line,
             'H1 S1F')
 
+    def test_is_user_defined_subject(self):
+        subject = 'Q1'
+        actual = self.interpreter.is_user_defined_subject(subject)
+        self.assertEqual(False, actual)
+
     def test_detection_of_event(self):
         event = self.interpreter._detect_event_class_and_id('Q1')
         self.assertEqual((MoodleQuiz, 1), event)

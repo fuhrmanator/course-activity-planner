@@ -100,6 +100,12 @@ class Interpreter():
             event._set_date_at_index(self._get_datetime_from_token(token), i)
         return event
 
+    def is_user_defined_subject(self, subject):
+        return False
+
+    def get_subject_from_line(self, line):
+        return self._split_line(line)[0]
+
     def _get_datetime_from_token(self, token):
         modifiers = self._get_modifiers_as_string(token)
         event = self._get_event_or_activity_from_token(token)
