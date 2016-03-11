@@ -5,6 +5,7 @@ from datetime import timedelta, datetime
 from moodle import MoodleQuiz, MoodleHomework, MoodleLesson, MoodleFeedback, \
     MoodleChoice
 from ics_calendar import Seminar, Practica
+from common import Exam
 
 
 class AbsoluteTimeModifierException(Exception):
@@ -78,6 +79,7 @@ class Interpreter():
                                    re.IGNORECASE),
         Seminar: re.compile(r'^[s](?P<id>[0-9]{1,2})([sf]?)', re.IGNORECASE),
         Practica: re.compile(r'^[p](?P<id>[0-9]{1,2})([sf]?)', re.IGNORECASE),
+        Exam: re.compile(r'^[e](?P<id>[0-9]{1,2})([sf]?)', re.IGNORECASE),
         }
 
     def __init__(self, meetings, course):
@@ -99,12 +101,6 @@ class Interpreter():
         for i, token in enumerate(tokens[1:]):
             event._set_date_at_index(self._get_datetime_from_token(token), i)
         return event
-
-    def is_user_defined_subject(self, subject):
-        return False
-
-    def get_subject_from_line(self, line):
-        return self._split_line(line)[0]
 
     def _get_datetime_from_token(self, token):
         modifiers = self._get_modifiers_as_string(token)
@@ -136,8 +132,13 @@ class Interpreter():
         """Returns the event described by the first token of string
         """
         event_clazz, event_id = self._detect_event_class_and_id(tokens[0])
+
         if not event_clazz.is_activity():
             raise InvalidSubjectException(tokens)
+
+        if event_clazz.is_user_defined():
+            return event_clazz(event_id)
+
         return self.course.get_activity_by_type_and_num(event_clazz, event_id)
 
     def _detect_event_class_and_id(self, string):

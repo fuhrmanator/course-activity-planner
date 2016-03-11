@@ -4,7 +4,7 @@ import tarfile
 import xml.etree.ElementTree as ET
 
 from dateutil import tz
-from common import Event
+from common import Event, Exam
 
 
 class MoodleActivity(Event):
@@ -19,9 +19,6 @@ class MoodleActivity(Event):
         'opens',
         'closes'
     ]
-
-    minimum_dates_count = 2
-    maximum_dates_count = 2
 
     def __init__(self, path):
         self.modified = False
@@ -242,7 +239,8 @@ class MoodleCourse():
         'assign': MoodleHomework,
         'feedback': MoodleFeedback,
         'lesson': MoodleLesson,
-        'choice': MoodleChoice
+        'choice': MoodleChoice,
+        'exam': Exam,  # TODO refactor this as exams are not related to Moodle
         }
 
     def __init__(self, moodle_archive_path):

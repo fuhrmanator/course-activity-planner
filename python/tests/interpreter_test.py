@@ -9,6 +9,7 @@ from datetime import timedelta, time
 
 from interpreter import Interpreter, AbsoluteTimeModifierException, \
     InvalidSyntaxException, InvalidModifiersException, InvalidSubjectException
+from common import Exam
 from moodle import MoodleCourse, MoodleQuiz
 from ics_calendar import CalendarReader, Seminar, Practica
 
@@ -55,11 +56,6 @@ class InterpreterTest(unittest.TestCase):
             Exception, self.interpreter._split_line,
             'H1 S1F')
 
-    def test_is_user_defined_subject(self):
-        subject = 'Q1'
-        actual = self.interpreter.is_user_defined_subject(subject)
-        self.assertEqual(False, actual)
-
     def test_detection_of_event(self):
         event = self.interpreter._detect_event_class_and_id('Q1')
         self.assertEqual((MoodleQuiz, 1), event)
@@ -78,6 +74,9 @@ class InterpreterTest(unittest.TestCase):
 
         event = self.interpreter._detect_event_class_and_id('S4')
         self.assertEqual((Seminar, 4), event)
+
+        event = self.interpreter._detect_event_class_and_id('E1')
+        self.assertEqual((Exam, 1), event)
 
     def test_get_at_end_modifier(self):
         # Implicit start
@@ -385,6 +384,17 @@ class InterpreterTest(unittest.TestCase):
             2014, 1, 18, 12, 23, tzinfo=tz.gettz('America/Montreal')).datetime
         actual = self.interpreter.get_new_event_from_string(
             'Q1 P1-1w@13:20 P2+3d@12:23')
+        actual_s = actual.get_start_datetime()
+        actual_e = actual.get_end_datetime()
+        self.assertEqual(expected_s, actual_s)
+        self.assertEqual(expected_e, actual_e)
+
+        expected_s = arrow.get(
+            2014, 1, 1, 13, 20, tzinfo=tz.gettz('America/Montreal')).datetime
+        expected_e = arrow.get(
+            2014, 1, 18, 12, 23, tzinfo=tz.gettz('America/Montreal')).datetime
+        actual = self.interpreter.get_new_event_from_string(
+            'E1 P1-1w@13:20 P2+3d@12:23')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)

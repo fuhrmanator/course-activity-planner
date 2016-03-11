@@ -544,5 +544,63 @@ class AppTest(unittest.TestCase):
             self.assertEqual(expected_s, actual_s)
             self.assertEqual(expected_e, actual_e)
 
+    def test_preview_planning_with_exam(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        # Ignore ics url in request and link to local ics file
+        course_activity_planner._dl_and_save_ics_file = \
+            MagicMock(return_value=self.local_short_cal_path)
+        # Ignore mbz in request and link to local mbz file
+        course_activity_planner._save_mbz_file = \
+            MagicMock(return_value=self.local_mbz_path)
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url='some_url_to_be_mocked'))
+
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'E1 S1 S1F'}),
+            headers=[('Content-Type', 'application/json')])
+
+        res = self.client.get('/api/planning/uuid/preview')
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['preview']
+
+        expected = [
+            {'key_str': 'E', 'title': 'Exam 1 starts',
+                'timestamp': 1389009600},
+            {'key_str': 'S', 'title': 'Seminar 1 opens',
+                'timestamp': 1389009600},
+            {'key_str': 'E', 'title': 'Exam 1 ends',
+                'timestamp': 1389013200},
+            {'key_str': 'S', 'title': 'Seminar 1 closes',
+                'timestamp': 1389013200},
+            {'key_str': 'P', 'title': 'Practica 1 opens',
+                'timestamp': 1389182400},
+            {'key_str': 'P', 'title': 'Practica 1 closes',
+                'timestamp': 1389186000},
+            {'key_str': 'S', 'title': 'Seminar 2 opens',
+                'timestamp': 1389614400},
+            {'key_str': 'S', 'title': 'Seminar 2 closes',
+                'timestamp': 1389618000},
+            {'key_str': 'P', 'title': 'Practica 2 opens',
+                'timestamp': 1389787200},
+            {'key_str': 'P', 'title': 'Practica 2 closes',
+                'timestamp': 1389790800},
+            {'key_str': 'S', 'title': 'Seminar 3 opens',
+                'timestamp': 1390219200},
+            {'key_str': 'S', 'title': 'Seminar 3 closes',
+                'timestamp': 1390222800},
+            {'key_str': 'P', 'title': 'Practica 3 opens',
+                'timestamp': 1390392000},
+            {'key_str': 'P', 'title': 'Practica 3 closes',
+                'timestamp': 1390395600},
+        ]
+        self.assertEqual(expected, actual)
+
 if __name__ == '__main__':
     unittest.main()
