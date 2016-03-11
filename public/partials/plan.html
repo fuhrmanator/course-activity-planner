@@ -305,9 +305,11 @@
                         <td>
                             {{timestamp | amFromUnix | amDateFormat:'YYYY-MM-DD HH:mm'}}
                         </td>
-                        {{elements}}
                         <td>
-                            <span ng-repeat="e in elements">{{e.title}} <br></span>
+                            <span ng-repeat="e in elements">
+                                <button  class="btn btn-primary btn-xs" name="button">{{e.title}}</button>
+                            </span>
+
                         </td>
                     </tr>
                 </tbody>
