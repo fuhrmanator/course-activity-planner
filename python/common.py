@@ -54,11 +54,11 @@ class Event():
         """To be implemented by subclasses"""
         raise Exception('Unimplemented')
 
-    def _set_date_at_index(self, datetime, index):
+    def get_timestamp_at_index(self, index):
         """To be implemented by subclasses"""
         raise Exception('Unimplemented')
 
-    def _get_timestamp_at_index(self, index):
+    def _set_date_at_index(self, datetime, index):
         """To be implemented by subclasses"""
         raise Exception('Unimplemented')
 
@@ -109,6 +109,9 @@ class Exam(Event):
     def set_end_datetime(self, datetime):
         self._set_date_at_index(datetime, 1)
 
+    def get_timestamp_at_index(self, index):
+        return self._get_arrow_at_index(index).timestamp
+
     def _set_date_at_index(self, datetime, index):
         if index == 0:
             self.start_arrow = arrow.get(datetime)
@@ -117,9 +120,6 @@ class Exam(Event):
         else:
             # TODO better err msg
             raise InvalidSyntaxException('Exam has invalid date count')
-
-    def _get_timestamp_at_index(self, index):
-        return self._get_arrow_at_index(index).timestamp
 
     def _get_arrow_at_index(self, index):
         if index == 0:

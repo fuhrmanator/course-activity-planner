@@ -64,6 +64,9 @@ class MoodleActivity(Event):
     def get_end_timestamp(self):
         return self._get_arrow_at_index(1).timestamp
 
+    def get_timestamp_at_index(self, index):
+        return self._get_arrow_at_index(index).timestamp
+
     def get_title(self):
         return self.__getitem__('name')
 
@@ -102,9 +105,6 @@ class MoodleActivity(Event):
 
     def _get_datetime_at_index(self, index):
         return self._get_arrow_at_index(index).datetime
-
-    def _get_timestamp_at_index(self, index):
-        return self._get_arrow_at_index(index).timestamp
 
     def _get_start_arrow(self):
         """Returns end as arrow object"""

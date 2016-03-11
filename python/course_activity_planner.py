@@ -227,7 +227,7 @@ def _get_preview_items_for_planning(interpreter, planning_txt):
             activity_pretty_name = activity.get_pretty_name()
 
             for i, event_pretty_name, in enumerate(activity.event_pretty_names):
-                timestamp = activity._get_timestamp_at_index(i)
+                timestamp = activity.get_timestamp_at_index(i)
 
                 if timestamp == 0:
                     continue
