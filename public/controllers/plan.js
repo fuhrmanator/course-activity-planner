@@ -14,8 +14,13 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
     $scope.shownPreviewKeys = $scope.previewKeys.slice(0);
     $scope.alerts = [];
 
-    $scope.closeAlert = function(index) {
+    $scope.closeAlert = function (index) {
         $scope.alerts.splice(index, 1);
+    };
+
+    $scope.isMeeting = function (element) {
+        var index = $scope.meetingsKeys.indexOf(element.key_str);
+        return index != -1
     };
 
     $scope.filterActivityByKey = function (element) {

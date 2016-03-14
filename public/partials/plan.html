@@ -297,7 +297,7 @@
                 <thead>
                     <tr>
                         <th style="width: 10em;">Date</th>
-                        <th>Meeting</th>
+                        <th>Events</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -307,9 +307,8 @@
                         </td>
                         <td>
                             <span ng-repeat="e in elements">
-                                <button  class="btn btn-primary btn-xs" name="button">{{e.title}}</button>
+                                <span class="label" ng-class="[{'label-primary': !isMeeting(e)}, {'label-default': isMeeting(e)}]" >{{e.title}}</span>
                             </span>
-
                         </td>
                     </tr>
                 </tbody>
