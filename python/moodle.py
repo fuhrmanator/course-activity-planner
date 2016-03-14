@@ -77,6 +77,11 @@ class MoodleActivity(Event):
                         xml_declaration=True)
         self._write_calendar()
 
+    def is_visible(self):
+        module_xml_path = (os.path.join(self.global_path, 'module.xml'))
+        module_xml = ET.parse(module_xml_path).getroot()
+        return int(module_xml.find('visible').text) == 1
+
     def _write_calendar(self):
         moodle_cal_path = os.path.join(self.global_path, 'calendar.xml')
         cal_tree = ET.parse(moodle_cal_path)
@@ -301,7 +306,11 @@ class MoodleCourse():
                 continue  # Ignore incomptatible activity
 
             clazz = self.modname_to_class[module_name]
-            activities[clazz].append(clazz(os.path.join(self.path, directory)))
+            activity_instance = clazz(os.path.join(self.path, directory))
+
+            # Ingore invisible activites
+            if activity_instance.is_visible():
+                activities[clazz].append(activity_instance)
 
         for activity_type, items in activities.items():
             activities[activity_type] = self._sort_activity_type(items)

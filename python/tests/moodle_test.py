@@ -300,5 +300,24 @@ class TestMoodleOtherActivities(unittest.TestCase):
         self.assertEqual(1, len(actual))
 
 
+class TestMoodleInvisibleActivites(unittest.TestCase):
+
+    moodle_archive_path = '../data/invisible.mbz'
+
+    def setUp(self):
+        self.tmp_path = tempfile.mkdtemp()
+
+        with tarfile.open(self.moodle_archive_path) as tar_file:
+            tar_file.extractall(self.tmp_path)
+
+    def tearDown(self):
+        # TODO test on windows
+        shutil.rmtree(self.tmp_path)
+
+    def test_invisible_activities_are_not_loaded(self):
+        course = MoodleCourse(self.tmp_path)
+        actual = course._load_activites()[MoodleQuiz]
+        self.assertEqual(2, len(actual))
+
 if __name__ == "__main__":
     unittest.main()
