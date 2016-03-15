@@ -5,7 +5,7 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
     $scope.key_to_name = {'P': 'Practicas', 'S': 'Seminars', 'Q':'Quizzes', 'H': 'Homeworks', 'L':'Lessons', 'C': 'Choices', 'F': 'Feedbacks', 'E': 'Exams'};
     $scope.meetingsKeys = ['S', 'P'];
     $scope.activitiesKeys = ['Q', 'H', 'L', 'C', 'F'];
-    $scope.previewKeys = $scope.meetingsKeys.concat($scope.activitiesKeys)
+    $scope.previewKeys = $scope.meetingsKeys.concat($scope.activitiesKeys);
     $scope.previewKeys.push('E');
     $scope.keys = $scope.meetingsKeys.concat($scope.activitiesKeys);
 
@@ -20,7 +20,7 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
 
     $scope.isMeeting = function (element) {
         var index = $scope.meetingsKeys.indexOf(element.key_str);
-        return index != -1
+        return index !== -1;
     };
 
     $scope.filterActivityByKey = function (element) {
