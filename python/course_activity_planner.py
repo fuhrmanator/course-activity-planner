@@ -17,6 +17,11 @@ from ics_calendar import CalendarReader
 app = Flask(__name__)
 
 
+@app.route('/api/auth/google', methods=['POST'])
+def auth_google():
+    print(vars(request))
+
+
 @app.route('/api/planning', methods=['POST'])
 def new_planning():
     ics_url = request.form['ics_url']
