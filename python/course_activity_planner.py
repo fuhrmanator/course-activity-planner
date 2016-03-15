@@ -4,7 +4,10 @@ import uuid
 import requests
 import tarfile
 import tempfile
+import json
+import jwt
 
+from datetime import datetime, timedelta
 from flask import Flask, jsonify, request, send_from_directory
 from models import Planning
 from database import db_session, init_db, init_engine, clear_db
@@ -19,7 +22,39 @@ app = Flask(__name__)
 
 @app.route('/api/auth/google', methods=['POST'])
 def auth_google():
-    print(vars(request))
+    access_token_url = 'https://accounts.google.com/o/oauth2/token'
+    people_api_url = '\
+https://www.googleapis.com/plus/v1/people/me/openIdConnect'
+
+    payload = dict(client_id=request.json['clientId'],
+                   redirect_uri=request.json['redirectUri'],
+                   client_secret=app.config['GOOGLE_SECRET'],
+                   code=request.json['code'],
+                   grant_type='authorization_code')
+
+    # Exchange authorization code for access token
+    r = requests.post(access_token_url, data=payload)
+    token = json.loads(r.text)
+    headers = {'Authorization': 'Bearer {0}'.format(token['access_token'])}
+
+    # Retrieve information about the current user from token
+    r = requests.get(people_api_url, headers=headers)
+    profile = json.loads(r.text)
+
+    guuid = profile['sub']  # google unique user id
+    token = create_token(guuid)
+
+    return jsonify(token=token)
+
+
+def create_token(id):
+    payload = {
+        'sub': id,
+        'iat': datetime.utcnow(),
+        'exp': datetime.utcnow() + timedelta(days=14)
+    }
+    token = jwt.encode(payload, app.config['TOKEN_SECRET'])
+    return token.decode('unicode_escape')
 
 
 @app.route('/api/planning', methods=['POST'])
