@@ -5,7 +5,7 @@ from datetime import timedelta, datetime
 from moodle import MoodleQuiz, MoodleHomework, MoodleLesson, MoodleFeedback, \
     MoodleChoice
 from ics_calendar import Seminar, Practica
-from common import Exam
+from common import Exam, InvalidSyntaxException
 
 
 class AbsoluteTimeModifierException(Exception):
@@ -13,16 +13,6 @@ class AbsoluteTimeModifierException(Exception):
     def __init__(self, str):
         self.message = '\
 Invalid absolute time modifier. Could not interpret value: "%s"' % str
-
-    def __str__(self):
-        return repr(self.message)
-
-
-class InvalidSyntaxException(Exception):
-    """Raised if the string could not be divided"""
-    def __init__(self, str):
-        self.message = '\
-Invalid syntax while splitting events from string "%s"' % str
 
     def __str__(self):
         return repr(self.message)
