@@ -7,7 +7,8 @@ angular.module('app', [
   'app.controllers.LoginController',
   'app.controllers.PlanController',
 ]).config(function($routeProvider, $authProvider) {
-    $routeProvider.when('/', {templateUrl: 'partials/login.html', controller: 'LoginController'});
+    $routeProvider.when('/', {templateUrl: 'partials/index.html', controller: 'IndexController'});
+    $routeProvider.when('/login', {templateUrl: 'partials/login.html', controller: 'LoginController'});
     $routeProvider.when('/plan/:uuid', {templateUrl: 'partials/plan.html', controller: 'PlanController'});
     $routeProvider.otherwise({redirectTo: '/'});
     $authProvider.google({
