@@ -1,12 +1,18 @@
 var controllers = angular.module('app.controllers.LoginController', ['satellizer']);
 
 
-controllers.controller('LoginController', function($scope, $location, $auth) {
+controllers.controller('LoginController', function($scope, $location, $auth, $http) {
     $scope.authenticate = function() {
       $auth.authenticate('google')
         .then(function() {
           console.log('yay');
-          $location.path('/');
+          $http.get('/api/me')
+              .success(function(res) {
+                  console.log(res);
+              })
+              .error(function(err, status) {
+                  console.log(err, status);
+              });
         })
         .catch(function(error) {
           if (error.error) {

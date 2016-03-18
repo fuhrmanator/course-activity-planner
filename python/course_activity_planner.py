@@ -7,8 +7,10 @@ import tempfile
 import json
 import jwt
 
+from functools import wraps
+from jwt import DecodeError, ExpiredSignature
 from datetime import datetime, timedelta
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory, g
 from models import Planning
 from database import db_session, init_db, init_engine, clear_db
 
@@ -18,6 +20,35 @@ from ics_calendar import CalendarReader
 
 
 app = Flask(__name__)
+
+
+def login_req(f):
+    @wraps(f)
+    def decorated_func(*args, **kwargs):
+        if not request.headers.get('Authorization'):
+            return jsonify(message='Please login'), 401
+        try:
+            payload = parse_token_from_header(request)
+            g.user_id = payload['sub']
+            return f(*args, **kwargs)
+        except DecodeError:
+            return jsonify(message='Your session is invalid'), 401
+        except ExpiredSignature:
+            return jsonify(message='\
+Your session has expired. Please login again.'), 401
+
+    return decorated_func
+
+
+def parse_token_from_header(req):
+    token = req.headers.get('Authorization').split()[1]
+    return jwt.decode(token, app.config['TOKEN_SECRET'])
+
+
+@app.route('/api/me')
+@login_req
+def me():
+    return jsonify({'user_id': g.user_id})
 
 
 @app.route('/api/auth/google', methods=['POST'])
