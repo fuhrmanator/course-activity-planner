@@ -77,3 +77,6 @@ target/
 
 bower_components
 node_modules
+
+# Ignore secret configs
+python/config/*_secret.py

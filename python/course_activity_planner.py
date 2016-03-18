@@ -337,6 +337,7 @@ def _clear_db():
 
 def setup(env):
     app.config.from_pyfile('config/%s.py' % env)
+    app.config.from_pyfile('config/%s_secret.py' % env, silent=True)
 
     init_engine(app.config['DATABASE_URI'])
     init_db()
