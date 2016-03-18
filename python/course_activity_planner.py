@@ -28,7 +28,7 @@ def login_req(f):
         if not request.headers.get('Authorization'):
             return jsonify(message='Please login'), 401
         try:
-            payload = parse_token_from_header(request)
+            payload = _parse_token_from_header(request)
             g.user_id = payload['sub']
             return f(*args, **kwargs)
         except DecodeError:
@@ -38,11 +38,6 @@ def login_req(f):
 Your session has expired. Please login again.'), 401
 
     return decorated_func
-
-
-def parse_token_from_header(req):
-    token = req.headers.get('Authorization').split()[1]
-    return jwt.decode(token, app.config['TOKEN_SECRET'])
 
 
 @app.route('/api/me')
@@ -72,23 +67,13 @@ https://www.googleapis.com/plus/v1/people/me/openIdConnect'
     r = requests.get(people_api_url, headers=headers)
     profile = json.loads(r.text)
 
-    guuid = profile['sub']  # google unique user id
-    token = create_token(guuid)
-
+    # create token from google unique user id
+    token = _create_token(profile['sub'])
     return jsonify(token=token)
 
 
-def create_token(id):
-    payload = {
-        'sub': id,
-        'iat': datetime.utcnow(),
-        'exp': datetime.utcnow() + timedelta(days=14)
-    }
-    token = jwt.encode(payload, app.config['TOKEN_SECRET'])
-    return token.decode('unicode_escape')
-
-
 @app.route('/api/planning', methods=['POST'])
+@login_req
 def new_planning():
     ics_url = request.form['ics_url']
     if not ics_url:
@@ -114,6 +99,7 @@ def new_planning():
 
 
 @app.route('/api/planning/<uuid>', methods=['PUT'])
+@login_req
 def update_planning(uuid):
     req = request.get_json()
 
@@ -235,6 +221,21 @@ def static_files(path):
         return index()
 
     return send_from_directory('../public', path)
+
+
+def _create_token(id):
+    payload = {
+        'sub': id,
+        'iat': datetime.utcnow(),
+        'exp': datetime.utcnow() + timedelta(days=14)
+    }
+    token = jwt.encode(payload, app.config['TOKEN_SECRET'])
+    return token.decode('unicode_escape')
+
+
+def _parse_token_from_header(req):
+    token = req.headers.get('Authorization').split()[1]
+    return jwt.decode(token, app.config['TOKEN_SECRET'])
 
 
 def _generate_planning_uuid():
