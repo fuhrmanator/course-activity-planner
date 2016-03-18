@@ -234,6 +234,7 @@ def _create_token(id):
 
 
 def _parse_token_from_header(req):
+    # Bearer <token>
     token = req.headers.get('Authorization').split()[1]
     return jwt.decode(token, app.config['TOKEN_SECRET'])
 

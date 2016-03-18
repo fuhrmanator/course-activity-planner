@@ -28,6 +28,7 @@ class AppTest(unittest.TestCase):
             os.unlink(self.db_path)
         self.app = course_activity_planner.setup('test')
         self.client = self.app.test_client()
+        self.token = course_activity_planner._create_token(111)
 
     def tearDown(self):
         if os.path.isdir(self.app.config['UPLOAD_FOLDER']):
@@ -50,7 +51,8 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url=self.cal_url))
+                ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
         self.assertEqual(200, res._status_code)
         assert 'planning' in json.loads(res.data.decode('utf8'))
