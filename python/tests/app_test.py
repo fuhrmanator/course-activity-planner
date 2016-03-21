@@ -59,18 +59,22 @@ class AppTest(unittest.TestCase):
 
     def test_bad_requests_new_planning(self):
         # No ICS or MBZ
-        res = self.client.post('/api/planning')
+        res = self.client.post(
+            '/api/planning',
+            headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(400, res._status_code)
 
         # No ICS url
         res = self.client.post(
             '/api/planning',
-            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz')))
+            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz')),
+            headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(400, res._status_code)
 
         # No MBZ
         res = self.client.post(
-            '/api/planning', data=dict(ics_url=self.cal_url))
+            '/api/planning', data=dict(ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(400, res._status_code)
 
     def test_mbz_file_is_saved_after_posting_planning(self):
@@ -81,7 +85,8 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url=self.cal_url))
+                ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
         self.assertEqual(200, res._status_code)
         self.assertTrue(os.path.exists('\
@@ -95,7 +100,8 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url=self.cal_url))
+                ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
         self.assertEqual(200, res._status_code)
         self.assertTrue(course_activity_planner._has_planning('uuid'))
@@ -108,15 +114,18 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url=self.cal_url))
+                ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
         res = self.client.put(
             '/api/planning/uuid',
             data=json.dumps({'planning': 'Q1 S1F S2'}),
-            headers=[('Content-Type', 'application/json')])
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
 
         self.assertEqual(200, res._status_code)
-        actual = course_activity_planner._get_planning('uuid').planning_txt
+        actual = course_activity_planner. \
+            _get_planning_bypass('uuid').planning_txt
         self.assertEqual('Q1 S1F S2', actual)
 
     def test_update_missing_planning(self):
@@ -126,7 +135,8 @@ class AppTest(unittest.TestCase):
         res = self.client.put(
             '/api/planning/uuid',
             data=json.dumps({'planning': 'some text'}),
-            headers=[('Content-Type', 'application/json')])
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
 
         self.assertEqual(404, res._status_code)
 
@@ -137,7 +147,8 @@ class AppTest(unittest.TestCase):
         res = self.client.put(
             '/api/planning/uuid',
             data=json.dumps({'planningee': 'some text'}),
-            headers=[('Content-Type', 'application/json')])
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
 
         self.assertEqual(400, res._status_code)
 
@@ -155,14 +166,18 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url='some_url_to_be_mocked'))
+                ics_url='some_url_to_be_mocked'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
         res = self.client.put(
             '/api/planning/uuid',
             data=json.dumps({'planning': 'Q1 S1 S2'}),
-            headers=[('Content-Type', 'application/json')])
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
 
-        res = self.client.get('/api/planning/uuid/preview')
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(200, res._status_code)
 
         actual_cal = json.loads(
@@ -204,14 +219,18 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url='some_url_to_be_mocked'))
+                ics_url='some_url_to_be_mocked'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
         res = self.client.put(
             '/api/planning/uuid',
             data=json.dumps({'planning': 'Q1 S1 S2'}),
-            headers=[('Content-Type', 'application/json')])
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
 
-        res = self.client.get('/api/planning/uuid/preview')
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(200, res._status_code)
 
         actual = json.loads(res.data.decode('utf8'))['preview']
@@ -255,9 +274,12 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url='http://some_invalid_url'))
+                ics_url='http://some_invalid_url'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
-        res = self.client.get('/api/planning/uuid/preview')
+        res = self.client.get('/api/planning/uuid/preview',
+                              headers=[('Authorization',
+                                        "Bearer %s" % self.token)])
         self.assertEqual(400, res._status_code)
         actual = json.loads(res.data.decode('utf8'))['alerts']
         self.assertEqual(1, len(actual))
@@ -275,9 +297,13 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url='some_url_to_be_mocked'))
+                ics_url='some_url_to_be_mocked'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
-        res = self.client.get('/api/planning/uuid/preview')
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+
         self.assertEqual(400, res._status_code)
         actual = json.loads(res.data.decode('utf8'))['alerts']
         self.assertEqual(1, len(actual))
@@ -298,14 +324,18 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url='some_url_to_be_mocked'))
+                ics_url='some_url_to_be_mocked'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
         res = self.client.put(
             '/api/planning/uuid',
             data=json.dumps({'planning': 'H1 S3F P3 P3F'}),
-            headers=[('Content-Type', 'application/json')])
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
 
-        res = self.client.get('/api/planning/uuid/preview')
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(200, res._status_code)
 
         actual = json.loads(res.data.decode('utf8'))['preview']
@@ -359,14 +389,18 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url='some_url_to_be_mocked'))
+                ics_url='some_url_to_be_mocked'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
         res = self.client.put(
             '/api/planning/uuid',
             data=json.dumps({'planning': 'Q1 S1 S2\nH1 S2 P3'}),
-            headers=[('Content-Type', 'application/json')])
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
 
-        res = self.client.get('/api/planning/uuid/preview')
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(200, res._status_code)
 
         actual = json.loads(res.data.decode('utf8'))['preview']
@@ -421,15 +455,19 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url='some_url_to_be_mocked'))
+                ics_url='some_url_to_be_mocked'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
         # Planning is not in chronological order
         res = self.client.put(
             '/api/planning/uuid',
             data=json.dumps({'planning': 'Q2 S1F S2\nQ1 S2F S3S'}),
-            headers=[('Content-Type', 'application/json')])
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
 
-        res = self.client.get('/api/planning/uuid/preview')
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(200, res._status_code)
 
         actual = json.loads(res.data.decode('utf8'))['preview']
@@ -484,14 +522,18 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url='some_url_to_be_mocked'))
+                ics_url='some_url_to_be_mocked'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
         res = self.client.put(
             '/api/planning/uuid',
             data=json.dumps({'planning': 'Q1 S2 S1'}),
-            headers=[('Content-Type', 'application/json')])
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
 
-        res = self.client.get('/api/planning/uuid/preview')
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(200, res._status_code)
 
         actual = json.loads(res.data.decode('utf8'))['alerts']
@@ -514,14 +556,18 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url=self.cal_url))
+                ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
         res = self.client.put(
             '/api/planning/uuid',
             data=json.dumps({'planning': 'Q1 S1F S2'}),
-            headers=[('Content-Type', 'application/json')])
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
 
-        res = self.client.get('/api/planning/uuid/mbz')
+        res = self.client.get(
+            '/api/planning/uuid/mbz',
+            headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(200, res._status_code)
 
         new_mbz_path = os.path.join(self.app.config['UPLOAD_FOLDER'],
@@ -560,14 +606,18 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url='some_url_to_be_mocked'))
+                ics_url='some_url_to_be_mocked'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
 
         res = self.client.put(
             '/api/planning/uuid',
             data=json.dumps({'planning': 'E1 S1 S1F'}),
-            headers=[('Content-Type', 'application/json')])
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
 
-        res = self.client.get('/api/planning/uuid/preview')
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(200, res._status_code)
 
         actual = json.loads(res.data.decode('utf8'))['preview']

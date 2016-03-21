@@ -10,7 +10,7 @@ import jwt
 from functools import wraps
 from jwt import DecodeError, ExpiredSignature
 from datetime import datetime, timedelta
-from flask import Flask, jsonify, request, send_from_directory, g
+from flask import Flask, jsonify, request, send_from_directory, g, Response
 from models import Planning
 from database import db_session, init_db, init_engine, clear_db
 
@@ -75,6 +75,8 @@ https://www.googleapis.com/plus/v1/people/me/openIdConnect'
 @app.route('/api/planning', methods=['POST'])
 @login_req
 def new_planning():
+    user_id = g.user_id
+
     ics_url = request.form['ics_url']
     if not ics_url:
         return _bad_request()
@@ -91,7 +93,7 @@ def new_planning():
     os.makedirs(folder)
 
     mbz_fullpath = _save_mbz_file(mbz_file, folder)
-    planning = Planning(planning_id, '', ics_url, mbz_fullpath)
+    planning = Planning(planning_id, user_id, '', ics_url, mbz_fullpath)
     db_session.add(planning)
     db_session.commit()
 
@@ -106,7 +108,10 @@ def update_planning(uuid):
     if not req or 'planning' not in req:
         return _bad_request()
 
-    planning = _get_planning(uuid)
+    try:
+        planning = _get_planning(uuid, g.user_id)
+    except CAPException as e:
+        return e.res
 
     if not planning:
         return jsonify(
@@ -121,19 +126,24 @@ def update_planning(uuid):
 
 
 @app.route('/api/planning/<uuid>/', methods=['GET'])
+@login_req
 def get_planning(uuid):
-    planning = _get_planning(uuid)
-    if not planning:
-        return _planning_not_found(uuid)
+    try:
+        planning = _get_planning(uuid, g.user_id)
+    except Exception as e:
+        return jsonify(
+            {'alerts': [{'type': 'danger', 'msg': e.message}]}), 400
     return jsonify({'planning': planning.as_pub_dict()})
 
 
 @app.route('/api/planning/<uuid>/preview', methods=['GET'])
+@login_req
 def preview_planning(uuid):
-    planning = _get_planning(uuid)
-    if not planning:
-        return _planning_not_found(uuid)
-
+    try:
+        planning = _get_planning(uuid, g.user_id)
+    except Exception as e:
+        return jsonify(
+            {'alerts': [{'type': 'danger', 'msg': str(e)}]}), 400
     moodle_archive_path = planning.mbz_fullpath
     planning_txt = planning.planning_txt
 
@@ -173,11 +183,18 @@ def preview_planning(uuid):
         {'preview': preview, 'inventory': inventory, 'alerts': alerts}), 200
 
 
+class CAPException(Exception):
+    def __init__(self, res):
+        self.res = res
+
+
 @app.route('/api/planning/<uuid>/mbz', methods=['GET'])
+@login_req
 def download_planning(uuid):
-    planning = _get_planning(uuid)
-    if not planning:
-        return _planning_not_found(uuid)
+    try:
+        planning = _get_planning(uuid, g.user_id)
+    except CAPException as e:
+        return e.res
 
     moodle_archive_path = planning.mbz_fullpath
     planning_txt = planning.planning_txt
@@ -247,8 +264,23 @@ def _has_planning(uuid):
     return Planning.query.filter(Planning.uuid == uuid).count() > 0
 
 
-def _get_planning(uuid):
+def __get_planning(uuid):
+    """Get planning from uuid bypassing user id check"""
     return Planning.query.filter(Planning.uuid == uuid).first()
+
+
+def _get_planning(uuid, user_id):
+    """Get planning from uuid and user id"""
+    planning = __get_planning(uuid)
+    if not planning:
+        _planning_not_found(uuid)
+    if planning.user_id != str(user_id):
+        _forbidden()
+    return planning
+
+
+def _get_planning_bypass(uuid):
+    return __get_planning(uuid)
 
 
 def _save_mbz_file(mbz_file, folder):
@@ -356,11 +388,22 @@ def _bad_request():
     return jsonify({'message': 'Bad request.'}), 400
 
 
-def _planning_not_found(uuid):
-    return jsonify(
+def _forbidden():
+    res = Response(
         {'alerts': [
             {'type': 'danger',
-             'msg': 'Planning with uuid "%s" not found' % uuid}]}), 404
+             'msg': 'You are not allowed to view this ressource.'}]
+         }, 403)
+    raise CAPException(res)
+
+
+def _planning_not_found(uuid):
+    res = Response(
+        {'alerts': [
+            {'type': 'danger',
+             'msg': 'Planning with uuid "%s" not found' % uuid}]
+         }, 404)
+    raise CAPException(res)
 
 
 def _clear_db():
