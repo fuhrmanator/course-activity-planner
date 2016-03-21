@@ -140,6 +140,26 @@ class AppTest(unittest.TestCase):
 
         self.assertEqual(404, res._status_code)
 
+    def test_unauthorized_access(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+
+        # Simulate another client with other user id
+        unauthorized_token = course_activity_planner._create_token(1111)
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'some text'}),
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % unauthorized_token)])
+        self.assertEqual(403, res._status_code)
+
     def test_update_planning_bad_request(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
