@@ -57,6 +57,13 @@ class AppTest(unittest.TestCase):
         self.assertEqual(200, res._status_code)
         assert 'planning' in json.loads(res.data.decode('utf8'))
 
+    def test_get_planning_bad_request(self):
+        # Test getting a planning that doesn't exist
+        res = self.client.get(
+            '/api/planning/uuid2/',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(404, res._status_code)
+
     def test_get_planning(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
@@ -73,11 +80,50 @@ class AppTest(unittest.TestCase):
             headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(200, res._status_code)
 
-        # Test getting a planning that doesn't exist
+    def test_get_plannings_for_user(self):
+        # Test 0 plannings are returned
         res = self.client.get(
-            '/api/planning/uuid2/',
+            '/api/planning/',
             headers=[('Authorization', "Bearer %s" % self.token)])
-        self.assertEqual(404, res._status_code)
+        self.assertEqual(200, res._status_code)
+        actual = json.loads(res.data.decode('utf8'))['plannings']
+        self.assertEqual(0, len(actual))
+
+        # Create first planning
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+
+        # Test 1 planning is returned
+        res = self.client.get(
+            '/api/planning/',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+        actual = json.loads(res.data.decode('utf8'))['plannings']
+        self.assertEqual(1, len(actual))
+
+        # Create second planning
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid2')
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+
+        # Test 2 plannings are returned
+        res = self.client.get(
+            '/api/planning/',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+        actual = json.loads(res.data.decode('utf8'))['plannings']
+        self.assertEqual(2, len(actual))
 
     def test_bad_requests_new_planning(self):
         # No ICS or MBZ

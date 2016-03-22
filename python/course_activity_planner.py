@@ -131,12 +131,11 @@ def update_planning(uuid):
 def get_all_plannings_for_user():
     try:
         plannings = _get_plannings_for_user(g.user_id)
-    except Exception as e:
-        return jsonify(
-            {'alerts': [{'type': 'danger', 'msg': e.message}]}), 400
+    except CAPException as e:
+        return e.res
 
     pub = map(lambda planning: planning.as_pub_dict(), plannings)
-    return jsonify({'plannings': pub}), 200
+    return jsonify({'plannings': list(pub)}), 200
 
 
 @app.route('/api/planning/<uuid>/', methods=['GET'])
@@ -286,14 +285,9 @@ def _get_planning(uuid, user_id):
     return planning
 
 
-def _get_plannings_for_user(uuid, user_id):
-    """Get planning from uuid and user id"""
-    planning = __get_planning(uuid)
-    if not planning:
-        _planning_not_found(uuid)
-    if planning.user_id != str(user_id):
-        _forbidden()
-    return planning
+def _get_plannings_for_user(user_id):
+    """Get all plannings from user id"""
+    return Planning.query.filter(Planning.user_id == user_id).all()
 
 
 def _get_planning_bypass(uuid):
