@@ -139,3 +139,8 @@ class Exam(Event):
         else:
             # TODO better err msg
             raise InvalidSyntaxException('Exam has invalid date count')
+
+
+class CAPException(Exception):
+    def __init__(self, res):
+        self.res = res

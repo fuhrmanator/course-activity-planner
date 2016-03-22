@@ -17,6 +17,7 @@ from database import db_session, init_db, init_engine, clear_db
 from interpreter import Interpreter, InvalidSyntaxException
 from moodle import MoodleCourse
 from ics_calendar import CalendarReader
+from common import CAPException
 
 
 app = Flask(__name__)
@@ -125,14 +126,26 @@ def update_planning(uuid):
     return jsonify({}), 200
 
 
+@app.route('/api/planning/', methods=['GET'])
+@login_req
+def get_all_plannings_for_user():
+    try:
+        plannings = _get_plannings_for_user(g.user_id)
+    except Exception as e:
+        return jsonify(
+            {'alerts': [{'type': 'danger', 'msg': e.message}]}), 400
+
+    pub = map(lambda planning: planning.as_pub_dict(), plannings)
+    return jsonify({'plannings': pub}), 200
+
+
 @app.route('/api/planning/<uuid>/', methods=['GET'])
 @login_req
 def get_planning(uuid):
     try:
         planning = _get_planning(uuid, g.user_id)
-    except Exception as e:
-        return jsonify(
-            {'alerts': [{'type': 'danger', 'msg': e.message}]}), 400
+    except CAPException as e:
+        return e.res
     return jsonify({'planning': planning.as_pub_dict()})
 
 
@@ -141,9 +154,8 @@ def get_planning(uuid):
 def preview_planning(uuid):
     try:
         planning = _get_planning(uuid, g.user_id)
-    except Exception as e:
-        return jsonify(
-            {'alerts': [{'type': 'danger', 'msg': str(e)}]}), 400
+    except CAPException as e:
+        return e.res
     moodle_archive_path = planning.mbz_fullpath
     planning_txt = planning.planning_txt
 
@@ -181,11 +193,6 @@ def preview_planning(uuid):
         alerts.append({'type': 'danger', 'msg': e.message})
     return jsonify(
         {'preview': preview, 'inventory': inventory, 'alerts': alerts}), 200
-
-
-class CAPException(Exception):
-    def __init__(self, res):
-        self.res = res
 
 
 @app.route('/api/planning/<uuid>/mbz', methods=['GET'])
@@ -270,6 +277,16 @@ def __get_planning(uuid):
 
 
 def _get_planning(uuid, user_id):
+    """Get planning from uuid and user id"""
+    planning = __get_planning(uuid)
+    if not planning:
+        _planning_not_found(uuid)
+    if planning.user_id != str(user_id):
+        _forbidden()
+    return planning
+
+
+def _get_plannings_for_user(uuid, user_id):
     """Get planning from uuid and user id"""
     planning = __get_planning(uuid)
     if not planning:

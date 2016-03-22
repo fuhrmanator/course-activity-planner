@@ -57,6 +57,28 @@ class AppTest(unittest.TestCase):
         self.assertEqual(200, res._status_code)
         assert 'planning' in json.loads(res.data.decode('utf8'))
 
+    def test_get_planning(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.get(
+            '/api/planning/uuid/',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+
+        # Test getting a planning that doesn't exist
+        res = self.client.get(
+            '/api/planning/uuid2/',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(404, res._status_code)
+
     def test_bad_requests_new_planning(self):
         # No ICS or MBZ
         res = self.client.post(
@@ -224,6 +246,12 @@ class AppTest(unittest.TestCase):
         # no order expected
         assert all(x in expected_cal for x in actual_cal)
         assert all(x in expected_moodle for x in actual_moodle)
+
+    def test_get_bad_preview(self):
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(404, res._status_code)
 
     def test_preview_planning(self):
         course_activity_planner._generate_planning_uuid = \
