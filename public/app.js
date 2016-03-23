@@ -6,6 +6,7 @@ angular.module('app', [
   'app.controllers.IndexController',
   'app.controllers.LoginController',
   'app.controllers.PlanController',
+  'app.controllers.LogoutController',
 ]).config(function($routeProvider, $authProvider) {
     $routeProvider.when('/', {
       templateUrl: 'partials/index.html',
@@ -17,6 +18,12 @@ angular.module('app', [
       templateUrl: 'partials/login.html',
       controller: 'LoginController',
       resolve: {skipIfLoggedIn: skipIfLoggedIn}
+    });
+
+    $routeProvider.when('/logout', {
+      templateUrl: '',
+      controller: 'LogoutController',
+      resolve: {loginRequired: loginRequired}
     });
 
     $routeProvider.when('/plan/:uuid', {

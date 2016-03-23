@@ -12,6 +12,15 @@ controllers.controller('IndexController', function($scope, $http, $location, Upl
       }
     };
 
+
+    $http.get('/api/planning/')
+        .success(function(data) {
+            $scope.plannings = data.plannings;
+        })
+        .error(function(err, status) {
+            console.log(err, status);
+        });
+
     $scope.upload = function(file) {
       delete $scope.uploadSuccess;
 

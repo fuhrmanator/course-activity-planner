@@ -5,10 +5,9 @@ controllers.controller('LoginController', function($scope, $location, $auth, $ht
     $scope.authenticate = function() {
       $auth.authenticate('google')
         .then(function() {
-          console.log('yay');
           $http.get('/api/me')
-              .success(function(res) {
-                  console.log(res);
+              .success(function() {
+                  $location.path('/');
               })
               .error(function(err, status) {
                   console.log(err, status);
