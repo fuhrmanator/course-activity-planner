@@ -12,6 +12,14 @@ controllers.controller('IndexController', function($scope, $http, $location, Upl
       }
     };
 
+    $scope.editPlanning = function(uuid) {
+      $location.path('/plan/' + uuid);
+    };
+
+    $scope.deletePlanning = function(uuid) {
+      // TODO
+      console.log(uuid);
+    };
 
     $http.get('/api/planning/')
         .success(function(data) {
