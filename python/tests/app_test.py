@@ -61,6 +61,15 @@ class AppTest(unittest.TestCase):
         self.assertEqual(200, res._status_code)
         assert 'planning' in json.loads(res.data.decode('utf8'))
 
+    def test_new_planning_without_mbz(self):
+        res = self.client.post(
+            '/api/planning',
+            data=dict(ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+
+        self.assertEqual(200, res._status_code)
+        assert 'planning' in json.loads(res.data.decode('utf8'))
+
     def test_get_planning_bad_request(self):
         # Test getting a planning that doesn't exist
         res = self.client.get(
@@ -140,12 +149,6 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz')),
-            headers=[('Authorization', "Bearer %s" % self.token)])
-        self.assertEqual(400, res._status_code)
-
-        # No MBZ
-        res = self.client.post(
-            '/api/planning', data=dict(ics_url=self.cal_url),
             headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(400, res._status_code)
 
@@ -386,6 +389,80 @@ class AppTest(unittest.TestCase):
                 'timestamp': 1390395600},
         ]
         self.assertEqual(expected, actual)
+
+    def test_preview_planning_without_mbz(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(ics_url='some_url_to_be_mocked'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['preview']
+        expected = [
+            {'key_str': 'S', 'title': 'Seminar 1 opens',
+                'timestamp': 1389009600},
+            {'key_str': 'S', 'title': 'Seminar 1 closes',
+                'timestamp': 1389013200},
+            {'key_str': 'P', 'title': 'Practica 1 opens',
+                'timestamp': 1389182400},
+            {'key_str': 'P', 'title': 'Practica 1 closes',
+                'timestamp': 1389186000},
+            {'key_str': 'S', 'title': 'Seminar 2 opens',
+                'timestamp': 1389614400},
+            {'key_str': 'S', 'title': 'Seminar 2 closes',
+                'timestamp': 1389618000},
+            {'key_str': 'P', 'title': 'Practica 2 opens',
+                'timestamp': 1389787200},
+            {'key_str': 'P', 'title': 'Practica 2 closes',
+                'timestamp': 1389790800},
+            {'key_str': 'S', 'title': 'Seminar 3 opens',
+                'timestamp': 1390219200},
+            {'key_str': 'S', 'title': 'Seminar 3 closes',
+                'timestamp': 1390222800},
+            {'key_str': 'P', 'title': 'Practica 3 opens',
+                'timestamp': 1390392000},
+            {'key_str': 'P', 'title': 'Practica 3 closes',
+                'timestamp': 1390395600},
+        ]
+        self.assertEqual(expected, actual)
+
+    def test_update_planning_without_mbz(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(ics_url='some_url_to_be_mocked'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['preview']
+        self.assertEqual(12, len(actual))
+
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'E1 S1 S2'}),
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['preview']
+        self.assertEqual(14, len(actual))
 
     def test_preview_planning_with_invalid_mbz(self):
         course_activity_planner._generate_planning_uuid = \

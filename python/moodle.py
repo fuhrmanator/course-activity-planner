@@ -250,6 +250,9 @@ class MoodleCourse():
 
     def __init__(self, moodle_archive_path):
         self.path = moodle_archive_path
+
+        if not moodle_archive_path:
+            return
         self.fullpath = os.path.join(self.path, 'moodle_backup.xml')
         self.backup = ET.parse(self.fullpath)
 

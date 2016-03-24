@@ -129,7 +129,10 @@ class Interpreter():
         if event_clazz.is_user_defined():
             return event_clazz(event_id)
 
-        return self.course.get_activity_by_type_and_num(event_clazz, event_id)
+        if self.course:
+            return self.course.get_activity_by_type_and_num(
+                event_clazz, event_id)
+        raise InvalidEventIdentifier(tokens[0])
 
     def _detect_event_class_and_id(self, string):
         """Returns a tuple of the class and the meeting id."""

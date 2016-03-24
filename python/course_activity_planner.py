@@ -96,11 +96,11 @@ def new_planning():
     else:
         return _bad_request()
 
-    # Get MBZ
-    mbz_file = request.files['mbz_file']
-    if not mbz_file:
-        return _bad_request()
-    mbz_fullpath = _save_mbz_file(mbz_file, folder)
+    # Get MBZ or empty mbz_fullpath
+    mbz_fullpath = None
+    if 'mbz_file' in request.files:
+        mbz_file = request.files['mbz_file']
+        mbz_fullpath = _save_mbz_file(mbz_file, folder)
 
     planning = Planning(planning_id, user_id, '', ics_fullpath, mbz_fullpath)
     db_session.add(planning)
@@ -184,19 +184,19 @@ def preview_planning(uuid):
             calendar = CalendarReader(planning.ics_fullpath)
             calendar_meetings = calendar.get_all_meetings()
         except Exception as e:
-            return jsonify(
-                alerts=[{'type': 'danger',
-                        'msg': 'Calendar file is not a valid ICS file.'}]), 400
+            _bad_cal()
 
         # Extract Moodle course to tmp folder
-        try:
-            with tarfile.open(moodle_archive_path) as tar_file:
-                tar_file.extractall(tmp_path)
-                course = MoodleCourse(tmp_path)
-        except Exception:
-            return jsonify(
-                alerts=[{'type': 'danger',
-                        'msg': 'MBZ file could not be read.'}]), 400
+        course = None
+        if moodle_archive_path:
+            try:
+                with tarfile.open(moodle_archive_path) as tar_file:
+                    tar_file.extractall(tmp_path)
+                    course = MoodleCourse(tmp_path)
+            except Exception as e:
+                return jsonify(
+                    alerts=[{'type': 'danger',
+                            'msg': 'MBZ file could not be read.'}]), 400
 
     alerts = []
     preview = None
@@ -340,7 +340,8 @@ def _dl_and_save_ics_file(ics_url, folder):
 def _build_inventory(interpreter, planning_txt):
     inventory = {'meetings': [], 'activities': []}
     calendar_meetings = interpreter.meetings
-    moodle_activities = interpreter.course.activities
+    moodle_activities = interpreter.course.activities \
+        if interpreter.course else []
 
     for meeting_type in calendar_meetings:
         for i, meeting in enumerate(calendar_meetings[meeting_type]):
@@ -411,8 +412,10 @@ def _build_preview(interpreter, planning_txt):
 
 def _build_alerts_for_preview(interpreter):
     alerts = []
-    for activity_type in interpreter.course.activities:
-        for activity in interpreter.course.activities[activity_type]:
+    moodle_activities = interpreter.course.activities \
+        if interpreter.course else []
+    for activity_type in moodle_activities:
+        for activity in moodle_activities[activity_type]:
             if activity.get_start_datetime() > activity.get_end_datetime():
                 alerts.append(
                     {'type': 'warning',
