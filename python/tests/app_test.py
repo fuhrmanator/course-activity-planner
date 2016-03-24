@@ -60,7 +60,7 @@ class AppTest(unittest.TestCase):
     def test_get_planning_bad_request(self):
         # Test getting a planning that doesn't exist
         res = self.client.get(
-            '/api/planning/uuid2/',
+            '/api/planning/uuid2',
             headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(404, res._status_code)
 
@@ -76,7 +76,7 @@ class AppTest(unittest.TestCase):
             headers=[('Authorization', "Bearer %s" % self.token)])
 
         res = self.client.get(
-            '/api/planning/uuid/',
+            '/api/planning/uuid',
             headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(200, res._status_code)
 
@@ -206,6 +206,34 @@ class AppTest(unittest.TestCase):
             headers=[('Content-Type', 'application/json'),
                      ('Authorization', "Bearer %s" % self.token)])
 
+        self.assertEqual(404, res._status_code)
+
+    def test_delete_planning(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+        # Planning exists
+        res = self.client.get(
+            '/api/planning/uuid',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+
+        # Delete planning
+        res = self.client.delete(
+            '/api/planning/uuid',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(204, res._status_code)
+
+        # Planning was deleted
+        res = self.client.get(
+            '/api/planning/uuid',
+            headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(404, res._status_code)
 
     def test_unauthorized_access(self):

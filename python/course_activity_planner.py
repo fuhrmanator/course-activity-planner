@@ -138,7 +138,7 @@ def get_all_plannings_for_user():
     return jsonify({'plannings': list(pub)}), 200
 
 
-@app.route('/api/planning/<uuid>/', methods=['GET'])
+@app.route('/api/planning/<uuid>', methods=['GET'])
 @login_req
 def get_planning(uuid):
     try:
@@ -146,6 +146,18 @@ def get_planning(uuid):
     except CAPException as e:
         return e.res
     return jsonify({'planning': planning.as_pub_dict()})
+
+
+@app.route('/api/planning/<uuid>', methods=['DELETE'])
+@login_req
+def delete_planning(uuid):
+    try:
+        planning = _get_planning(uuid, g.user_id)
+        db_session.delete(planning)
+        db_session.commit()
+    except CAPException as e:
+        return e.res
+    return jsonify({}), 204
 
 
 @app.route('/api/planning/<uuid>/preview', methods=['GET'])
