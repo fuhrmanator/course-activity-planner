@@ -108,7 +108,7 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
     };
 
     $scope.refresh = function() {
-        $http.get('/api/planning/'+ $scope.uuid + '/')
+        $http.get('/api/planning/'+ $scope.uuid)
             .success(function(data) {
                 $scope.planning_txt = data.planning.planning_txt;
                 $http.get('/api/planning/'+ $scope.uuid + '/preview')

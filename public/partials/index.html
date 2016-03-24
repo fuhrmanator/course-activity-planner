@@ -4,19 +4,27 @@
     </div>
     <div class="row">
         <div class="col-md-4 col-md-offset-1">
-            <h2>Create new planning</h2>
-            <div class="drop-box" ngf-drag-over-class="dragover" ngf-select ngf-drop ng-model="file">
-                <p ng-hide="file" class="text-info">Select MBZ file or drop here</p>
-                <p ng-show="file" class="text-success">Ready to upload "{{file.name}}"</p>
+            <h1>Create new planning</h1>
+            <h4>1. Upload a Moodle Backup File</h4>
+            <div class="drop-box" ngf-drag-over-class="dragover" ngf-select ngf-drop ng-model="mbzFile">
+                <p ng-hide="mbzFile" class="text-info">Select MBZ file or drop here</p>
+                <p ng-show="mbzFile" class="text-success">Ready to upload "{{mbzFile.name}}"</p>
             </div>
+            <hr>
+            <h4>2. Upload a calendar file or link to an URL</h4>
             <div class="row" style="padding-top: 15px">
                 <div class="col-md-12">
                     <input type="text" name="ics_url" ng-model="ics_url" class="form-control" placeholder="URL of the ical">
                 </div>
             </div>
-            <div class="row" ng-show="file">
+            <h2>OR</h2>
+            <div class="drop-box" ngf-drag-over-class="dragover" ngf-select ngf-drop ng-model="icsFile">
+                <p ng-hide="icsFile" class="text-info">Select ICS file or drop here</p>
+                <p ng-show="icsFile" class="text-success">Ready to upload "{{icsFile.name}}"</p>
+            </div>
+            <div class="row" ng-show="mbzFile">
                 <div class="col-md-12">
-                    <button class="btn btn-info center-block" ng-click="upload(file)">Plan now</button>
+                    <button class="btn btn-info center-block" ng-click="upload()">Plan now</button>
                 </div>
             </div>
 
@@ -27,7 +35,7 @@
             </div>
         </div>
         <div class="col-md-4 col-md-offset-1">
-            <h2>Reuse planning</h2>
+            <h1>Reuse planning</h1>
             <table class="table table-hover">
                 <thead>
                   <th>

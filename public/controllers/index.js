@@ -8,8 +8,8 @@ controllers.controller('IndexController', function($scope, $http, $location, Upl
     };
 
     $scope.submit = function() {
-      if ($scope.form.file.$valid && $scope.file) {
-        $scope.upload($scope.file);
+      if ($scope.form.mbzFile.$valid && $scope.mbzFile) {
+        $scope.upload($scope.mbzFile);
       }
     };
 
@@ -37,12 +37,21 @@ controllers.controller('IndexController', function($scope, $http, $location, Upl
           });
     };
 
-    $scope.upload = function(file) {
+    $scope.upload = function() {
       delete $scope.uploadSuccess;
+
+      var payload = {mbz_file: $scope.mbzFile};
+      if ($scope.ics_url) {
+        payload.ics_url = $scope.ics_url;
+      } else if ($scope.icsFile) {
+        payload.ics_file = $scope.icsFile;
+      } else {
+        console.log('error: no ics');
+      }
 
       Upload.upload({
           url: '/api/planning',
-          data: {file: file, 'ics_url': $scope.ics_url}
+          data: payload
       }).progress(function (evt) {
           $scope.progress = parseInt(100.0 * evt.loaded / evt.total);
       }).success(function (data) {
@@ -58,7 +67,7 @@ controllers.controller('IndexController', function($scope, $http, $location, Upl
           } else {
               $scope.alerts.push({msg: 'An error occurred while uploading your file.', type: 'danger'});
           }
-          delete $scope.file;
+          delete $scope.mbzFile;
           delete $scope.progress;
       });
   };

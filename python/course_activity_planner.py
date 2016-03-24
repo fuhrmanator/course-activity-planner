@@ -16,7 +16,7 @@ from database import db_session, init_db, init_engine, clear_db
 
 from interpreter import Interpreter, InvalidSyntaxException
 from moodle import MoodleCourse
-from ics_calendar import CalendarReader
+from ics_calendar import CalendarReader, InvalidCalendarFileException
 from common import CAPException
 
 
@@ -77,24 +77,35 @@ https://www.googleapis.com/plus/v1/people/me/openIdConnect'
 @login_req
 def new_planning():
     user_id = g.user_id
-
-    ics_url = request.form['ics_url']
-    if not ics_url:
-        return _bad_request()
-
-    mbz_file = request.files['file']
-    if not mbz_file:
-        return _bad_request()
-
     planning_id = _generate_planning_uuid()
-
     folder = os.path.join(app.config['UPLOAD_FOLDER'], planning_id)
     if os.path.isdir(folder):
         raise Exception('Planning uuid collision. UUID4 busted ?')
     os.makedirs(folder)
 
+    # Get ICS
+    if 'ics_url' in request.form:
+        try:
+            ics_url = request.form['ics_url']
+            ics_fullpath = _dl_and_save_ics_file(ics_url, folder)
+        except InvalidCalendarFileException:
+            return jsonify(
+                alerts=[{'type': 'danger',
+                        'msg': 'Calendar file is not a valid ICS file.'}]), 400
+
+    elif 'ics_file' in request.files:
+        ics_file = request.files['ics_file']
+        ics_fullpath = _save_ics_file(ics_file, folder)
+    else:
+        return _bad_request()
+
+    # Get MBZ
+    mbz_file = request.files['mbz_file']
+    if not mbz_file:
+        return _bad_request()
     mbz_fullpath = _save_mbz_file(mbz_file, folder)
-    planning = Planning(planning_id, user_id, '', ics_url, mbz_fullpath)
+
+    planning = Planning(planning_id, user_id, '', ics_fullpath, mbz_fullpath)
     db_session.add(planning)
     db_session.commit()
 
@@ -170,12 +181,10 @@ def preview_planning(uuid):
     moodle_archive_path = planning.mbz_fullpath
     planning_txt = planning.planning_txt
 
-    # Make tmp directory for MBZ extraction and ics download
+    # Make tmp directory for MBZ extraction
     with tempfile.TemporaryDirectory() as tmp_path:
-        # Download calendar to tmp folder
         try:
-            calendar_path = _dl_and_save_ics_file(planning.ics_url, tmp_path)
-            calendar = CalendarReader(calendar_path)
+            calendar = CalendarReader(planning.ics_fullpath)
             calendar_meetings = calendar.get_all_meetings()
         except Exception as e:
             return jsonify(
@@ -223,8 +232,7 @@ def download_planning(uuid):
     # Make tmp directory for MBZ extraction and ics download
     with tempfile.TemporaryDirectory() as tmp_path:
         # Download calendar to tmp folder
-        calendar_path = _dl_and_save_ics_file(planning.ics_url, tmp_path)
-        calendar = CalendarReader(calendar_path)
+        calendar = CalendarReader(planning.ics_fullpath)
         calendar_meetings = calendar.get_all_meetings()
 
         # Extract Moodle course to tmp folder
@@ -306,6 +314,12 @@ def _get_planning_bypass(uuid):
     return __get_planning(uuid)
 
 
+def _save_ics_file(ics_file, folder):
+    ics_fullpath = os.path.join(folder, 'original_calendar.ics')
+    ics_file.save(ics_fullpath)
+    return ics_fullpath
+
+
 def _save_mbz_file(mbz_file, folder):
     mbz_fullpath = os.path.join(folder, 'original_archive.mbz')
     mbz_file.save(mbz_fullpath)
@@ -313,13 +327,16 @@ def _save_mbz_file(mbz_file, folder):
 
 
 def _dl_and_save_ics_file(ics_url, folder):
-    ics_fullpath = os.path.join(folder, 'original_calendar.ics')
-    r = requests.get(ics_url, stream=True)
+    try:
+        ics_fullpath = os.path.join(folder, 'original_calendar.ics')
+        r = requests.get(ics_url, stream=True)
 
-    with open(ics_fullpath, 'wb') as f:
-        for chunk in r.iter_content(chunk_size=4096):
-            if chunk:
-                f.write(chunk)
+        with open(ics_fullpath, 'wb') as f:
+            for chunk in r.iter_content(chunk_size=4096):
+                if chunk:
+                    f.write(chunk)
+    except Exception:
+        raise InvalidCalendarFileException()
     return ics_fullpath
 
 

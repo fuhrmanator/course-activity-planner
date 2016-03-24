@@ -30,6 +30,10 @@ class AppTest(unittest.TestCase):
         self.client = self.app.test_client()
         self.token = course_activity_planner._create_token(111)
 
+        # Ignore ics url in request and link to local ics file
+        course_activity_planner._dl_and_save_ics_file = \
+            MagicMock(return_value=self.local_short_cal_path)
+
     def tearDown(self):
         if os.path.isdir(self.app.config['UPLOAD_FOLDER']):
             # TODO test on windows
@@ -50,7 +54,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url=self.cal_url),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -71,7 +75,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url=self.cal_url),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -95,7 +99,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url=self.cal_url),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -113,7 +117,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url=self.cal_url),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -135,7 +139,7 @@ class AppTest(unittest.TestCase):
         # No ICS url
         res = self.client.post(
             '/api/planning',
-            data=dict(file=(io.BytesIO(b'this is a test'), 'test.mbz')),
+            data=dict(mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz')),
             headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(400, res._status_code)
 
@@ -152,7 +156,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url=self.cal_url),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -167,7 +171,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url=self.cal_url),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -181,7 +185,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url=self.cal_url),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -214,7 +218,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url=self.cal_url),
             headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(200, res._status_code)
@@ -243,7 +247,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url=self.cal_url),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -271,9 +275,6 @@ class AppTest(unittest.TestCase):
     def test_inventory(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
-        # Ignore ics url in request and link to local ics file
-        course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value=self.local_short_cal_path)
         # Ignore mbz in request and link to local mbz file
         course_activity_planner._save_mbz_file = \
             MagicMock(return_value=self.local_mbz_path)
@@ -281,7 +282,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url='some_url_to_be_mocked'),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -330,9 +331,6 @@ class AppTest(unittest.TestCase):
     def test_preview_planning(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
-        # Ignore ics url in request and link to local ics file
-        course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value=self.local_short_cal_path)
         # Ignore mbz in request and link to local mbz file
         course_activity_planner._save_mbz_file = \
             MagicMock(return_value=self.local_mbz_path)
@@ -340,7 +338,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url='some_url_to_be_mocked'),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -389,36 +387,14 @@ class AppTest(unittest.TestCase):
         ]
         self.assertEqual(expected, actual)
 
-    def test_preview_planning_with_invalid_ics_url(self):
-        course_activity_planner._generate_planning_uuid = \
-            MagicMock(return_value='uuid')
-        res = self.client.post(
-            '/api/planning',
-            data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url='http://some_invalid_url'),
-            headers=[('Authorization', "Bearer %s" % self.token)])
-
-        res = self.client.get('/api/planning/uuid/preview',
-                              headers=[('Authorization',
-                                        "Bearer %s" % self.token)])
-        self.assertEqual(400, res._status_code)
-        actual = json.loads(res.data.decode('utf8'))['alerts']
-        self.assertEqual(1, len(actual))
-        msg = actual[0]['msg']
-        self.assertEqual('Calendar file is not a valid ICS file.', msg)
-
     def test_preview_planning_with_invalid_mbz(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
-        # Ignore ics url in request and link to local ics file
-        course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value=self.local_short_cal_path)
 
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url='some_url_to_be_mocked'),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -435,9 +411,6 @@ class AppTest(unittest.TestCase):
     def test_preview_homework_3_events(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
-        # Ignore ics url in request and link to local ics file
-        course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value=self.local_short_cal_path)
         # Ignore mbz in request and link to local mbz file
         course_activity_planner._save_mbz_file = \
             MagicMock(return_value=self.local_mbz_path)
@@ -445,7 +418,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url='some_url_to_be_mocked'),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -501,16 +474,13 @@ class AppTest(unittest.TestCase):
     def test_preview_multiple_lines(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
-        # Ignore ics url in request and link to local ics file
-        course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value=self.local_short_cal_path)
         # Ignore mbz in request and link to local mbz file
         course_activity_planner._save_mbz_file = \
             MagicMock(return_value=self.local_mbz_path)
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url='some_url_to_be_mocked'),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -566,9 +536,6 @@ class AppTest(unittest.TestCase):
     def test_preview_planning_is_sorted(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
-        # Ignore ics url in request and link to local ics file
-        course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value=self.local_short_cal_path)
         # Ignore mbz in request and link to local mbz file
         course_activity_planner._save_mbz_file = \
             MagicMock(return_value=self.local_mbz_path)
@@ -576,7 +543,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url='some_url_to_be_mocked'),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -633,9 +600,6 @@ class AppTest(unittest.TestCase):
     def test_warnings_are_sent_if_end_is_before_start(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
-        # Ignore ics url in request and link to local ics file
-        course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value=self.local_short_cal_path)
         # Ignore mbz in request and link to local mbz file
         course_activity_planner._save_mbz_file = \
             MagicMock(return_value=self.local_mbz_path)
@@ -643,7 +607,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url='some_url_to_be_mocked'),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -667,9 +631,6 @@ class AppTest(unittest.TestCase):
     def test_new_mbz_archive(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
-        # Ignore ics url in request and link to local ics file
-        course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value=self.local_short_cal_path)
         # Ignore mbz in request and link to local mbz file
         course_activity_planner._save_mbz_file = \
             MagicMock(return_value=self.local_mbz_path)
@@ -677,7 +638,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url=self.cal_url),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -717,9 +678,6 @@ class AppTest(unittest.TestCase):
     def test_preview_planning_with_exam(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
-        # Ignore ics url in request and link to local ics file
-        course_activity_planner._dl_and_save_ics_file = \
-            MagicMock(return_value=self.local_short_cal_path)
         # Ignore mbz in request and link to local mbz file
         course_activity_planner._save_mbz_file = \
             MagicMock(return_value=self.local_mbz_path)
@@ -727,7 +685,7 @@ class AppTest(unittest.TestCase):
         res = self.client.post(
             '/api/planning',
             data=dict(
-                file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
                 ics_url='some_url_to_be_mocked'),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
@@ -775,6 +733,63 @@ class AppTest(unittest.TestCase):
                 'timestamp': 1390395600},
         ]
         self.assertEqual(expected, actual)
+
+
+class AppTestNoURLMock(unittest.TestCase):
+    db_path = '/tmp/test.db'
+
+    def setUp(self):
+        if os.path.exists(self.db_path):
+            os.unlink(self.db_path)
+        self.app = course_activity_planner.setup('test')
+        self.client = self.app.test_client()
+        self.token = course_activity_planner._create_token(111)
+
+    def tearDown(self):
+        if os.path.isdir(self.app.config['UPLOAD_FOLDER']):
+            # TODO test on windows
+            shutil.rmtree(self.app.config['UPLOAD_FOLDER'])
+        course_activity_planner._clear_db()
+        os.unlink(self.db_path)
+
+        imp.reload(course_activity_planner)  # Reset mocks on module
+
+    def test_planning_with_invalid_ics_url(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url='http://some_invalid_url'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(400, res._status_code)
+        actual = json.loads(res.data.decode('utf8'))['alerts']
+        self.assertEqual(1, len(actual))
+        msg = actual[0]['msg']
+        self.assertEqual('Calendar file is not a valid ICS file.', msg)
+
+        res = self.client.get('/api/planning/uuid',
+                              headers=[('Authorization',
+                                        "Bearer %s" % self.token)])
+        self.assertEqual(404, res._status_code)
+
+    def test_planning_with_ics_file(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_file=(io.BytesIO(b'this is a test'), 'test.ics')),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+
+        res = self.client.get('/api/planning/uuid',
+                              headers=[('Authorization',
+                                        "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+
 
 if __name__ == '__main__':
     unittest.main()
