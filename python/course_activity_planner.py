@@ -88,11 +88,8 @@ def new_planning():
         try:
             ics_url = request.form['ics_url']
             ics_fullpath = _dl_and_save_ics_file(ics_url, folder)
-        except InvalidCalendarFileException:
-            return jsonify(
-                alerts=[{'type': 'danger',
-                        'msg': 'Calendar file is not a valid ICS file.'}]), 400
-
+        except CAPException as e:
+            return e.res
     elif 'ics_file' in request.files:
         ics_file = request.files['ics_file']
         ics_fullpath = _save_ics_file(ics_file, folder)
@@ -336,7 +333,7 @@ def _dl_and_save_ics_file(ics_url, folder):
                 if chunk:
                     f.write(chunk)
     except Exception:
-        raise InvalidCalendarFileException()
+        _bad_cal()
     return ics_fullpath
 
 
@@ -429,21 +426,24 @@ def _bad_request():
 
 
 def _forbidden():
-    res = Response(
-        {'alerts': [
-            {'type': 'danger',
-             'msg': 'You are not allowed to view this ressource.'}]
-         }, 403)
-    raise CAPException(res)
+    """Raiser function"""
+    raise CAPException(
+        {'type': 'danger',
+         'msg': 'You are not allowed to view this ressource.'}, 403)
 
 
 def _planning_not_found(uuid):
-    res = Response(
-        {'alerts': [
-            {'type': 'danger',
-             'msg': 'Planning with uuid "%s" not found' % uuid}]
-         }, 404)
-    raise CAPException(res)
+    """Raiser function"""
+    raise CAPException(
+        {'type': 'danger',
+         'msg': 'Planning with uuid "%s" not found' % uuid}, 404)
+
+
+def _bad_cal():
+    """Raiser function"""
+    raise CAPException(
+        {'type': 'danger',
+         'msg': 'Calendar file is not a valid ICS file.'}, 400)
 
 
 def _clear_db():

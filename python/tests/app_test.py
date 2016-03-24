@@ -764,6 +764,7 @@ class AppTestNoURLMock(unittest.TestCase):
                 ics_url='http://some_invalid_url'),
             headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(400, res._status_code)
+
         actual = json.loads(res.data.decode('utf8'))['alerts']
         self.assertEqual(1, len(actual))
         msg = actual[0]['msg']

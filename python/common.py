@@ -1,4 +1,7 @@
 import arrow
+import json
+
+from flask import Response
 
 
 class InvalidSyntaxException(Exception):
@@ -142,5 +145,7 @@ class Exam(Event):
 
 
 class CAPException(Exception):
-    def __init__(self, res):
+    def __init__(self, alert, status):
+        data = json.dumps({'alerts': [alert]})
+        res = Response(data, status, mimetype='application/json')
         self.res = res

@@ -2,16 +2,11 @@ import re
 import arrow
 
 from ics import Calendar as iCalendar
-from common import Event
+from common import Event, CAPException
 
 
-class InvalidCalendarFileException(Exception):
+class InvalidCalendarFileException(CAPException):
     """Raised if the calendar file could not read"""
-    def __init__(self):
-        self.message = 'Calendar file is not a valid ICS file.'
-
-    def __str__(self):
-        return repr(self.message)
 
 
 class GenericMeeting(Event):
