@@ -2,6 +2,7 @@ var controllers = angular.module('app.controllers.IndexController', ['ngFileUplo
 
 controllers.controller('IndexController', function($scope, $http, $location, Upload) {
     $scope.alerts = [];
+
     $scope.closeAlert = function(index) {
        $scope.alerts.splice(index, 1);
     };
@@ -12,22 +13,29 @@ controllers.controller('IndexController', function($scope, $http, $location, Upl
       }
     };
 
+    $scope.refresh = function() {
+      $http.get('/api/planning/')
+          .success(function(data) {
+              $scope.plannings = data.plannings;
+          })
+          .error(function(err, status) {
+              console.log(err, status);
+          });
+    };
+
     $scope.editPlanning = function(uuid) {
       $location.path('/plan/' + uuid);
     };
 
     $scope.deletePlanning = function(uuid) {
-      // TODO
-      console.log(uuid);
+      $http.delete('/api/planning/' + uuid)
+          .success(function() {
+              $scope.refresh();
+          })
+          .error(function(err, status) {
+              console.log(err, status);
+          });
     };
-
-    $http.get('/api/planning/')
-        .success(function(data) {
-            $scope.plannings = data.plannings;
-        })
-        .error(function(err, status) {
-            console.log(err, status);
-        });
 
     $scope.upload = function(file) {
       delete $scope.uploadSuccess;
@@ -54,5 +62,7 @@ controllers.controller('IndexController', function($scope, $http, $location, Upl
           delete $scope.progress;
       });
   };
+
+  $scope.refresh();
 
 });
