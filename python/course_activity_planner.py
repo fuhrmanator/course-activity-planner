@@ -10,13 +10,13 @@ import jwt
 from functools import wraps
 from jwt import DecodeError, ExpiredSignature
 from datetime import datetime, timedelta
-from flask import Flask, jsonify, request, send_from_directory, g, Response
+from flask import Flask, jsonify, request, send_from_directory, g
 from models import Planning
 from database import db_session, init_db, init_engine, clear_db
 
 from interpreter import Interpreter, InvalidSyntaxException
 from moodle import MoodleCourse
-from ics_calendar import CalendarReader, InvalidCalendarFileException
+from ics_calendar import CalendarReader
 from common import CAPException
 
 
@@ -102,7 +102,15 @@ def new_planning():
         mbz_file = request.files['mbz_file']
         mbz_fullpath = _save_mbz_file(mbz_file, folder)
 
-    planning = Planning(planning_id, user_id, '', ics_fullpath, mbz_fullpath)
+    # .get() returns None if key is not defined
+    # Client should be pressured to send the information from the front-end
+    name = request.form.get('name')
+    year = request.form.get('year')
+    session = request.form.get('session')
+    group = request.form.get('group')
+
+    planning = Planning(planning_id, user_id, '', ics_fullpath, mbz_fullpath,
+                        name, year, session, group)
     db_session.add(planning)
     db_session.commit()
 
