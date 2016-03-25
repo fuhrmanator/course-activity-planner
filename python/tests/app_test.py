@@ -55,11 +55,20 @@ class AppTest(unittest.TestCase):
             '/api/planning',
             data=dict(
                 mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
-                ics_url=self.cal_url),
+                ics_url=self.cal_url,
+                name='LOG-121',
+                year='2016',
+                session='02',
+                group='06'
+                ),
             headers=[('Authorization', "Bearer %s" % self.token)])
 
         self.assertEqual(200, res._status_code)
-        assert 'planning' in json.loads(res.data.decode('utf8'))
+        planning = json.loads(res.data.decode('utf8'))['planning']
+        self.assertEqual('LOG-121', planning['name'])
+        self.assertEqual('2016', planning['year'])
+        self.assertEqual('02', planning['session'])
+        self.assertEqual('06', planning['group'])
 
     def test_new_planning_without_mbz(self):
         res = self.client.post(
