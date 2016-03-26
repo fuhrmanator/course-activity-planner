@@ -21,7 +21,35 @@
                 </div>
             </div>
             <hr>
-            <h4>2. (Optional) Upload a Moodle Backup File</h4>
+            <h4>2. Information about the planning</h4>
+            <div class="col-md-12">
+                <div class="form-group">
+                  <label for="name" class="col-sm-4 col-md-4 col-lg-4 control-label">Course</label>
+                  <div class="col-sm-8 col-md-8 col-lg-8 control-label-hidden">
+                    <input name="name" id="name" ng-model="name" class="form-control" placeholder="LOG-121" maxlength="64">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="year" class="col-sm-3 col-md-3 col-lg-3 control-label">Year</label>
+                  <div class="col-sm-8 col-md-9 col-lg-9 control-label-hidden">
+                    <input name="year" id="year" ng-model="year" class="form-control" placeholder="2016" maxlength="64">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="session" class="col-sm-3 col-md-3 col-lg-3 control-label">Semester</label>
+                  <div class="col-sm-8 col-md-9 col-lg-9 control-label-hidden">
+                    <input name="session" id="session" ng-model="session" class="form-control" placeholder="01" maxlength="64">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="group" class="col-sm-3 col-md-3 col-lg-3 control-label">Group</label>
+                  <div class="col-sm-8 col-md-9 col-lg-9 control-label-hidden">
+                    <input name="group" id="group" ng-model="group" class="form-control" placeholder="01" maxlength="64">
+                  </div>
+                </div>
+            </div>
+
+            <h4>3. (Optional) Upload a Moodle Backup File</h4>
             <div class="drop-box" ngf-drag-over-class="dragover" ngf-select ngf-drop ng-model="mbzFile">
                 <p ng-hide="mbzFile" class="text-info">Select MBZ file or drop here</p>
                 <p ng-show="mbzFile" class="text-success">Ready to upload "{{mbzFile.name}}"</p>
