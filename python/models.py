@@ -9,7 +9,7 @@ class Planning():
     query = db_session.query_property()
 
     def __init__(self, uuid, user_id, planning_txt, ics_fullpath,
-                 mbz_fullpath, name, year, session, group):
+                 mbz_fullpath, name, year, semester, group):
         self.uuid = uuid
         self.user_id = user_id
         self.planning_txt = planning_txt
@@ -17,7 +17,7 @@ class Planning():
         self.mbz_fullpath = mbz_fullpath
         self.name = name
         self.year = year
-        self.session = session
+        self.semester = semester
         self.group = group
 
     def as_pub_dict(self):
@@ -26,7 +26,7 @@ class Planning():
             'planning_txt': self.planning_txt,
             'name': self.name,
             'year': self.year,
-            'session': self.session,
+            'semester': self.semester,
             'group': self.group,
             'created_at': self.created_at,
             }
@@ -43,7 +43,7 @@ plannings = Table(
     Column('mbz_fullpath', String),
     Column('name', String),     # LOG-121
     Column('year', String),     # 2016
-    Column('session', String),  # 02
+    Column('semester', String),  # 02
     Column('group', String),    # 06
     Column('created_at', DateTime, default=datetime.now),
     Column('modified_at', DateTime, onupdate=datetime.now),

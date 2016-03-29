@@ -106,11 +106,11 @@ def new_planning():
     # Client should be pressured to send the information from the front-end
     name = request.form.get('name')
     year = request.form.get('year')
-    session = request.form.get('session')
+    semester = request.form.get('semester')
     group = request.form.get('group')
 
     planning = Planning(planning_id, user_id, '', ics_fullpath, mbz_fullpath,
-                        name, year, session, group)
+                        name, year, semester, group)
     db_session.add(planning)
     db_session.commit()
 
