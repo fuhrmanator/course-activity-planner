@@ -39,8 +39,12 @@ controllers.controller('IndexController', function($scope, $http, $location, Upl
 
     $scope.upload = function() {
       delete $scope.uploadSuccess;
+      var payload = $scope.planning;
 
-      var payload = {mbz_file: $scope.mbzFile};
+      if ($scope.mbzFile) {
+        payload.mbz_file = $scope.mbzFile;
+      }
+
       if ($scope.ics_url) {
         payload.ics_url = $scope.ics_url;
       } else if ($scope.icsFile) {

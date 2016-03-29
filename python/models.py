@@ -41,10 +41,10 @@ plannings = Table(
     Column('planning_txt', String),
     Column('ics_fullpath', String),
     Column('mbz_fullpath', String),
-    Column('name', String),     # LOG-121
-    Column('year', String),     # 2016
+    Column('name', String),      # LOG-121
+    Column('year', String),      # 2016
     Column('semester', String),  # 02
-    Column('group', String),    # 06
+    Column('group', String),     # 06
     Column('created_at', DateTime, default=datetime.now),
     Column('modified_at', DateTime, onupdate=datetime.now),
 )
