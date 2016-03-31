@@ -36,7 +36,7 @@ class Seminar(GenericMeeting):
     def __init__(self, *args, **kwargs):
         GenericMeeting.__init__(self, *args, **kwargs)
 
-    def get_key(self):
+    def get_key():
         return 'S'
 
 
@@ -44,7 +44,7 @@ class Practica(GenericMeeting):
     def __init__(self, *args, **kwargs):
         GenericMeeting.__init__(self, *args, **kwargs)
 
-    def get_key(self):
+    def get_key():
         return 'P'
 
 

@@ -51,31 +51,26 @@ Lines must start with an activity followed by meetings keys.' % \
 class Interpreter():
 
     modifiers_regex = re.compile(
-        r'^[qlcfhsp][0-9]{1,2}(?P<end>[sf])?(?P<rel>[+-][0-9]+[wdhm])?' +
+        r'^[a-z]{1,2}[0-9]{1,2}(?P<end>[sf])?(?P<rel>[+-][0-9]+[wdhm])?' +
         r'(?:\@(?P<time>[0-9]{1,2}\:[0-9]{1,2}))?$', re.IGNORECASE)
 
     timedelta_regex = re.compile(
         r'^(?P<neg>\-)?\+?(:?(?P<weeks>[0-9])+w)?(:?(?P<days>[0-9])+d)?' +
         r'(:?(?P<hours>[0-9]+)h)?(:?(?P<minutes>[0-9]+)m)?$', re.IGNORECASE)
 
-    candidates = {
-        MoodleQuiz: re.compile(r'^[q](?P<id>[0-9]{1,2})([sf]?)', re.IGNORECASE),
-        MoodleLesson: re.compile(r'^[l](?P<id>[0-9]{1,2})([sf]?)',
-                                 re.IGNORECASE),
-        MoodleChoice: re.compile(r'^[c](?P<id>[0-9]{1,2})([sf]?)',
-                                 re.IGNORECASE),
-        MoodleFeedback: re.compile(r'^[f](?P<id>[0-9]{1,2})([sf]?)',
-                                   re.IGNORECASE),
-        MoodleHomework: re.compile(r'^[h](?P<id>[0-9]{1,2})([sf]?)',
-                                   re.IGNORECASE),
-        Seminar: re.compile(r'^[s](?P<id>[0-9]{1,2})([sf]?)', re.IGNORECASE),
-        Practica: re.compile(r'^[p](?P<id>[0-9]{1,2})([sf]?)', re.IGNORECASE),
-        Exam: re.compile(r'^[e](?P<id>[0-9]{1,2})([sf]?)', re.IGNORECASE),
-        }
+    candidate_classes = [MoodleQuiz, MoodleLesson, MoodleFeedback,
+                         MoodleHomework, MoodleChoice, Seminar, Practica, Exam]
 
     def __init__(self, meetings, course):
         self.meetings = meetings
         self.course = course
+        self.__build_candidates()
+
+    def __build_candidates(self):
+        self.candidates = {}
+        for clazz in self.candidate_classes:
+            regex_str = '^[%s](?P<id>[0-9]{1,2})([sf]?)' % clazz.get_key()
+            self.candidates[clazz] = re.compile(regex_str, re.IGNORECASE)
 
     def get_new_event_from_string(self, string):
         tokens = self._split_line(string)

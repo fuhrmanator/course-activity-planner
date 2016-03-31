@@ -32,7 +32,7 @@ class Event():
     def is_user_defined():
         return False
 
-    def get_key(self):
+    def get_key():
         """"Return the letter of the planning key
         Q for Quiz, etc.
         Must be implemented by subclasses
@@ -98,7 +98,7 @@ class Exam(Event):
     def is_user_defined():
         return True
 
-    def get_key(self):
+    def get_key():
         return 'E'
 
     def get_pretty_name(self):

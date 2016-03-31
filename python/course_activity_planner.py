@@ -346,27 +346,27 @@ def _dl_and_save_ics_file(ics_url, folder):
 
 
 def _build_inventory(interpreter, planning_txt):
-    inventory = {'meetings': [], 'activities': []}
+    inventory = {}
+
     calendar_meetings = interpreter.meetings
     moodle_activities = interpreter.course.activities \
         if interpreter.course else []
 
-    for meeting_type in calendar_meetings:
-        for i, meeting in enumerate(calendar_meetings[meeting_type]):
-            rel_id = i + 1
-            inventory['meetings'].append({
-                'rel_id': rel_id,
-                'key_str': meeting.get_key(),
-                'title': meeting.get_title()})
-
-    for activity_type in moodle_activities:
-        for i, activity in enumerate(moodle_activities[activity_type]):
-            rel_id = i + 1
-            inventory['activities'].append({
-                'rel_id': rel_id,
-                'key_str': activity.get_key(),
-                'title': activity.get_title()})
+    inventory['meetings'] = _build_inventory_part(calendar_meetings)
+    inventory['activities'] = _build_inventory_part(moodle_activities)
     return inventory
+
+
+def _build_inventory_part(events):
+    part = []
+    for event_type in events:
+        for i, event in enumerate(events[event_type]):
+            rel_id = i + 1
+            part.append({
+                'rel_id': rel_id,
+                'key_str': event_type.get_key(),
+                'title': event.get_title()})
+    return part
 
 
 def _get_preview_items_for_planning(interpreter, planning_txt):
@@ -386,7 +386,7 @@ def _get_preview_items_for_planning(interpreter, planning_txt):
                     'title': '%s %d %s' % (
                         activity_pretty_name, activity.rel_id,
                         event_pretty_name),
-                    'key_str': activity.get_key(),
+                    'key_str': activity.__class__.get_key(),
                     'timestamp': timestamp})
     return preview
 
@@ -399,11 +399,11 @@ def _add_preview_items_for_calendar(calendar_meetings, preview_items):
             rel_id = i + 1
             preview_items.append({
                 'title': '%s %d opens' % (clazz, rel_id),
-                'key_str': meeting.get_key(),
+                'key_str': meeting_type.get_key(),
                 'timestamp': meeting.get_start_timestamp()})
             preview_items.append({
                 'title': '%s %d closes' % (clazz, rel_id),
-                'key_str': meeting.get_key(),
+                'key_str': meeting_type.get_key(),
                 'timestamp': meeting.get_end_timestamp()})
     return preview_items
 

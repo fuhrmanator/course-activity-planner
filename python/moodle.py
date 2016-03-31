@@ -137,7 +137,7 @@ class MoodleQuiz(MoodleActivity):
     def get_pretty_name(self):
         return 'Quiz'
 
-    def get_key(self):
+    def get_key():
         return 'Q'
 
 
@@ -151,7 +151,7 @@ class MoodleChoice(MoodleActivity):
     def get_pretty_name(self):
         return 'Choice'
 
-    def get_key(self):
+    def get_key():
         return 'C'
 
 
@@ -165,7 +165,7 @@ class MoodleFeedback(MoodleActivity):
     def get_pretty_name(self):
         return 'Feedback'
 
-    def get_key(self):
+    def get_key():
         return 'F'
 
 
@@ -189,7 +189,7 @@ class MoodleLesson(MoodleActivity):
     def get_pretty_name(self):
         return 'Lesson'
 
-    def get_key(self):
+    def get_key():
         return 'L'
 
 
@@ -217,7 +217,7 @@ class MoodleHomework(MoodleActivity):
     def get_pretty_name(self):
         return 'Homework'
 
-    def get_key(self):
+    def get_key():
         return 'H'
 
     def _write_calendar(self):
