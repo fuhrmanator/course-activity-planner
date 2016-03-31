@@ -5,7 +5,7 @@ from datetime import timedelta, datetime
 from moodle import MoodleQuiz, MoodleHomework, MoodleLesson, MoodleFeedback, \
     MoodleChoice
 from ics_calendar import Seminar, Practica
-from common import Exam, InvalidSyntaxException
+from common import Exam, UserQuiz, InvalidSyntaxException
 
 
 class AbsoluteTimeModifierException(Exception):
@@ -58,8 +58,14 @@ class Interpreter():
         r'^(?P<neg>\-)?\+?(:?(?P<weeks>[0-9])+w)?(:?(?P<days>[0-9])+d)?' +
         r'(:?(?P<hours>[0-9]+)h)?(:?(?P<minutes>[0-9]+)m)?$', re.IGNORECASE)
 
-    candidate_classes = [MoodleQuiz, MoodleLesson, MoodleFeedback,
-                         MoodleHomework, MoodleChoice, Seminar, Practica, Exam]
+    candidate_classes = [  # Imported from  MBZ
+                         MoodleQuiz, MoodleLesson, MoodleFeedback,
+                         MoodleHomework, MoodleChoice,
+                         # Imported from calendar
+                         Seminar, Practica,
+                         # User defined from planning
+                         Exam, UserQuiz
+                         ]
 
     def __init__(self, meetings, course):
         self.meetings = meetings
@@ -69,7 +75,7 @@ class Interpreter():
     def __build_candidates(self):
         self.candidates = {}
         for clazz in self.candidate_classes:
-            regex_str = '^[%s](?P<id>[0-9]{1,2})([sf]?)' % clazz.get_key()
+            regex_str = '^%s(?P<id>[0-9]{1,2})([sf]?)' % clazz.get_key()
             self.candidates[clazz] = re.compile(regex_str, re.IGNORECASE)
 
     def get_new_event_from_string(self, string):

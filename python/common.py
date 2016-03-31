@@ -80,29 +80,21 @@ class Event():
         raise Exception('Unimplemented')
 
 
-class Exam(Event):
+class UserDefinedEvent(Event):
+    """Basic partial implementation of a user defined
+    event with only dates 'start' and 'end'
+    """
 
     event_pretty_names = [
         'starts',
         'ends'
     ]
 
-    def __init__(self, event_id):
-        self.rel_id = event_id
-        self.start_arrow = arrow.get(0)
-        self.end_arrow = arrow.get(0)
-
     def is_activity():
         return True
 
     def is_user_defined():
         return True
-
-    def get_key():
-        return 'E'
-
-    def get_pretty_name(self):
-        return 'Exam'
 
     def get_start_datetime(self):
         return self.start_arrow.datetime
@@ -132,7 +124,7 @@ class Exam(Event):
             self.end_arrow = arrow.get(datetime)
         else:
             # TODO better err msg
-            raise InvalidSyntaxException('Exam has invalid date count')
+            raise InvalidSyntaxException('Invalid date count')
 
     def _get_arrow_at_index(self, index):
         if index == 0:
@@ -141,7 +133,32 @@ class Exam(Event):
             return self.end_arrow
         else:
             # TODO better err msg
-            raise InvalidSyntaxException('Exam has invalid date count')
+            raise InvalidSyntaxException('Invalid date count')
+
+
+class Exam(UserDefinedEvent):
+
+    def __init__(self, event_id):
+        self.rel_id = event_id
+
+    def get_key():
+        return 'E'
+
+    def get_pretty_name(self):
+        return 'Exam'
+
+
+class UserQuiz(UserDefinedEvent):
+
+    def __init__(self, event_id):
+        self.rel_id = event_id
+
+    def get_key():
+        # TODO change to 'Q' as only Moodle activity will be prefixed by M
+        return 'UQ'
+
+    def get_pretty_name(self):
+        return 'Quiz'
 
 
 class CAPException(Exception):
