@@ -2,7 +2,6 @@ var controllers = angular.module('app.controllers.PlanController', ['ngFileUploa
 
 controllers.controller('PlanController', function($scope, $http, $location, $routeParams) {
     $scope.uuid = $routeParams.uuid;
-    $scope.key_to_name = {'P': 'Practicas', 'S': 'Seminars', 'Q':'Quizzes', 'H': 'Homeworks', 'L':'Lessons', 'C': 'Choices', 'F': 'Feedbacks', 'E': 'Exams'};
     $scope.meetingsKeys = ['S', 'P'];
     $scope.activitiesKeys = ['Q', 'H', 'L', 'C', 'F'];
     $scope.previewKeys = $scope.meetingsKeys.concat($scope.activitiesKeys);
@@ -13,6 +12,14 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
     $scope.shownActivitiesKeys = $scope.activitiesKeys.slice(0);
     $scope.shownPreviewKeys = $scope.previewKeys.slice(0);
     $scope.alerts = [];
+
+    $http.get('/api/keys')
+        .success(function(data) {
+            $scope.key_to_name = data.names;
+        })
+        .error(function(err, status) {
+            console.log(err, status);
+        });
 
     $scope.closeAlert = function (index) {
         $scope.alerts.splice(index, 1);

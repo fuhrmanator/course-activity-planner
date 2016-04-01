@@ -258,6 +258,14 @@ def download_planning(uuid):
             folder, 'latest.mbz', as_attachment=True)
 
 
+@app.route('/api/keys', methods=['GET'])
+def get_keys():
+    names = {}
+    for e in Interpreter.candidate_classes:
+        names[e.get_key()] = e.get_pretty_name()
+    return jsonify({'names': names})
+
+
 @app.route('/')
 def index():
     return send_from_directory('../public', 'index.html')

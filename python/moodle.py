@@ -134,7 +134,7 @@ class MoodleQuiz(MoodleActivity):
         self.global_path = path
         super().__init__(os.path.join(path, 'quiz.xml'))
 
-    def get_pretty_name(self):
+    def get_pretty_name(self=None):
         return 'Quiz'
 
     def get_key():
@@ -148,7 +148,7 @@ class MoodleChoice(MoodleActivity):
         self.global_path = path
         super().__init__(os.path.join(path, 'choice.xml'))
 
-    def get_pretty_name(self):
+    def get_pretty_name(self=None):
         return 'Choice'
 
     def get_key():
@@ -162,7 +162,7 @@ class MoodleFeedback(MoodleActivity):
         self.global_path = path
         super().__init__(os.path.join(path, 'feedback.xml'))
 
-    def get_pretty_name(self):
+    def get_pretty_name(self=None):
         return 'Feedback'
 
     def get_key():
@@ -186,7 +186,7 @@ class MoodleLesson(MoodleActivity):
         self.global_path = path
         super().__init__(os.path.join(path, 'lesson.xml'))
 
-    def get_pretty_name(self):
+    def get_pretty_name(self=None):
         return 'Lesson'
 
     def get_key():
@@ -214,7 +214,7 @@ class MoodleHomework(MoodleActivity):
         self.global_path = path
         super().__init__(os.path.join(path, 'assign.xml'))
 
-    def get_pretty_name(self):
+    def get_pretty_name(self=None):
         return 'Homework'
 
     def get_key():

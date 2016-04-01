@@ -39,6 +39,9 @@ class Seminar(GenericMeeting):
     def get_key():
         return 'S'
 
+    def get_pretty_name(self=None):
+        return 'Seminar'
+
 
 class Practica(GenericMeeting):
     def __init__(self, *args, **kwargs):
@@ -46,6 +49,9 @@ class Practica(GenericMeeting):
 
     def get_key():
         return 'P'
+
+    def get_pretty_name(self=None):
+        return 'Practica'
 
 
 class CalendarReader():

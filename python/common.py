@@ -39,7 +39,7 @@ class Event():
         """
         raise Exception('Unimplemented')
 
-    def get_pretty_name(self):
+    def get_pretty_name(self=None):
         """To be implemented by subclasses"""
         raise Exception('Unimplemented')
 
@@ -144,7 +144,7 @@ class Exam(UserDefinedEvent):
     def get_key():
         return 'E'
 
-    def get_pretty_name(self):
+    def get_pretty_name(self=None):
         return 'Exam'
 
 
@@ -157,7 +157,7 @@ class UserQuiz(UserDefinedEvent):
         # TODO change to 'Q' as only Moodle activity will be prefixed by M
         return 'UQ'
 
-    def get_pretty_name(self):
+    def get_pretty_name(self=None):
         return 'Quiz'
 
 

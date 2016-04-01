@@ -58,6 +58,13 @@ class Interpreter():
         r'^(?P<neg>\-)?\+?(:?(?P<weeks>[0-9])+w)?(:?(?P<days>[0-9])+d)?' +
         r'(:?(?P<hours>[0-9]+)h)?(:?(?P<minutes>[0-9]+)m)?$', re.IGNORECASE)
 
+    candidate_classes_dict = {
+        'moodle': [MoodleQuiz, MoodleLesson, MoodleFeedback,
+                   MoodleHomework, MoodleChoice],
+        'calendar': [Seminar, Practica],
+        'user': [Exam, UserQuiz]
+    }
+
     candidate_classes = [  # Imported from  MBZ
                          MoodleQuiz, MoodleLesson, MoodleFeedback,
                          MoodleHomework, MoodleChoice,
