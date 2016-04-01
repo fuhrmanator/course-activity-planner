@@ -261,9 +261,19 @@ def download_planning(uuid):
 @app.route('/api/keys', methods=['GET'])
 def get_keys():
     names = {}
+    associations = {'activities': [], 'meetings': [], 'user': []}
+
     for e in Interpreter.candidate_classes:
         names[e.get_key()] = e.get_pretty_name()
-    return jsonify({'names': names})
+
+        if e.is_user_defined():
+            associations['user'].append(e.get_key())
+        elif e.is_activity():
+            associations['activities'].append(e.get_key())
+        else:
+            associations['meetings'].append(e.get_key())
+
+    return jsonify({'names': names, 'associations': associations})
 
 
 @app.route('/')

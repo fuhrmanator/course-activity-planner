@@ -2,20 +2,20 @@ var controllers = angular.module('app.controllers.PlanController', ['ngFileUploa
 
 controllers.controller('PlanController', function($scope, $http, $location, $routeParams) {
     $scope.uuid = $routeParams.uuid;
-    $scope.meetingsKeys = ['S', 'P'];
-    $scope.activitiesKeys = ['Q', 'H', 'L', 'C', 'F'];
-    $scope.previewKeys = $scope.meetingsKeys.concat($scope.activitiesKeys);
-    $scope.previewKeys.push('E');
-    $scope.keys = $scope.meetingsKeys.concat($scope.activitiesKeys);
-
-    $scope.shownMeetingsKeys = $scope.meetingsKeys.slice(0);
-    $scope.shownActivitiesKeys = $scope.activitiesKeys.slice(0);
-    $scope.shownPreviewKeys = $scope.previewKeys.slice(0);
     $scope.alerts = [];
 
     $http.get('/api/keys')
         .success(function(data) {
             $scope.key_to_name = data.names;
+            $scope.meetingsKeys = data.associations.meetings;
+            $scope.activitiesKeys = data.associations.activities;
+
+            $scope.previewKeys = $scope.meetingsKeys.concat($scope.activitiesKeys).concat(data.associations.user);
+            $scope.keys = $scope.meetingsKeys.concat($scope.activitiesKeys);
+
+            $scope.shownMeetingsKeys = $scope.meetingsKeys.slice(0);
+            $scope.shownActivitiesKeys = $scope.activitiesKeys.slice(0);
+            $scope.shownPreviewKeys = $scope.previewKeys.slice(0);
         })
         .error(function(err, status) {
             console.log(err, status);
