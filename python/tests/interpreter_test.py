@@ -9,7 +9,7 @@ from datetime import timedelta, time
 
 from interpreter import Interpreter, AbsoluteTimeModifierException, \
     InvalidSyntaxException, InvalidModifiersException, InvalidSubjectException
-from common import Exam
+from common import Exam, UserQuiz
 from moodle import MoodleCourse, MoodleQuiz
 from ics_calendar import CalendarReader, Seminar, Practica
 
@@ -77,6 +77,9 @@ class InterpreterTest(unittest.TestCase):
 
         event = self.interpreter._detect_event_class_and_id('E1')
         self.assertEqual((Exam, 1), event)
+
+        event = self.interpreter._detect_event_class_and_id('UQ1')
+        self.assertEqual((UserQuiz, 1), event)
 
     def test_get_at_end_modifier(self):
         # Implicit start
