@@ -135,10 +135,10 @@ class MoodleQuiz(MoodleActivity):
         super().__init__(os.path.join(path, 'quiz.xml'))
 
     def get_pretty_name(self=None):
-        return 'Quiz'
+        return 'Moodle Quiz'
 
     def get_key():
-        return 'Q'
+        return 'MQ'
 
 
 class MoodleChoice(MoodleActivity):
@@ -152,7 +152,7 @@ class MoodleChoice(MoodleActivity):
         return 'Choice'
 
     def get_key():
-        return 'C'
+        return 'MC'
 
 
 class MoodleFeedback(MoodleActivity):
@@ -166,7 +166,7 @@ class MoodleFeedback(MoodleActivity):
         return 'Feedback'
 
     def get_key():
-        return 'F'
+        return 'MF'
 
 
 class MoodleLesson(MoodleActivity):
@@ -187,10 +187,10 @@ class MoodleLesson(MoodleActivity):
         super().__init__(os.path.join(path, 'lesson.xml'))
 
     def get_pretty_name(self=None):
-        return 'Lesson'
+        return 'Moodle Lesson'
 
     def get_key():
-        return 'L'
+        return 'ML'
 
 
 class MoodleHomework(MoodleActivity):
@@ -215,10 +215,10 @@ class MoodleHomework(MoodleActivity):
         super().__init__(os.path.join(path, 'assign.xml'))
 
     def get_pretty_name(self=None):
-        return 'Homework'
+        return 'Moodle Homework'
 
     def get_key():
-        return 'H'
+        return 'MH'
 
     def _write_calendar(self):
         moodle_cal_path = os.path.join(self.global_path, 'calendar.xml')
