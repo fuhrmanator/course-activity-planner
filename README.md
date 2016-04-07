@@ -10,8 +10,10 @@ This project is affiliated with the [Maison du logiciel libre (ML<sup>2</sup>)](
     - [Start/End of activities](#startend-of-activities)
     - [Relative date or time modifiers](#relative-date-or-time-modifiers)
     - [Absolute time modifier](#absolute-time-modifier)
-  - [Setup](#setup)
+  - [Development setup](#development-setup)
     - [Run unit tests](#run-unit-tests)
+    - [Run the linter](#run-the-linter)
+  - [Production setup](#production-setup)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -80,7 +82,7 @@ Ex: `the day before Seminar 1 at 23:55` would be `S1-1d@23:55`.
 
 `S1@23:55-1d` is invalid
 
-## Setup back-end only
+## Development setup
 * Setup a python virtualenv
 ```
 cd python && virtualenv-3.4 env
@@ -97,9 +99,6 @@ pip install -r requirements.txt
 ```
 ./course_activity_planner.py
 ```
-
-# Setup front-end
-* Setup and run back-end
 * Install bower dependencies
 ```
 cd .. && bower install
@@ -120,3 +119,6 @@ nosetests --with-coverage
 ```
 pep8 && flake8
 ```
+
+## Production setup
+Please see deploy/README.md
