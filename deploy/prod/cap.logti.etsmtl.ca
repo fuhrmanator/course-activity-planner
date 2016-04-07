@@ -1,0 +1,33 @@
+server {
+    root /opt/course-activity-planner/static/;
+    index index.html;
+
+    server_name cap.logti.etsmtl.ca;
+
+    access_log off;
+    error_log off;
+
+    location ~* \.(?:manifest|appcache|html?|xml|json)$ {
+        expires -1;
+    }
+
+    location ~* \.(?:rss|atom)$ {
+        expires 1h;
+        add_header Cache-Control "public";
+    }
+
+    location ~* \.(?:jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm|htc)$ {
+        expires 1M;
+        add_header Cache-Control "public";
+    }
+
+    location ~* \.(?:css|js)$ {
+        expires 1M;
+        add_header Cache-Control "public";
+    }
+
+    location /api/ {
+        include uwsgi_params;
+        uwsgi_pass 127.0.0.1:9090;
+    }
+}
