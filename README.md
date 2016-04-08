@@ -83,6 +83,8 @@ Ex: `the day before Seminar 1 at 23:55` would be `S1-1d@23:55`.
 `S1@23:55-1d` is invalid
 
 ## Development setup
+* Create a google application with Identity Toolkit API access. Create an oauth2 client as a web application and save the client id. This id needs to be put in config/.
+
 * Setup a python virtualenv
 ```
 cd python && virtualenv-3.4 env
