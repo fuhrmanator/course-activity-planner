@@ -1,11 +1,13 @@
 import re
+import copy
 
 from datetime import timedelta, datetime
 
 from moodle import MoodleQuiz, MoodleHomework, MoodleLesson, MoodleFeedback, \
     MoodleChoice
 from ics_calendar import Seminar, Practica
-from common import Exam, UserQuiz, InvalidSyntaxException
+from activity_loader import ActivityLoader
+from common import InvalidSyntaxException
 
 
 class AbsoluteTimeModifierException(Exception):
@@ -62,16 +64,14 @@ class Interpreter():
         'moodle': [MoodleQuiz, MoodleLesson, MoodleFeedback,
                    MoodleHomework, MoodleChoice],
         'calendar': [Seminar, Practica],
-        'user': [Exam, UserQuiz]
+        # 'user': [Exam, UserQuiz]
     }
 
     candidate_classes = [  # Imported from  MBZ
                          MoodleQuiz, MoodleLesson, MoodleFeedback,
                          MoodleHomework, MoodleChoice,
                          # Imported from calendar
-                         Seminar, Practica,
-                         # User defined from planning
-                         Exam, UserQuiz
+                         Seminar, Practica
                          ]
 
     def __init__(self, meetings, course):
@@ -81,9 +81,19 @@ class Interpreter():
 
     def __build_candidates(self):
         self.candidates = {}
+
         for clazz in self.candidate_classes:
-            regex_str = '^%s(?P<id>[0-9]{1,2})([sf]?)' % clazz.get_key()
-            self.candidates[clazz] = re.compile(regex_str, re.IGNORECASE)
+            self.__build_candidate(clazz)
+
+        loader = ActivityLoader()
+
+        for clazz in loader.get_activities_instances():
+            self.__build_candidate(clazz)
+
+    def __build_candidate(self, clazz):
+        regex_str = '^%s(?P<id>[0-9]{1,2})([sf]?)' % clazz.key
+        self.candidates[clazz.key] = (re.compile(regex_str, re.IGNORECASE),
+                                      clazz)
 
     def get_new_event_from_string(self, string):
         tokens = self._split_line(string)
@@ -120,9 +130,14 @@ class Interpreter():
         # TODO: find a more elegant solution
         try:
             event_clazz, event_id = self._detect_event_class_and_id(token)
+
             if event_clazz.is_activity():
                 return self.course.get_activity_by_type_and_num(
                     event_clazz, event_id)
+            if event_clazz.is_user_defined():
+                instance = event_clazz
+                instance.rel_id = event_id
+                return instance
             return self.meetings[event_clazz][event_id - 1]
         except Exception:
             raise InvalidEventIdentifier(token)
@@ -136,7 +151,9 @@ class Interpreter():
             raise InvalidSubjectException(tokens)
 
         if event_clazz.is_user_defined():
-            return event_clazz(event_id)
+            instance_copy = copy.deepcopy(event_clazz)
+            instance_copy.rel_id = event_id
+            return instance_copy
 
         if self.course:
             return self.course.get_activity_by_type_and_num(
@@ -145,8 +162,9 @@ class Interpreter():
 
     def _detect_event_class_and_id(self, string):
         """Returns a tuple of the class and the meeting id."""
-        for clazz, regex in self.candidates.items():
+        for key, (regex, clazz) in self.candidates.items():
             r = regex.search(string)
+
             if r and r.groupdict()['id']:
                 return (clazz, int(r.groupdict()['id']))
         raise InvalidEventIdentifier(string)

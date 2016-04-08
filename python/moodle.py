@@ -4,7 +4,7 @@ import tarfile
 import xml.etree.ElementTree as ET
 
 from dateutil import tz
-from common import Event, Exam
+from common import Event
 
 
 class MoodleActivity(Event):
@@ -43,7 +43,7 @@ class MoodleActivity(Event):
         self.event.find(k).text = v
         self.modified = True
 
-    def is_activity():
+    def is_activity(self=None):
         return True
 
     def set_start_datetime(self, datetime):
@@ -130,43 +130,34 @@ class MoodleActivity(Event):
 class MoodleQuiz(MoodleActivity):
     """Describes an XML Moodle quiz with key based access"""
 
+    key = 'Q'
+    name = 'Quiz'
+
     def __init__(self, path):
         self.global_path = path
         super().__init__(os.path.join(path, 'quiz.xml'))
-
-    def get_pretty_name(self=None):
-        return 'Quiz'
-
-    def get_key():
-        return 'Q'
 
 
 class MoodleChoice(MoodleActivity):
     """Describes an XML Moodle choice with key based access"""
 
+    key = 'C'
+    name = 'Choice'
+
     def __init__(self, path):
         self.global_path = path
         super().__init__(os.path.join(path, 'choice.xml'))
-
-    def get_pretty_name(self=None):
-        return 'Choice'
-
-    def get_key():
-        return 'C'
 
 
 class MoodleFeedback(MoodleActivity):
     """Describes an XML Moodle feedback with key based access"""
 
+    key = 'F'
+    name = 'Feeback'
+
     def __init__(self, path):
         self.global_path = path
         super().__init__(os.path.join(path, 'feedback.xml'))
-
-    def get_pretty_name(self=None):
-        return 'Feedback'
-
-    def get_key():
-        return 'F'
 
 
 class MoodleLesson(MoodleActivity):
@@ -181,6 +172,9 @@ class MoodleLesson(MoodleActivity):
         'opens',
         'closes'
     ]
+
+    key = 'L'
+    name = 'Lesson'
 
     def __init__(self, path):
         self.global_path = path
@@ -210,15 +204,12 @@ class MoodleHomework(MoodleActivity):
         'closes'
     ]
 
+    key = 'H'
+    name = 'Homework'
+
     def __init__(self, path):
         self.global_path = path
         super().__init__(os.path.join(path, 'assign.xml'))
-
-    def get_pretty_name(self=None):
-        return 'Homework'
-
-    def get_key():
-        return 'H'
 
     def _write_calendar(self):
         moodle_cal_path = os.path.join(self.global_path, 'calendar.xml')
@@ -245,7 +236,6 @@ class MoodleCourse():
         'feedback': MoodleFeedback,
         'lesson': MoodleLesson,
         'choice': MoodleChoice,
-        'exam': Exam,  # TODO refactor this as exams are not related to Moodle
         }
 
     def __init__(self, moodle_archive_path):

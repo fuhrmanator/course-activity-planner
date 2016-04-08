@@ -264,14 +264,14 @@ def get_keys():
     associations = {'activities': [], 'meetings': [], 'user': []}
 
     for e in Interpreter.candidate_classes:
-        names[e.get_key()] = e.get_pretty_name()
+        names[e.key] = e.name
 
         if e.is_user_defined():
-            associations['user'].append(e.get_key())
+            associations['user'].append(e.key)
         elif e.is_activity():
-            associations['activities'].append(e.get_key())
+            associations['activities'].append(e.key)
         else:
-            associations['meetings'].append(e.get_key())
+            associations['meetings'].append(e.key)
 
     return jsonify({'names': names, 'associations': associations})
 
@@ -382,7 +382,7 @@ def _build_inventory_part(events):
             rel_id = i + 1
             part.append({
                 'rel_id': rel_id,
-                'key_str': event_type.get_key(),
+                'key_str': event_type.key,
                 'title': event.get_title()})
     return part
 
@@ -393,7 +393,7 @@ def _get_preview_items_for_planning(interpreter, planning_txt):
     if planning_txt:
         for line in planning_txt.split('\n'):
             activity = interpreter.get_new_event_from_string(line)
-            activity_pretty_name = activity.get_pretty_name()
+            activity_pretty_name = activity.name
 
             for i, event_pretty_name, in enumerate(activity.event_pretty_names):
                 timestamp = activity.get_timestamp_at_index(i)
@@ -404,7 +404,7 @@ def _get_preview_items_for_planning(interpreter, planning_txt):
                     'title': '%s %d %s' % (
                         activity_pretty_name, activity.rel_id,
                         event_pretty_name),
-                    'key_str': activity.__class__.get_key(),
+                    'key_str': activity.key,
                     'timestamp': timestamp})
     return preview
 
@@ -417,11 +417,11 @@ def _add_preview_items_for_calendar(calendar_meetings, preview_items):
             rel_id = i + 1
             preview_items.append({
                 'title': '%s %d opens' % (clazz, rel_id),
-                'key_str': meeting_type.get_key(),
+                'key_str': meeting_type.key,
                 'timestamp': meeting.get_start_timestamp()})
             preview_items.append({
                 'title': '%s %d closes' % (clazz, rel_id),
-                'key_str': meeting_type.get_key(),
+                'key_str': meeting_type.key,
                 'timestamp': meeting.get_end_timestamp()})
     return preview_items
 
@@ -446,7 +446,7 @@ def _build_alerts_for_preview(interpreter):
                 alerts.append(
                     {'type': 'warning',
                      'msg': '%s %d ends before it starts.' %
-                     (activity.get_pretty_name(), activity.rel_id)})
+                     (activity.name, activity.rel_id)})
     return alerts
 
 

@@ -33,25 +33,24 @@ class GenericMeeting(Event):
 
 
 class Seminar(GenericMeeting):
+
+    key = 'S'
+    name = 'Seminar'
+
     def __init__(self, *args, **kwargs):
         GenericMeeting.__init__(self, *args, **kwargs)
-
-    def get_key():
-        return 'S'
 
     def get_pretty_name(self=None):
         return 'Seminar'
 
 
 class Practica(GenericMeeting):
+
+    key = 'P'
+    name = 'Practica'
+
     def __init__(self, *args, **kwargs):
         GenericMeeting.__init__(self, *args, **kwargs)
-
-    def get_key():
-        return 'P'
-
-    def get_pretty_name(self=None):
-        return 'Practica'
 
 
 class CalendarReader():

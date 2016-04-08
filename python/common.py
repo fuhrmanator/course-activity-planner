@@ -26,22 +26,11 @@ class Event():
     def __init__(self):
         raise Exception('Unimplemented')
 
-    def is_activity():
+    def is_activity(self=None):
         return False
 
-    def is_user_defined():
+    def is_user_defined(self=None):
         return False
-
-    def get_key():
-        """"Return the letter of the planning key
-        Q for Quiz, etc.
-        Must be implemented by subclasses
-        """
-        raise Exception('Unimplemented')
-
-    def get_pretty_name(self=None):
-        """To be implemented by subclasses"""
-        raise Exception('Unimplemented')
 
     def get_start_datetime(self):
         """To be implemented by subclasses"""
@@ -90,10 +79,15 @@ class UserDefinedEvent(Event):
         'ends'
     ]
 
-    def is_activity():
+    def __init__(self, event_id=0, key=None, name=None):
+        self.rel_id = event_id
+        self.key = key
+        self.name = name
+
+    def is_activity(self=None):
         return True
 
-    def is_user_defined():
+    def is_user_defined(self=None):
         return True
 
     def get_start_datetime(self):
@@ -134,31 +128,6 @@ class UserDefinedEvent(Event):
         else:
             # TODO better err msg
             raise InvalidSyntaxException('Invalid date count')
-
-
-class Exam(UserDefinedEvent):
-
-    def __init__(self, event_id):
-        self.rel_id = event_id
-
-    def get_key():
-        return 'E'
-
-    def get_pretty_name(self=None):
-        return 'Exam'
-
-
-class UserQuiz(UserDefinedEvent):
-
-    def __init__(self, event_id):
-        self.rel_id = event_id
-
-    def get_key():
-        # TODO change to 'Q' as only Moodle activity will be prefixed by M
-        return 'UQ'
-
-    def get_pretty_name(self=None):
-        return 'Quiz'
 
 
 class CAPException(Exception):
