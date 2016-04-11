@@ -86,7 +86,6 @@ class Interpreter():
             self.__build_candidate(clazz)
 
         loader = ActivityLoader()
-
         for clazz in loader.get_activities_instances():
             self.__build_candidate(clazz)
 

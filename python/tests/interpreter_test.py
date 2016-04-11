@@ -77,8 +77,8 @@ class InterpreterTest(unittest.TestCase):
         event = self.interpreter._detect_event_class_and_id('E1')
         self.assertEqual('Exam', event[0].name)
 
-        event = self.interpreter._detect_event_class_and_id('UQ1')
-        self.assertEqual('UserQuiz', event[0].name)
+        event = self.interpreter._detect_event_class_and_id('Q1')
+        self.assertEqual('Quiz', event[0].name)
 
     def test_get_at_end_modifier(self):
         # Implicit start
