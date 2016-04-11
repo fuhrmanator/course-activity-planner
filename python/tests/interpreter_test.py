@@ -56,10 +56,10 @@ class InterpreterTest(unittest.TestCase):
             'H1 S1F')
 
     def test_detection_of_event(self):
-        event = self.interpreter._detect_event_class_and_id('Q1')
+        event = self.interpreter._detect_event_class_and_id('MQ1')
         self.assertEqual((MoodleQuiz, 1), event)
 
-        event = self.interpreter._detect_event_class_and_id('q13')
+        event = self.interpreter._detect_event_class_and_id('Mq13')
         self.assertEqual((MoodleQuiz, 13), event)
 
         event = self.interpreter._detect_event_class_and_id('p2')
@@ -292,15 +292,15 @@ class InterpreterTest(unittest.TestCase):
         self.assertEqual(expected, actual)
 
     def test_get_subject(self):
-        tokens = self.interpreter._split_line('Q1 S1 S1F')
+        tokens = self.interpreter._split_line('MQ1 S1 S1F')
         actual = self.interpreter._parse_subject(tokens)['id']
         self.assertEqual('4271', actual)
 
-        tokens = self.interpreter._split_line('Q2 S1 S1F')
+        tokens = self.interpreter._split_line('MQ2 S1 S1F')
         actual = self.interpreter._parse_subject(tokens)['id']
         self.assertEqual('4272', actual)
 
-        tokens = self.interpreter._split_line('Q3 S1 S1F')
+        tokens = self.interpreter._split_line('MQ3 S1 S1F')
         actual = self.interpreter._parse_subject(tokens)['id']
         self.assertEqual('4273', actual)
 
@@ -322,7 +322,7 @@ class InterpreterTest(unittest.TestCase):
             2014, 1, 6, 7, tzinfo=tz.gettz('America/Montreal')).datetime
         expected_e = arrow.get(
             2014, 1, 6, 8, tzinfo=tz.gettz('America/Montreal')).datetime
-        actual = self.interpreter.get_new_event_from_string('Q1 S1S S1F')
+        actual = self.interpreter.get_new_event_from_string('MQ1 S1S S1F')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)
@@ -332,7 +332,7 @@ class InterpreterTest(unittest.TestCase):
             2014, 1, 13, 7, tzinfo=tz.gettz('America/Montreal')).datetime
         expected_e = arrow.get(
             2014, 1, 20, 8, tzinfo=tz.gettz('America/Montreal')).datetime
-        actual = self.interpreter.get_new_event_from_string('Q1 S2 S3F')
+        actual = self.interpreter.get_new_event_from_string('MQ1 S2 S3F')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)
@@ -342,7 +342,7 @@ class InterpreterTest(unittest.TestCase):
             2014, 1, 13, 7, tzinfo=tz.gettz('America/Montreal')).datetime
         expected_e = arrow.get(
             2014, 1, 20, 8, tzinfo=tz.gettz('America/Montreal')).datetime
-        actual = self.interpreter.get_new_event_from_string('H1 S2 S3F')
+        actual = self.interpreter.get_new_event_from_string('MH1 S2 S3F')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)
@@ -352,7 +352,7 @@ class InterpreterTest(unittest.TestCase):
             2014, 1, 8, 8, tzinfo=tz.gettz('America/Montreal')).datetime
         expected_e = arrow.get(
             2014, 1, 15, 7, tzinfo=tz.gettz('America/Montreal')).datetime
-        actual = self.interpreter.get_new_event_from_string('Q1 P1F P2')
+        actual = self.interpreter.get_new_event_from_string('MQ1 P1F P2')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)
@@ -363,7 +363,7 @@ class InterpreterTest(unittest.TestCase):
         expected_e = arrow.get(
             2014, 1, 14, 22, 23, tzinfo=tz.gettz('America/Montreal')).datetime
         actual = self.interpreter.get_new_event_from_string(
-            'Q1 P1@23:45 P2-1d@22:23')
+            'MQ1 P1@23:45 P2-1d@22:23')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)
@@ -374,7 +374,7 @@ class InterpreterTest(unittest.TestCase):
         expected_e = arrow.get(
             2014, 1, 18, 12, 23, tzinfo=tz.gettz('America/Montreal')).datetime
         actual = self.interpreter.get_new_event_from_string(
-            'Q1 P1-1m P2+3d@12:23')
+            'MQ1 P1-1m P2+3d@12:23')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)
@@ -385,7 +385,7 @@ class InterpreterTest(unittest.TestCase):
         expected_e = arrow.get(
             2014, 1, 18, 12, 23, tzinfo=tz.gettz('America/Montreal')).datetime
         actual = self.interpreter.get_new_event_from_string(
-            'Q1 P1-1w@13:20 P2+3d@12:23')
+            'MQ1 P1-1w@13:20 P2+3d@12:23')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)
@@ -409,7 +409,7 @@ class InterpreterTest(unittest.TestCase):
             2014, 1, 13, 7, tzinfo=tz.gettz('America/Montreal')).datetime
         expected_c = arrow.get(
             2014, 1, 13, 8, tzinfo=tz.gettz('America/Montreal')).datetime
-        actual = self.interpreter.get_new_event_from_string('h1 S1F S2S S2F')
+        actual = self.interpreter.get_new_event_from_string('mh1 S1F S2S S2F')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         actual_c = actual._get_datetime_at_index(2)
@@ -447,7 +447,7 @@ class InterpreterTestOtherActivities(unittest.TestCase):
             2015, 10, 1, 0, tzinfo=tz.gettz('America/Montreal')).datetime
         expected_e = arrow.get(
             2015, 10, 29, 0, tzinfo=tz.gettz('America/Montreal')).datetime
-        actual = self.interpreter.get_new_event_from_string('Q1 h1 h1f')
+        actual = self.interpreter.get_new_event_from_string('MQ1 mh1 mh1f')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)
@@ -458,7 +458,7 @@ class InterpreterTestOtherActivities(unittest.TestCase):
             2016, 2, 10, 13, tzinfo=tz.gettz('America/Montreal')).datetime
         expected_e = arrow.get(
             2016, 2, 10, 15, tzinfo=tz.gettz('America/Montreal')).datetime
-        actual = self.interpreter.get_new_event_from_string('Q1 l1 l1f')
+        actual = self.interpreter.get_new_event_from_string('MQ1 ml1 ml1f')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)
@@ -469,7 +469,7 @@ class InterpreterTestOtherActivities(unittest.TestCase):
             2016, 2, 10, 13, tzinfo=tz.gettz('America/Montreal')).datetime
         expected_e = arrow.get(
             2016, 2, 10, 14, tzinfo=tz.gettz('America/Montreal')).datetime
-        actual = self.interpreter.get_new_event_from_string('Q1 c1 c1f')
+        actual = self.interpreter.get_new_event_from_string('MQ1 mc1 mc1f')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)
@@ -480,7 +480,7 @@ class InterpreterTestOtherActivities(unittest.TestCase):
             2016, 2, 10, 13, 0, tzinfo=tz.gettz('America/Montreal')).datetime
         expected_e = arrow.get(
             2016, 2, 10, 13, 5, tzinfo=tz.gettz('America/Montreal')).datetime
-        actual = self.interpreter.get_new_event_from_string('Q1 f1 f1f')
+        actual = self.interpreter.get_new_event_from_string('MQ1 mf1 mf1f')
         actual_s = actual.get_start_datetime()
         actual_e = actual.get_end_datetime()
         self.assertEqual(expected_s, actual_s)

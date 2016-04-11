@@ -130,7 +130,7 @@ class MoodleActivity(Event):
 class MoodleQuiz(MoodleActivity):
     """Describes an XML Moodle quiz with key based access"""
 
-    key = 'Q'
+    key = 'MQ'
     name = 'Quiz'
 
     def __init__(self, path):
@@ -141,7 +141,7 @@ class MoodleQuiz(MoodleActivity):
 class MoodleChoice(MoodleActivity):
     """Describes an XML Moodle choice with key based access"""
 
-    key = 'C'
+    key = 'MC'
     name = 'Choice'
 
     def __init__(self, path):
@@ -152,8 +152,8 @@ class MoodleChoice(MoodleActivity):
 class MoodleFeedback(MoodleActivity):
     """Describes an XML Moodle feedback with key based access"""
 
-    key = 'F'
-    name = 'Feeback'
+    key = 'MF'
+    name = 'Feedback'
 
     def __init__(self, path):
         self.global_path = path
@@ -173,7 +173,7 @@ class MoodleLesson(MoodleActivity):
         'closes'
     ]
 
-    key = 'L'
+    key = 'ML'
     name = 'Lesson'
 
     def __init__(self, path):
@@ -204,7 +204,7 @@ class MoodleHomework(MoodleActivity):
         'closes'
     ]
 
-    key = 'H'
+    key = 'MH'
     name = 'Homework'
 
     def __init__(self, path):

@@ -323,10 +323,10 @@ class AppTest(unittest.TestCase):
             {'key_str': 'P', 'rel_id': 3, 'title': 'log210 TP 3'},
         ]
         expected_moodle = [
-            {'key_str': 'H', 'rel_id': 1, 'title': 'Devoir bidon'},
-            {'key_str': 'Q', 'rel_id': 1, 'title': 'test de remise'},
-            {'key_str': 'Q', 'rel_id': 2, 'title': 'Premier test'},
-            {'key_str': 'Q', 'rel_id': 3, 'title': 'Quiz Moodle Backup'},
+            {'key_str': 'MH', 'rel_id': 1, 'title': 'Devoir bidon'},
+            {'key_str': 'MQ', 'rel_id': 1, 'title': 'test de remise'},
+            {'key_str': 'MQ', 'rel_id': 2, 'title': 'Premier test'},
+            {'key_str': 'MQ', 'rel_id': 3, 'title': 'Quiz Moodle Backup'},
         ]
         self.assertEqual(len(actual_cal), len(expected_cal))
         self.assertEqual(len(actual_moodle), len(expected_moodle))
@@ -356,7 +356,7 @@ class AppTest(unittest.TestCase):
 
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'Q1 S1 S2'}),
+            data=json.dumps({'planning': 'MQ1 S1 S2'}),
             headers=[('Content-Type', 'application/json'),
                      ('Authorization', "Bearer %s" % self.token)])
 
@@ -368,7 +368,7 @@ class AppTest(unittest.TestCase):
         actual = json.loads(res.data.decode('utf8'))['preview']
 
         expected = [
-            {'key_str': 'Q', 'title': 'Quiz 1 opens',
+            {'key_str': 'MQ', 'title': 'Quiz 1 opens',
                 'timestamp': 1389009600},
             {'key_str': 'S', 'title': 'Seminar 1 opens',
                 'timestamp': 1389009600},
@@ -378,7 +378,7 @@ class AppTest(unittest.TestCase):
                 'timestamp': 1389182400},
             {'key_str': 'P', 'title': 'Practica 1 closes',
                 'timestamp': 1389186000},
-            {'key_str': 'Q', 'title': 'Quiz 1 closes',
+            {'key_str': 'MQ', 'title': 'Quiz 1 closes',
                 'timestamp': 1389614400},
             {'key_str': 'S', 'title': 'Seminar 2 opens',
                 'timestamp': 1389614400},
@@ -510,7 +510,7 @@ class AppTest(unittest.TestCase):
 
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'H1 S3F P3 P3F'}),
+            data=json.dumps({'planning': 'MH1 S3F P3 P3F'}),
             headers=[('Content-Type', 'application/json'),
                      ('Authorization', "Bearer %s" % self.token)])
 
@@ -540,19 +540,20 @@ class AppTest(unittest.TestCase):
                 'timestamp': 1389790800},
             {'key_str': 'S', 'title': 'Seminar 3 opens',
                 'timestamp': 1390219200},
-            {'key_str': 'H', 'title': 'Homework 1 opens',
+            {'key_str': 'MH', 'title': 'Homework 1 opens',
                 'timestamp': 1390222800},
             {'key_str': 'S', 'title': 'Seminar 3 closes',
                 'timestamp': 1390222800},
             {'key_str': 'P', 'title': 'Practica 3 opens',
                 'timestamp': 1390392000},
-            {'key_str': 'H', 'title': 'Homework 1 is due',
+            {'key_str': 'MH', 'title': 'Homework 1 is due',
                 'timestamp': 1390392000},
             {'key_str': 'P', 'title': 'Practica 3 closes',
                 'timestamp': 1390395600},
-            {'key_str': 'H', 'title': 'Homework 1 closes',
+            {'key_str': 'MH', 'title': 'Homework 1 closes',
                 'timestamp': 1390395600},
         ]
+
         self.assertEqual(len(actual), len(expected))
         # no order expected
         assert all(x in expected for x in actual)
@@ -572,7 +573,7 @@ class AppTest(unittest.TestCase):
 
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'Q1 S1 S2\nH1 S2 P3'}),
+            data=json.dumps({'planning': 'MQ1 S1 S2\nMH1 S2 P3'}),
             headers=[('Content-Type', 'application/json'),
                      ('Authorization', "Bearer %s" % self.token)])
 
@@ -585,7 +586,7 @@ class AppTest(unittest.TestCase):
 
         expected = [
             {'title': 'Quiz 1 opens', 'timestamp': 1389009600,
-                'key_str': 'Q'},
+                'key_str': 'MQ'},
             {'title': 'Seminar 1 opens', 'timestamp': 1389009600,
                 'key_str': 'S'},
             {'title': 'Seminar 1 closes', 'timestamp': 1389013200,
@@ -595,9 +596,9 @@ class AppTest(unittest.TestCase):
             {'title': 'Practica 1 closes', 'timestamp': 1389186000,
                 'key_str': 'P'},
             {'title': 'Quiz 1 closes', 'timestamp': 1389614400,
-                'key_str': 'Q'},
+                'key_str': 'MQ'},
             {'title': 'Homework 1 opens', 'timestamp': 1389614400,
-                'key_str': 'H'},
+                'key_str': 'MH'},
             {'title': 'Seminar 2 opens', 'timestamp': 1389614400,
                 'key_str': 'S'},
             {'title': 'Seminar 2 closes', 'timestamp': 1389618000,
@@ -611,7 +612,7 @@ class AppTest(unittest.TestCase):
             {'title': 'Seminar 3 closes', 'timestamp': 1390222800,
                 'key_str': 'S'},
             {'title': 'Homework 1 is due', 'timestamp': 1390392000,
-                'key_str': 'H'},
+                'key_str': 'MH'},
             {'title': 'Practica 3 opens', 'timestamp': 1390392000,
                 'key_str': 'P'},
             {'title': 'Practica 3 closes', 'timestamp': 1390395600,
@@ -636,7 +637,7 @@ class AppTest(unittest.TestCase):
         # Planning is not in chronological order
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'Q2 S1F S2\nQ1 S2F S3S'}),
+            data=json.dumps({'planning': 'MQ2 S1F S2\nMQ1 S2F S3S'}),
             headers=[('Content-Type', 'application/json'),
                      ('Authorization', "Bearer %s" % self.token)])
 
@@ -651,7 +652,7 @@ class AppTest(unittest.TestCase):
             {'title': 'Seminar 1 opens', 'timestamp': 1389009600,
                 'key_str': 'S'},
             {'title': 'Quiz 2 opens', 'timestamp': 1389013200,
-                'key_str': 'Q'},
+                'key_str': 'MQ'},
             {'title': 'Seminar 1 closes', 'timestamp': 1389013200,
                 'key_str': 'S'},
             {'title': 'Practica 1 opens', 'timestamp': 1389182400,
@@ -659,11 +660,11 @@ class AppTest(unittest.TestCase):
             {'title': 'Practica 1 closes', 'timestamp': 1389186000,
                 'key_str': 'P'},
             {'title': 'Quiz 2 closes', 'timestamp': 1389614400,
-                'key_str': 'Q'},
+                'key_str': 'MQ'},
             {'title': 'Seminar 2 opens', 'timestamp': 1389614400,
                 'key_str': 'S'},
             {'title': 'Quiz 1 opens', 'timestamp': 1389618000,
-                'key_str': 'Q'},
+                'key_str': 'MQ'},
             {'title': 'Seminar 2 closes', 'timestamp': 1389618000,
                 'key_str': 'S'},
             {'title': 'Practica 2 opens', 'timestamp': 1389787200,
@@ -671,7 +672,7 @@ class AppTest(unittest.TestCase):
             {'title': 'Practica 2 closes', 'timestamp': 1389790800,
                 'key_str': 'P'},
             {'title': 'Quiz 1 closes', 'timestamp': 1390219200,
-                'key_str': 'Q'},
+                'key_str': 'MQ'},
             {'title': 'Seminar 3 opens', 'timestamp': 1390219200,
                 'key_str': 'S'},
             {'title': 'Seminar 3 closes', 'timestamp': 1390222800,
@@ -699,7 +700,7 @@ class AppTest(unittest.TestCase):
 
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'Q1 S2 S1'}),
+            data=json.dumps({'planning': 'MQ1 S2 S1'}),
             headers=[('Content-Type', 'application/json'),
                      ('Authorization', "Bearer %s" % self.token)])
 
@@ -730,7 +731,7 @@ class AppTest(unittest.TestCase):
 
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'Q1 S1F S2'}),
+            data=json.dumps({'planning': 'MQ1 S1F S2'}),
             headers=[('Content-Type', 'application/json'),
                      ('Authorization', "Bearer %s" % self.token)])
 
