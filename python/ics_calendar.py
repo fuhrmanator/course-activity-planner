@@ -40,9 +40,6 @@ class Seminar(GenericMeeting):
     def __init__(self, *args, **kwargs):
         GenericMeeting.__init__(self, *args, **kwargs)
 
-    def get_pretty_name(self=None):
-        return 'Seminar'
-
 
 class Practica(GenericMeeting):
 
@@ -53,12 +50,22 @@ class Practica(GenericMeeting):
         GenericMeeting.__init__(self, *args, **kwargs)
 
 
+class Laboratory(GenericMeeting):
+
+    key = 'L'
+    name = 'Laboratory'
+
+    def __init__(self, *args, **kwargs):
+        GenericMeeting.__init__(self, *args, **kwargs)
+
+
 class CalendarReader():
     """Reads iCalendar and returns generic meetings"""
 
     # Association of the meeting classes and their regex in the calendar
     candidates = {Seminar: re.compile(r'Cours magistral ([0-9]{1,2})$'),
-                  Practica: re.compile(r'TP ([0-9]{1,2})$')}
+                  Practica: re.compile(r'TP ([0-9]{1,2})$'),
+                  Laboratory: re.compile(r'Laboratoire ([0-9]{1,2})$')}
 
     def __init__(self, calendar_path):
         with open(calendar_path, 'r') as cal_file:
