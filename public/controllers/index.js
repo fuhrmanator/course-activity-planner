@@ -13,6 +13,11 @@ controllers.controller('IndexController', function($scope, $http, $location, Upl
       }
     };
 
+    $scope.get_epoch = function (date_str) {
+      console.log(Date.parse(date_str));
+      return Date.parse(date_str);
+    };
+
     $scope.refresh = function() {
       $http.get('/api/planning/')
           .success(function(data) {

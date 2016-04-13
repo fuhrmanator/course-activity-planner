@@ -67,7 +67,8 @@
                 </thead>
                 <tbody>
                     <tr ng-repeat="p in plannings">
-                        <td style="vertical-align:middle;">{{p.uuid}}</td>
+                        <td style="vertical-align:middle;" ng-hide="p.name">{{get_epoch(p.created_at) | date : 'yyyy-MM-dd H:mm' : '+0'}}</td>
+                        <td style="vertical-align:middle;" ng-show="p.name">{{p.name}}-{{p.year}}-{{p.semester}}-{{p.group}}</td>
                         <td>
                           <div class="btn-group">
                               <button class="btn btn-danger" ng-click="deletePlanning(p.uuid)">
