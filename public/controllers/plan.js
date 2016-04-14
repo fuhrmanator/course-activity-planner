@@ -98,20 +98,50 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
         return key_set.indexOf(key_str) !== -1;
     };
 
-    $scope.submit = function() {
+    $scope.get_preview = function() {
+        $scope.refresh();
+    };
+
+    $scope.save = function (next_fn) {
         var data = {'planning' : $scope.planning_txt};
 
         $http.put('/api/planning/' + $scope.uuid, data)
             .success(function() {
-                $scope.refresh();
+                next_fn();
             })
             .error(function(err, status) {
                 console.log(err, status);
             });
     };
 
-    $scope.download = function() {
-        window.open('/api/planning/'+ $scope.uuid + '/mbz', '_blank', '');
+    $scope.planets = function () {
+        $http.get('/api/planning/' + $scope.uuid + '/planets')
+            .success(function(data) {
+                $scope.planets_str = data.planets;
+            })
+            .error(function(err, status) {
+                console.log(err, status);
+            });
+    };
+
+    $scope.download_mbz = function() {
+        $http.get('/api/planning/' + $scope.uuid + '/mbz')
+            .success(function(data) {
+                // Wow JS... taken from http://stackoverflow.com/questions/30443238/save-json-to-file-in-angularjs
+                var blob = new Blob([data]),
+                    e = document.createEvent('MouseEvents'),
+                    a = document.createElement('a');
+
+              a.download = 'updated.mbz';
+              a.href = window.URL.createObjectURL(blob);
+              a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
+              e.initEvent('click', true, false, window,
+                  0, 0, 0, 0, 0, false, false, false, false, 0, null);
+              a.dispatchEvent(e);
+            })
+            .error(function(err, status) {
+                console.log(err, status);
+            });
     };
 
     $scope.refresh = function() {
@@ -139,6 +169,9 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
                         }
                         // Build compact preview
                         $scope.condensedPreview = $scope.buildCondensedPreviewDict(data.preview);
+                        if ($scope.planets_str) {
+                            $scope.planets();
+                        }
                     })
                     .error(function(err, status) {
                         $scope.alerts = err.alerts;
