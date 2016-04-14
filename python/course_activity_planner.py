@@ -6,6 +6,7 @@ import tarfile
 import tempfile
 import json
 import jwt
+import locale
 
 from functools import wraps
 from jwt import DecodeError, ExpiredSignature
@@ -179,41 +180,19 @@ def delete_planning(uuid):
 @app.route('/api/planning/<uuid>/preview', methods=['GET'])
 @login_req
 def preview_planning(uuid):
-    try:
-        planning = _get_planning(uuid, g.user_id)
-    except CAPException as e:
-        return e.res
-    moodle_archive_path = planning.mbz_fullpath
-    planning_txt = planning.planning_txt
-
-    # Make tmp directory for MBZ extraction
-    with tempfile.TemporaryDirectory() as tmp_path:
-        try:
-            calendar = CalendarReader(planning.ics_fullpath)
-            calendar_meetings = calendar.get_all_meetings()
-        except Exception as e:
-            _bad_cal()
-
-        # Extract Moodle course to tmp folder
-        course = None
-        if moodle_archive_path:
-            try:
-                with tarfile.open(moodle_archive_path) as tar_file:
-                    tar_file.extractall(tmp_path)
-                    course = MoodleCourse(tmp_path)
-            except Exception as e:
-                return jsonify(
-                    alerts=[{'type': 'danger',
-                            'msg': 'MBZ file could not be read.'}]), 400
-
     alerts = []
     preview = None
     inventory = None
+
     try:
-        interpreter = Interpreter(calendar_meetings, course)
+        interpreter, planning = get_interpreter_and_planning_from(uuid)
+        planning_txt = planning.planning_txt
+
         inventory = _build_inventory(interpreter, planning_txt)
         preview = _build_preview(interpreter, planning_txt)
         alerts = _build_alerts_for_preview(interpreter)
+    except CAPException as e:
+        return e.res
     except InvalidSyntaxException as e:
         alerts.append({'type': 'danger', 'msg': e.message})
     return jsonify(
@@ -256,6 +235,83 @@ def download_planning(uuid):
         course.write(latest_mbz_path)
         return send_from_directory(
             folder, 'latest.mbz', as_attachment=True)
+
+
+@app.route('/api/planning/<uuid>/planets', methods=['GET'])
+@login_req
+def download_planets(uuid):
+    """
+    'Examen Intra, Groupe 1, Mercredi le 10 février 2015 de 18h à 21h'
+    or if dates differ
+    'Examen Intra 1, Groupe 1, du lundi 01 janvier 2014 7h au mardi 02 janvier
+    2014 7h'
+    """
+    text = ''
+    planets_lines = []
+    try:
+        interpreter, planning = get_interpreter_and_planning_from(uuid)
+        planning_txt = planning.planning_txt
+
+        for line in planning_txt.split('\n'):
+            event = interpreter.get_new_event_from_string(line)
+            if event.show_planets:
+                planets_lines.append(_build_planets_for_event(event, planning))
+
+        text = '\n'.join(planets_lines)
+    except CAPException as e:
+        return e.res
+    return jsonify({'planets': text}), 200
+
+
+def _build_planets_for_event(event, planning):
+    locale.setlocale(locale.LC_TIME, 'fr_CA.UTF-8')
+    start_date = event.get_start_datetime()
+    end_date = event.get_end_datetime()
+
+    if start_date.date() == end_date.date():
+        date_str = start_date.strftime('%A le %d %B %Y')
+        date_str += end_date.strftime(' de %s à %s' % (
+            _build_time(start_date), _build_time(end_date)))
+    else:
+        start_str = start_date.strftime('%A %d %B %Y')
+        end_str = end_date.strftime('%A %d %B %Y')
+
+        date_str = 'du %s %s au %s %s' % (
+            start_str, _build_time(start_date), end_str, _build_time(end_date))
+
+    return '%s %d, Groupe %s, %s' % (
+        event.planets_name, event.rel_id, planning.group, date_str)
+
+
+def _build_time(date):
+    if not date.minute:
+        return '{d.hour}h'.format(d=date)
+    return '{d.hour}h{d.minute:02}'.format(d=date)
+
+
+def get_interpreter_and_planning_from(uuid):
+    planning = _get_planning(uuid, g.user_id)
+    moodle_archive_path = planning.mbz_fullpath
+
+    try:
+        calendar = CalendarReader(planning.ics_fullpath)
+        calendar_meetings = calendar.get_all_meetings()
+    except Exception:
+        _bad_cal()
+
+    if not moodle_archive_path:
+        return Interpreter(calendar_meetings, None), planning
+
+    # Make tmp directory for MBZ extraction
+    with tempfile.TemporaryDirectory() as tmp_path:
+        # Extract Moodle course to tmp folder
+        try:
+            with tarfile.open(moodle_archive_path) as tar_file:
+                tar_file.extractall(tmp_path)
+                course = MoodleCourse(tmp_path)
+        except Exception:
+            _bad_mbz()
+    return Interpreter(calendar_meetings, course), planning
 
 
 @app.route('/api/keys', methods=['GET'])
@@ -473,6 +529,13 @@ def _bad_cal():
     raise CAPException(
         {'type': 'danger',
          'msg': 'Calendar file is not a valid ICS file.'}, 400)
+
+
+def _bad_mbz():
+    """Raiser function"""
+    raise CAPException(
+        {'type': 'danger',
+         'msg': 'MBZ file could not be read.'}, 400)
 
 
 def _clear_db():

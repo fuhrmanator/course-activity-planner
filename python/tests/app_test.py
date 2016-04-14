@@ -821,6 +821,87 @@ class AppTest(unittest.TestCase):
         ]
         self.assertEqual(expected, actual)
 
+    def test_download_planets(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        # Ignore mbz in request and link to local mbz file
+        course_activity_planner._save_mbz_file = \
+            MagicMock(return_value=self.local_mbz_path)
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url='some_url_to_be_mocked', group='1'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'E1 S1 S1F'}),
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.get(
+            '/api/planning/uuid/planets',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['planets']
+        expected = 'Examen Intra 1, Groupe 1, lundi le 06 janvier' \
+            ' 2014 de 7h à 8h'
+        self.assertEqual(expected, actual)
+
+        # Test minutes
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'E1 S1+1m S1F-1m'}),
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.get(
+            '/api/planning/uuid/planets',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['planets']
+        expected = 'Examen Intra 1, Groupe 1, lundi le 06 janvier' \
+            ' 2014 de 7h01 à 7h59'
+        self.assertEqual(expected, actual)
+
+        # Test different days
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'E1 S1 S1+1d@15:01'}),
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.get(
+            '/api/planning/uuid/planets',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['planets']
+        expected = 'Examen Intra 1, Groupe 1, du lundi 06 janvier 2014 7h ' \
+            'au mardi 07 janvier 2014 15h01'
+
+        # Test multiple lines
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'E1 S1 S1F\nE2 S2 S2F'}),
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.get(
+            '/api/planning/uuid/planets',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['planets']
+        expected = \
+            'Examen Intra 1, Groupe 1, lundi le 06 janvier 2014 de 7h à 8h' \
+            '\nExamen Intra 2, Groupe 1, lundi le 13 janvier 2014 de 7h à 8h'
+        self.assertEqual(expected, actual)
+
 
 class AppTestNoURLMock(unittest.TestCase):
     db_path = '/tmp/test.db'
@@ -877,7 +958,6 @@ class AppTestNoURLMock(unittest.TestCase):
                               headers=[('Authorization',
                                         "Bearer %s" % self.token)])
         self.assertEqual(200, res._status_code)
-
 
 if __name__ == '__main__':
     unittest.main()

@@ -22,6 +22,7 @@ class Event():
 
     # Array of events name (opens, closes etc)
     event_pretty_names = None
+    show_planets = False
 
     def __init__(self):
         raise Exception('Unimplemented')
@@ -79,10 +80,13 @@ class UserDefinedEvent(Event):
         'ends'
     ]
 
-    def __init__(self, event_id=0, key=None, name=None):
+    def __init__(self, event_id=0, key=None, name=None, planets_name=None):
         self.rel_id = event_id
         self.key = key
         self.name = name
+        self.planets_name = planets_name
+        if planets_name:
+            self.show_planets = True
 
     def is_activity(self=None):
         return True
