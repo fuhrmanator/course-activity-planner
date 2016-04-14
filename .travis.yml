@@ -6,6 +6,8 @@ python:
   - "nightly"
 node_js:
   - "0.12"
+before_install:
+  - sudo apt-get update && sudo apt-get --reinstall install -qq language-pack-fr
 install:
   - npm install jshint
   - pip install coveralls
