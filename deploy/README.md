@@ -10,8 +10,8 @@ You are strongly advised to run this application inside a container/VM. Python d
 
 **Windows is not supported.** See `Windows Help` section in main README.
 
-### Install base system dependencies
-* `sudo apt-get install npm python3 python3-pip nginx uwsgi uwsgi-plugin-python3 libssl-dev`
+### Install base system dependencies for Ubuntu 14.04
+* `sudo apt-get install npm python3 python3-pip nginx uwsgi uwsgi-plugin-python3 libssl-dev language-pack-fr`
 * `sudo npm install grunt-cli -g`
 
 ### Install CAP
