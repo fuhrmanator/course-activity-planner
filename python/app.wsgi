@@ -1,3 +1,3 @@
-from app import setup
+from course_activity_planner import setup
 
 application = setup('prod')

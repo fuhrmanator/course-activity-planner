@@ -18,10 +18,10 @@ You are strongly advised to run this application inside a container/VM. Python d
 * `cd /opt`
 * `git clone https://github.com/fuhrmanator/course-activity-planner.git`
 * `cd course-activity-planner`
-* `sudo pip3 install -r requirements.txt`
+* `(cd python && sudo pip3 install -r requirements.txt)`
 * `bower install`
 * `(cd deploy && npm install)`
-* `sudo cp deploy/nginx/cap.logti.etsmtl.ca /etc/nginx/sites-enabled/`
+* `sudo cp deploy/prod/cap.logti.etsmtl.ca /etc/nginx/sites-enabled/`
 * `cp deploy/cap.service /etc/systemd/system/` TODO change for upstart
 * Change config/prod_config.py to your needs
 * `grunt build`
