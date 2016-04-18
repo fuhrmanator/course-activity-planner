@@ -207,10 +207,39 @@ class AppTest(unittest.TestCase):
             headers=[('Content-Type', 'application/json'),
                      ('Authorization', "Bearer %s" % self.token)])
 
-        self.assertEqual(200, res._status_code)
+        self.assertEqual(202, res._status_code)
         actual = course_activity_planner. \
             _get_planning_bypass('uuid').planning_txt
         self.assertEqual('Q1 S1F S2', actual)
+
+    def test_invalid_date_count_update(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        # Ignore mbz in request and link to local mbz file
+        course_activity_planner._save_mbz_file = \
+            MagicMock(return_value=self.local_mbz_path)
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'MQ1 S1F S2S-30m s3'}),
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
+
+        # At this point, the planning might be errored
+        # but it will only be detected at the next preview
+        self.assertEqual(202, res._status_code)
+
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
 
     def test_update_missing_planning(self):
         course_activity_planner._generate_planning_uuid = \

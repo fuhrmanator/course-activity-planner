@@ -140,7 +140,7 @@ def update_planning(uuid):
     db_session.add(planning)
     db_session.commit()
 
-    return jsonify({}), 200
+    return jsonify({}), 202
 
 
 @app.route('/api/planning/', methods=['GET'])
@@ -183,6 +183,7 @@ def preview_planning(uuid):
     alerts = []
     preview = None
     inventory = None
+    code = 200
 
     try:
         interpreter, planning = get_interpreter_and_planning_from(uuid)
@@ -195,6 +196,11 @@ def preview_planning(uuid):
         return e.res
     except InvalidSyntaxException as e:
         alerts.append({'type': 'danger', 'msg': e.message})
+        code = 400
+    except Exception as e:
+        code = 400
+        alerts.append({'type': 'danger', 'msg': str(e)})
+
     return jsonify(
         {'preview': preview, 'inventory': inventory, 'alerts': alerts}), 200
 

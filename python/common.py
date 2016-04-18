@@ -4,16 +4,6 @@ import json
 from flask import Response
 
 
-class InvalidSyntaxException(Exception):
-    """Raised if the string could not be divided"""
-    def __init__(self, str):
-        self.message = '\
-Invalid syntax while splitting events from string "%s"' % str
-
-    def __str__(self):
-        return repr(self.message)
-
-
 class Event():
     """Abstract class to be extended with all event (activity or meeting)"""
 
@@ -139,3 +129,13 @@ class CAPException(Exception):
         data = json.dumps({'alerts': [alert]})
         res = Response(data, status, mimetype='application/json')
         self.res = res
+
+
+class InvalidSyntaxException(Exception):
+    """Raised if the string could not be divided"""
+    def __init__(self, str):
+        self.message = '\
+Invalid syntax while splitting events from string "%s"' % str
+
+    def __str__(self):
+        return repr(self.message)
