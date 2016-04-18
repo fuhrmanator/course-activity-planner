@@ -22,15 +22,14 @@ You are strongly advised to run this application inside a container/VM. Python d
 * `bower install`
 * `(cd deploy && npm install)`
 * `sudo cp deploy/prod/cap.logti.etsmtl.ca /etc/nginx/sites-enabled/`
-* `cp deploy/cap.service /etc/systemd/system/` TODO change for upstart
+* `sudo cp deploy/prod/upstart/cap.conf /etc/init/`
 * Change config/prod_config.py to your needs
 * `grunt build`
-* `sudo systemctl enable cap` TODO change for upstart
-* `sudo systemctl start cap` TODO change for upstart
-* `sudo systemctl reload nginx`
+* `sudo start cap`
+* `sudo service nginx reload`
 
 ## Upgrading CAP
-* `sudo systemctl stop cap` TODO change for upstart
+* `sudo stop cap`
 * `cd /opt/course-activity-planner/`
 * `git pull`
 * Run DB migration scripts if needed or delete database
@@ -39,5 +38,5 @@ You are strongly advised to run this application inside a container/VM. Python d
 * `sudo pip3 install -r requirements.txt`
 * `bower install`
 * `grunt build`
-* `sudo systemctl start cap` TODO change for upstart
-* `sudo systemctl reload nginx` TODO change for upstart
+* `sudo start cap` TODO change for upstart
+* `sudo service nginx reload`
