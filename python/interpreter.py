@@ -67,12 +67,13 @@ class Interpreter():
         # 'user': [Exam, UserQuiz]
     }
 
-    candidate_classes = [  # Imported from  MBZ
-                         MoodleQuiz, MoodleLesson, MoodleFeedback,
-                         MoodleHomework, MoodleChoice,
-                         # Imported from calendar
-                         Seminar, Practica, Laboratory
-                         ]
+    candidate_classes = [
+        # Imported from  MBZ
+        MoodleQuiz, MoodleLesson, MoodleFeedback,
+        MoodleHomework, MoodleChoice,
+        # Imported from calendar
+        Seminar, Practica, Laboratory
+    ]
 
     def __init__(self, meetings, course):
         self.meetings = meetings
