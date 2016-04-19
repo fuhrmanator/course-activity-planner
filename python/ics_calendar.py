@@ -72,7 +72,7 @@ class CalendarReader():
                   Laboratory: re.compile(r'Laboratoire ([0-9]{1,2})$')}
 
     def __init__(self, calendar_path):
-        with open(calendar_path, 'r') as cal_file:
+        with open(calendar_path, 'r', encoding='UTF-8') as cal_file:
             try:
                 cal_content = cal_file.readlines()
                 self.calendar = iCalendar(cal_content)
