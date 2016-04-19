@@ -170,7 +170,7 @@ class Interpreter():
         raise InvalidEventIdentifier(string)
 
     def _split_line(self, string):
-        parts = string.split(' ')
+        parts = string.strip().split(' ')
 
         if len(parts) < 3 or len(parts) > 4:
             raise InvalidSyntaxException(string)

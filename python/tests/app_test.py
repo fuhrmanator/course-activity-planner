@@ -240,6 +240,39 @@ class AppTest(unittest.TestCase):
             '/api/planning/uuid/preview',
             headers=[('Authorization', "Bearer %s" % self.token)])
         self.assertEqual(200, res._status_code)
+        actual = json.loads(res.data.decode('utf8'))['alerts']
+        self.assertEqual(1, len(actual))
+        msg = actual[0]['msg']
+        self.assertEqual('Activity "MoodleQuiz" must have between ' +
+                         '2 and 2 dates. 3 given.', msg)
+
+    def test_trailing_spaces_should_not_affect_cap(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        # Ignore mbz in request and link to local mbz file
+        course_activity_planner._save_mbz_file = \
+            MagicMock(return_value=self.local_mbz_path)
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url=self.cal_url),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'MQ1 S1F S2S-30m  \nMq2 s2 s3'}),
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(202, res._status_code)
+
+        res = self.client.get(
+            '/api/planning/uuid/preview',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+        actual = json.loads(res.data.decode('utf8'))['alerts']
+        self.assertEqual(0, len(actual))
 
     def test_update_missing_planning(self):
         course_activity_planner._generate_planning_uuid = \
