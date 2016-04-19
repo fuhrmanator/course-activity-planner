@@ -7,6 +7,10 @@ from common import Event, CAPException
 
 class InvalidCalendarFileException(CAPException):
     """Raised if the calendar file could not read"""
+    def __init__(self, message='Reason unknown'):
+        super(InvalidCalendarFileException, self).__init__(
+            {'type': 'danger', 'msg': 'Invalid calendar file: %s' % message},
+            400)
 
 
 class GenericMeeting(Event):
@@ -72,8 +76,8 @@ class CalendarReader():
             try:
                 cal_content = cal_file.readlines()
                 self.calendar = iCalendar(cal_content)
-            except Exception:
-                raise InvalidCalendarFileException()
+            except Exception as e:
+                raise InvalidCalendarFileException(message=str(e))
 
     def get_all_meetings(self):
         """Parses events from ics_calendar and orders them by meeting type.

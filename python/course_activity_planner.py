@@ -183,7 +183,6 @@ def preview_planning(uuid):
     alerts = []
     preview = None
     inventory = None
-    code = 200
 
     try:
         interpreter, planning = get_interpreter_and_planning_from(uuid)
@@ -196,9 +195,7 @@ def preview_planning(uuid):
         return e.res
     except InvalidSyntaxException as e:
         alerts.append({'type': 'danger', 'msg': e.message})
-        code = 400
     except Exception as e:
-        code = 400
         alerts.append({'type': 'danger', 'msg': str(e)})
 
     return jsonify(
@@ -302,8 +299,10 @@ def get_interpreter_and_planning_from(uuid):
     try:
         calendar = CalendarReader(planning.ics_fullpath)
         calendar_meetings = calendar.get_all_meetings()
-    except Exception:
-        _bad_cal()
+    except CAPException as e:
+        raise e
+    except Exception as e:
+        raise CAPException({'type': 'danger', 'msg': str(e)}, 400)
 
     if not moodle_archive_path:
         return Interpreter(calendar_meetings, None), planning
