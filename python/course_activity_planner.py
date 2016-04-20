@@ -284,8 +284,7 @@ def _build_planets_for_event(event, planning):
             start_str, _build_time(start_date), end_str, _build_time(end_date))
 
     group_str = 'Groupe %s, ' % planning.group if planning.group else ''
-    return '%s, %s%s' % (
-        event.planets_name, group_str, date_str)
+    return '%s, %s%s' % (event.planets_name, group_str, date_str)
 
 
 def _build_time(date):
