@@ -8,7 +8,7 @@ from dateutil import tz
 from datetime import timedelta, time
 
 from interpreter import Interpreter, AbsoluteTimeModifierException, \
-    InvalidSyntaxException, InvalidModifiersException, InvalidSubjectException
+    InvalidModifiersException, InvalidSubjectException
 from moodle import MoodleCourse, MoodleQuiz
 from ics_calendar import CalendarReader, Seminar, Practica
 
@@ -37,23 +37,9 @@ class InterpreterTest(unittest.TestCase):
         # TODO test on windows
         shutil.rmtree(self.tmp_path)
 
-    def test_invalid_syntax(self):
-        self.assertRaises(
-            InvalidSyntaxException, self.interpreter._split_line, 'Q1S1FS2S')
-        self.assertRaises(
-            InvalidSyntaxException, self.interpreter._split_line,
-            'Q1 S1F S2S S3S S4F')
-
     def test_split_events_line(self):
         self.assertEqual(['Q1', 'S1F', 'S2S'],
                          self.interpreter._split_line('Q1 S1F S2S'))
-
-    def test_split_events_line_wrong_date_count(self):
-        self.assertRaises(
-            Exception, self.interpreter._split_line, 'Q1 s1')
-        self.assertRaises(
-            Exception, self.interpreter._split_line,
-            'H1 S1F')
 
     def test_detection_of_event(self):
         event = self.interpreter._detect_event_class_and_id('MQ1')

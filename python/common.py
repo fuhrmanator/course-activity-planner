@@ -132,9 +132,11 @@ class CAPException(Exception):
 
 
 class InvalidSyntaxException(Exception):
-    """Raised if the string could not be divided"""
-    def __init__(self, str):
-        self.message = '\
+    def __init__(self, str=None, message=None):
+        if message:
+            self.message = message
+        else:
+            self.message = '\
 Invalid syntax while splitting events from string "%s"' % str
 
     def __str__(self):

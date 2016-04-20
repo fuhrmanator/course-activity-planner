@@ -14,8 +14,7 @@ class ActivityLoader():
             stream = open(f, 'r')
             yaml_data = yaml.load(stream)
             self.activities.append(
-                UserDefinedEvent(key=yaml_data['key'], name=yaml_data['name'],
-                                 planets_name=yaml_data.get('planets_name')))
+                UserDefinedEvent(key=yaml_data['key'], name=yaml_data['name']))
 
     def get_activities_instances(self):
         return self.activities

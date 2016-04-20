@@ -8,6 +8,7 @@ import json
 import jwt
 import locale
 
+from dateutil import tz
 from functools import wraps
 from jwt import DecodeError, ExpiredSignature
 from datetime import datetime, timedelta
@@ -282,14 +283,16 @@ def _build_planets_for_event(event, planning):
         date_str = 'du %s %s au %s %s' % (
             start_str, _build_time(start_date), end_str, _build_time(end_date))
 
-    return '%s %d, Groupe %s, %s' % (
-        event.planets_name, event.rel_id, planning.group, date_str)
+    group_str = 'Groupe %s, ' % planning.group if planning.group else ''
+    return '%s, %s%s' % (
+        event.planets_name, group_str, date_str)
 
 
 def _build_time(date):
-    if not date.minute:
-        return '{d.hour}h'.format(d=date)
-    return '{d.hour}h{d.minute:02}'.format(d=date)
+    date_n = date.astimezone(tz=tz.gettz('America/Montreal'))
+    if not date_n.minute:
+        return '{d.hour}h'.format(d=date_n)
+    return '{d.hour}h{d.minute:02}'.format(d=date_n)
 
 
 def get_interpreter_and_planning_from(uuid):

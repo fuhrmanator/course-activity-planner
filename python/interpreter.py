@@ -60,6 +60,8 @@ class Interpreter():
         r'^(?P<neg>\-)?\+?(:?(?P<weeks>[0-9])+w)?(:?(?P<days>[0-9])+d)?' +
         r'(:?(?P<hours>[0-9]+)h)?(:?(?P<minutes>[0-9]+)m)?$', re.IGNORECASE)
 
+    planets_name_regex = re.compile(r'\"(?P<name>[\w\s]+)\"$', re.IGNORECASE)
+
     candidate_classes_dict = {
         'moodle': [MoodleQuiz, MoodleLesson, MoodleFeedback,
                    MoodleHomework, MoodleChoice],
@@ -98,12 +100,25 @@ class Interpreter():
     def get_new_event_from_string(self, string):
         tokens = self._split_line(string)
         event = self._parse_subject(tokens)
+
+        # Try to get planets' name
+        r = self.planets_name_regex.search(string)
+        if r:
+            event.show_planets = True
+            event.planets_name = r.groupdict()['name']
+
+            # Length of the name and quotations
+            length = len(event.planets_name) + 2
+            # Regenerate tokens without name
+            tokens = self._split_line(string[:-length])
+
         date_tokens_len = len(tokens) - 1
 
         if date_tokens_len < event.minimum_dates_count or \
                 date_tokens_len > event.maximum_dates_count:
-            raise Exception(
-                'Activity "%s" must have between %d and %d dates. %d given.' %
+            raise InvalidSyntaxException(
+                message=('Activity "%s" must have between %d and %d dates' +
+                         '. %d given.') %
                 (event.__class__.__name__, event.minimum_dates_count,
                  event.maximum_dates_count, date_tokens_len))
 
@@ -170,11 +185,7 @@ class Interpreter():
         raise InvalidEventIdentifier(string)
 
     def _split_line(self, string):
-        parts = string.strip().split(' ')
-
-        if len(parts) < 3 or len(parts) > 4:
-            raise InvalidSyntaxException(string)
-        return parts
+        return string.strip().split(' ')
 
     def _get_modifiers_as_string(self, string):
         """Returns tuple (at_end, relative_modifier_str, time_modifier_str)

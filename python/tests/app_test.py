@@ -883,6 +883,36 @@ class AppTest(unittest.TestCase):
         ]
         self.assertEqual(expected, actual)
 
+    def test_download_planets_without_group(self):
+        course_activity_planner._generate_planning_uuid = \
+            MagicMock(return_value='uuid')
+        # Ignore mbz in request and link to local mbz file
+        course_activity_planner._save_mbz_file = \
+            MagicMock(return_value=self.local_mbz_path)
+
+        res = self.client.post(
+            '/api/planning',
+            data=dict(
+                mbz_file=(io.BytesIO(b'this is a test'), 'test.mbz'),
+                ics_url='some_url_to_be_mocked'),
+            headers=[('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'E1 S1 S1F "Examen Intra 1"'}),
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.get(
+            '/api/planning/uuid/planets',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['planets']
+        expected = 'Examen Intra 1, lundi le 06 janvier' \
+            ' 2014 de 7h à 8h'
+        self.assertEqual(expected, actual)
+
     def test_download_planets(self):
         course_activity_planner._generate_planning_uuid = \
             MagicMock(return_value='uuid')
@@ -899,7 +929,7 @@ class AppTest(unittest.TestCase):
 
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'E1 S1 S1F'}),
+            data=json.dumps({'planning': 'E1 S1 S1F "Examen Intra 1"'}),
             headers=[('Content-Type', 'application/json'),
                      ('Authorization', "Bearer %s" % self.token)])
 
@@ -916,7 +946,7 @@ class AppTest(unittest.TestCase):
         # Test minutes
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'E1 S1+1m S1F-1m'}),
+            data=json.dumps({'planning': 'E1 S1+1m S1F-1m "Examen Intra 1"'}),
             headers=[('Content-Type', 'application/json'),
                      ('Authorization', "Bearer %s" % self.token)])
 
@@ -933,7 +963,7 @@ class AppTest(unittest.TestCase):
         # Test different days
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'E1 S1 S1+1d@15:01'}),
+            data=json.dumps({'planning': 'E1 S1 S1+1d@15:01 "Examen Intra 1"'}),
             headers=[('Content-Type', 'application/json'),
                      ('Authorization', "Bearer %s" % self.token)])
 
@@ -949,7 +979,8 @@ class AppTest(unittest.TestCase):
         # Test multiple lines
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'E1 S1 S1F\nE2 S2 S2F'}),
+            data=json.dumps({'planning': 'E1 S1 S1F "Examen Intra 1"\n' +
+                             'E2 S2 S2F "Examen Intra 2"'}),
             headers=[('Content-Type', 'application/json'),
                      ('Authorization', "Bearer %s" % self.token)])
 
@@ -962,6 +993,23 @@ class AppTest(unittest.TestCase):
         expected = \
             'Examen Intra 1, Groupe 1, lundi le 06 janvier 2014 de 7h à 8h' \
             '\nExamen Intra 2, Groupe 1, lundi le 13 janvier 2014 de 7h à 8h'
+        self.assertEqual(expected, actual)
+
+        # Test moodle activity
+        res = self.client.put(
+            '/api/planning/uuid',
+            data=json.dumps({'planning': 'MQ1 S1 S1F "Quiz important 1"'}),
+            headers=[('Content-Type', 'application/json'),
+                     ('Authorization', "Bearer %s" % self.token)])
+
+        res = self.client.get(
+            '/api/planning/uuid/planets',
+            headers=[('Authorization', "Bearer %s" % self.token)])
+        self.assertEqual(200, res._status_code)
+
+        actual = json.loads(res.data.decode('utf8'))['planets']
+        expected = \
+            'Quiz important 1, Groupe 1, lundi le 06 janvier 2014 de 7h à 8h'
         self.assertEqual(expected, actual)
 
 
