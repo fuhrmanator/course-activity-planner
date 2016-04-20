@@ -15,6 +15,7 @@ from datetime import datetime, timedelta
 from flask import Flask, jsonify, request, send_from_directory, g
 from models import Planning
 from database import db_session, init_db, init_engine, clear_db
+from activity_loader import ActivityLoader
 
 from interpreter import Interpreter, InvalidSyntaxException
 from moodle import MoodleCourse
@@ -325,13 +326,15 @@ def get_interpreter_and_planning_from(uuid):
 def get_keys():
     names = {}
     associations = {'activities': [], 'meetings': [], 'user': []}
+    loader = ActivityLoader()
+
+    for e in loader.get_activities_instances():
+        names[e.key] = e.name
+        associations['user'].append(e.key)
 
     for e in Interpreter.candidate_classes:
         names[e.key] = e.name
-
-        if e.is_user_defined():
-            associations['user'].append(e.key)
-        elif e.is_activity():
+        if e.is_activity():
             associations['activities'].append(e.key)
         else:
             associations['meetings'].append(e.key)
