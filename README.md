@@ -10,6 +10,7 @@ This project is affiliated with the [Maison du logiciel libre (ML<sup>2</sup>)](
     - [Start/End of activities](#startend-of-activities)
     - [Relative date or time modifiers](#relative-date-or-time-modifiers)
     - [Absolute time modifier](#absolute-time-modifier)
+    - [Defining new activities](#defining-new-activities)
   - [Development setup](#development-setup)
     - [Run unit tests](#run-unit-tests)
     - [Run the linter](#run-the-linter)
@@ -31,15 +32,19 @@ Moodle courses can be cloned and updated with new activity dates from a calendar
 
 ### General principle
 
-Quizzes (more to come) can be planned relative to Seminars and Practica. Each activity adapts it's start and end dates with the calendar of specific dates.
+Moodle activities can be planned relative to Seminars, Practica and Laboratories. Each activity adapts it's start and end dates with the calendar of specific dates.
 
 `<activity to plan> <start at activity> <end at activity>`
 
 Ex: `Quiz 1 is opened on Seminar 1 and closed right before Practicum 2` would be possible with this line: `Q1 S1 P2`
 
-* `Q1` stands for Quiz 1
+* `MQ1` stands for Moodle Quiz 1
 * `S1` stands for Seminar 1
 * `P2` stands for Practicum 2
+
+Generic activites which are not linked to Moodle content can also be created.
+
+By default, Quizzes and Exams can be planned without any Moodle file.
 
 ### Start/End of activities
 
@@ -81,6 +86,10 @@ Ex: `the day before Seminar 1 at 23:55` would be `S1-1d@23:55`.
 `S1-1d@23:55` is valid
 
 `S1@23:55-1d` is invalid
+
+### Defining new activities
+
+Activities can be configured by the administrator. Please refer to examples in `python/config/activities`.
 
 ## Development setup
 * Create a google application with Identity Toolkit API access. Create an oauth2 client as a web application and save the client id. This id needs to be put in config/.
