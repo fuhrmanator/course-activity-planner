@@ -793,7 +793,7 @@ class AppTest(unittest.TestCase):
 
         res = self.client.put(
             '/api/planning/uuid',
-            data=json.dumps({'planning': 'MQ1 S1F S2'}),
+            data=json.dumps({'planning': 'MQ1 S1F S2\nE1 S1F S2'}),
             headers=[('Content-Type', 'application/json'),
                      ('Authorization', "Bearer %s" % self.token)])
 
