@@ -152,6 +152,7 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
                     .success(function(data) {
                         $scope.preview = data.preview;
                         $scope.inventory = data.inventory;
+                        $scope.hasMoodle = data.inventory.activities.length !== 0;
                         $scope.alerts = data.alerts;
                         $scope.key_counts = {};
 
