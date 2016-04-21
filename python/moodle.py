@@ -87,8 +87,9 @@ class MoodleActivity(Event):
         cal_tree = ET.parse(moodle_cal_path)
         events = cal_tree.getroot()
 
-        events[0].find('timestart').text = str(self.get_start_timestamp())
-        events[0].find('timeduration').text = 0
+        if len(events) > 0:
+            events[0].find('timestart').text = str(self.get_start_timestamp())
+            events[0].find('timeduration').text = 0
 
         if len(events) > 1:
             events[0].find('timeduration').text = str(
