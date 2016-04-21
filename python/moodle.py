@@ -87,9 +87,6 @@ class MoodleActivity(Event):
         cal_tree = ET.parse(moodle_cal_path)
         events = cal_tree.getroot()
 
-        if len(events) > 2 or len(events) < 1:
-            raise Exception('Unimplemented')
-
         events[0].find('timestart').text = str(self.get_start_timestamp())
         events[0].find('timeduration').text = 0
 
