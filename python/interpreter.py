@@ -5,7 +5,7 @@ from datetime import timedelta, datetime
 
 from moodle import MoodleQuiz, MoodleHomework, MoodleLesson, MoodleFeedback, \
     MoodleChoice
-from ics_calendar import Seminar, Practica, Laboratory
+from ics_calendar import Seminar, Practicum, Laboratory
 from activity_loader import ActivityLoader
 from common import InvalidSyntaxException
 
@@ -65,7 +65,7 @@ class Interpreter():
     candidate_classes_dict = {
         'moodle': [MoodleQuiz, MoodleLesson, MoodleFeedback,
                    MoodleHomework, MoodleChoice],
-        'calendar': [Seminar, Practica],
+        'calendar': [Seminar, Practicum],
         # 'user': [Exam, UserQuiz]
     }
 
@@ -74,7 +74,7 @@ class Interpreter():
         MoodleQuiz, MoodleLesson, MoodleFeedback,
         MoodleHomework, MoodleChoice,
         # Imported from calendar
-        Seminar, Practica, Laboratory
+        Seminar, Practicum, Laboratory
     ]
 
     def __init__(self, meetings, course):

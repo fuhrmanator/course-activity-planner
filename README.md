@@ -31,21 +31,21 @@ Moodle courses can be cloned and updated with new activity dates from a calendar
 
 ### General principle
 
-Quizzes (more to come) can be planned relative to Seminars and Practicas. Each activity adapts it's start and end dates with the calendar of specific dates.
+Quizzes (more to come) can be planned relative to Seminars and Practica. Each activity adapts it's start and end dates with the calendar of specific dates.
 
 `<activity to plan> <start at activity> <end at activity>`
 
-Ex: `Quiz 1 is opened on Seminar 1 and closed right before Practica 2` would be possible with this line: `Q1 S1 P2`
+Ex: `Quiz 1 is opened on Seminar 1 and closed right before Practicum 2` would be possible with this line: `Q1 S1 P2`
 
 * `Q1` stands for Quiz 1
 * `S1` stands for Seminar 1
-* `P2` stands for Practica 2
+* `P2` stands for Practicum 2
 
 ### Start/End of activities
 
 Adding `F` to an activity will read the finishing time of the activity. Adding nothing or `S` will read the start time.
 
-Ex: `Quiz 1 is opened right after Seminar 1 and closed right after Practica 1` would be `Q1 S1F P1F`
+Ex: `Quiz 1 is opened right after Seminar 1 and closed right after Practicum 1` would be `Q1 S1F P1F`
 
 
 ### Relative date or time modifiers
@@ -61,9 +61,9 @@ Supports `+` or `-` combined with
 
 Ex: `1 hour after Seminar 1` would be `S1+1h`.
 
-Ex: `15 minutes before Practica 2` would be `P2-15m`.
+Ex: `15 minutes before Practicum 2` would be `P2-15m`.
 
-Ex: `Quiz 1 is opened 1 hour after Seminar 1 and closed 15 minutes before Practica 2` would be `Q1 S1+1h P2-15m`
+Ex: `Quiz 1 is opened 1 hour after Seminar 1 and closed 15 minutes before Practicum 2` would be `Q1 S1+1h P2-15m`
 
 
 ### Absolute time modifier

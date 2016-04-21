@@ -45,10 +45,10 @@ class Seminar(GenericMeeting):
         GenericMeeting.__init__(self, *args, **kwargs)
 
 
-class Practica(GenericMeeting):
+class Practicum(GenericMeeting):
 
     key = 'P'
-    name = 'Practica'
+    name = 'Practicum'
 
     def __init__(self, *args, **kwargs):
         GenericMeeting.__init__(self, *args, **kwargs)
@@ -68,7 +68,7 @@ class CalendarReader():
 
     # Association of the meeting classes and their regex in the calendar
     candidates = {Seminar: re.compile(r'Cours magistral ([0-9]{1,2})$'),
-                  Practica: re.compile(r'TP ([0-9]{1,2})$'),
+                  Practicum: re.compile(r'TP ([0-9]{1,2})$'),
                   Laboratory: re.compile(r'Laboratoire ([0-9]{1,2})$')}
 
     def __init__(self, calendar_path):

@@ -10,7 +10,7 @@ from datetime import timedelta, time
 from interpreter import Interpreter, AbsoluteTimeModifierException, \
     InvalidModifiersException, InvalidSubjectException
 from moodle import MoodleCourse, MoodleQuiz
-from ics_calendar import CalendarReader, Seminar, Practica
+from ics_calendar import CalendarReader, Seminar, Practicum
 
 
 class InterpreterTest(unittest.TestCase):
@@ -49,10 +49,10 @@ class InterpreterTest(unittest.TestCase):
         self.assertEqual((MoodleQuiz, 13), event)
 
         event = self.interpreter._detect_event_class_and_id('p2')
-        self.assertEqual((Practica, 2), event)
+        self.assertEqual((Practicum, 2), event)
 
         event = self.interpreter._detect_event_class_and_id('P12')
-        self.assertEqual((Practica, 12), event)
+        self.assertEqual((Practicum, 12), event)
 
         event = self.interpreter._detect_event_class_and_id('s4')
         self.assertEqual((Seminar, 4), event)
@@ -297,7 +297,7 @@ class InterpreterTest(unittest.TestCase):
             InvalidSubjectException,
             self.interpreter._parse_subject, tokens)
 
-        # Practicas can't be used as subject
+        # Practica can't be used as subject
         tokens = self.interpreter._split_line('P1 Q1 Q1F')
         self.assertRaises(
             InvalidSubjectException,

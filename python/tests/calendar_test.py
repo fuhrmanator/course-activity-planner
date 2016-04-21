@@ -3,7 +3,7 @@ import arrow
 
 from dateutil import tz
 
-from ics_calendar import CalendarReader, Seminar, Practica, Laboratory, \
+from ics_calendar import CalendarReader, Seminar, Practicum, Laboratory, \
     GenericMeeting
 
 
@@ -17,14 +17,14 @@ class TestCalendarParsing(unittest.TestCase):
     def test_event_count(self):
         meetings = self.calendar.get_all_meetings()
         self.assertEqual(13, len(meetings[Seminar]))
-        self.assertEqual(13, len(meetings[Practica]))
+        self.assertEqual(13, len(meetings[Practicum]))
         self.assertEqual(13, len(meetings[Laboratory]))
 
         seminars = self.calendar.get_meetings_by_type(Seminar)
-        practicas = self.calendar.get_meetings_by_type(Practica)
+        practica = self.calendar.get_meetings_by_type(Practicum)
         laboratories = self.calendar.get_meetings_by_type(Laboratory)
         self.assertEqual(13, len(seminars))
-        self.assertEqual(13, len(practicas))
+        self.assertEqual(13, len(practica))
         self.assertEqual(13, len(laboratories))
 
     def test_event_getters(self):
