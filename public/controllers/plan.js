@@ -125,10 +125,8 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
     };
 
     $scope.download_mbz = function() {
-        console.log('ok');
         $http.get('/api/planning/' + $scope.uuid + '/mbz')
             .success(function(data) {
-                console.log(data.mbz_64);
                 var byteCharacters = atob(data.mbz_64);
                 var byteNumbers = new Array(byteCharacters.length);
                 for (var i = 0; i < byteCharacters.length; i++) {
