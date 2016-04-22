@@ -7,6 +7,7 @@ import tempfile
 import json
 import jwt
 import locale
+import base64
 
 from dateutil import tz
 from functools import wraps
@@ -239,8 +240,10 @@ def download_planning(uuid):
         latest_mbz_path = os.path.join(folder, 'latest.mbz')
 
         course.write(latest_mbz_path)
-        return send_from_directory(
-            folder, 'latest.mbz', as_attachment=True)
+
+        with open(os.path.join(folder, 'latest.mbz'), 'rb') as f:
+            encoded = base64.encodestring(f.read()).decode()
+            return jsonify({'mbz_64': encoded})
 
 
 @app.route('/api/planning/<uuid>/planets', methods=['GET'])

@@ -25,6 +25,7 @@
     "angular-bootstrap": "1.1.2",
     "ng-file-upload": "~11.2.3",
     "angular-moment": "1.0.0-beta.3",
-    "satellizer": "0.14.0"
+    "satellizer": "0.14.0",
+    "angular-file-saver": "1.1.1"
   }
 }

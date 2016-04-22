@@ -1,6 +1,6 @@
 var controllers = angular.module('app.controllers.PlanController', ['ngFileUpload']);
 
-controllers.controller('PlanController', function($scope, $http, $location, $routeParams) {
+controllers.controller('PlanController', function($scope, $http, $location, $routeParams, FileSaver, Blob) {
     $scope.uuid = $routeParams.uuid;
     $scope.alerts = [];
 
@@ -125,19 +125,18 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
     };
 
     $scope.download_mbz = function() {
+        console.log('ok');
         $http.get('/api/planning/' + $scope.uuid + '/mbz')
             .success(function(data) {
-                // Wow JS... taken from http://stackoverflow.com/questions/30443238/save-json-to-file-in-angularjs
-                var blob = new Blob([data]),
-                    e = document.createEvent('MouseEvents'),
-                    a = document.createElement('a');
-
-              a.download = 'updated.mbz';
-              a.href = window.URL.createObjectURL(blob);
-              a.dataset.downloadurl = ['text/json', a.download, a.href].join(':');
-              e.initEvent('click', true, false, window,
-                  0, 0, 0, 0, 0, false, false, false, false, 0, null);
-              a.dispatchEvent(e);
+                console.log(data.mbz_64);
+                var byteCharacters = atob(data.mbz_64);
+                var byteNumbers = new Array(byteCharacters.length);
+                for (var i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                var bytes = new Uint8Array(byteNumbers);
+                var blob = new Blob([bytes], {type: "application/x-gzip"});
+                FileSaver.saveAs(blob, 'updated.mbz');
             })
             .error(function(err, status) {
                 console.log(err, status);

@@ -3,6 +3,7 @@ angular.module('app', [
   'angularMoment',
   'ui.bootstrap',
   'satellizer',
+  'ngFileSaver',
   'app.controllers.IndexController',
   'app.controllers.LoginController',
   'app.controllers.PlanController',
