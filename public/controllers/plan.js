@@ -167,9 +167,7 @@ controllers.controller('PlanController', function($scope, $http, $location, $rou
                         }
                         // Build compact preview
                         $scope.condensedPreview = $scope.buildCondensedPreviewDict(data.preview);
-                        if ($scope.planets_str) {
-                            $scope.planets();
-                        }
+                        $scope.planets();
                     })
                     .error(function(err, status) {
                         $scope.alerts = err.alerts;
