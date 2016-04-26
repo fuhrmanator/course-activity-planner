@@ -15,6 +15,10 @@ angular.module('app', [
       resolve: {loginRequired: loginRequired}
     });
 
+    $routeProvider.when('/about', {
+      templateUrl: 'partials/about.html'
+    });
+
     $routeProvider.when('/login', {
       templateUrl: 'partials/login.html',
       controller: 'LoginController',

@@ -9,3 +9,12 @@
 .dragover {
     border: 5px dashed blue;
 }
+
+footer {
+    margin: 5em 0;
+}
+
+footer p {
+    clear: left;
+    margin-bottom: 0;
+}
