@@ -30,7 +30,9 @@ Moodle courses can be cloned and updated with new activity dates from a calendar
 
 ## How to use
 
-### General principle
+### Overview
+
+![](https://docs.google.com/drawings/d/1dHamm1nw_N9n5JWKxLVGg7bBtb9BFCVm34DDo_D0WVc/pub?w=472&h=492)
 
 Moodle activities can be planned relative to Seminars, Practica and Laboratories. Each activity adapts its start and end dates with the calendar of specific dates.
 
