@@ -30,7 +30,7 @@ Moodle courses can be cloned and updated with new activity dates from a calendar
 
 ## How to use
 
-### Overview
+### General principle
 
 ![](https://docs.google.com/drawings/d/1dHamm1nw_N9n5JWKxLVGg7bBtb9BFCVm34DDo_D0WVc/pub?w=472&h=492)
 
@@ -135,3 +135,8 @@ pep8 && flake8
 
 ## Production setup
 Please see deploy/README.md
+
+## Screen shots
+
+![](https://raw.githubusercontent.com/fuhrmanator/course-activity-planner/ddae3a3f5a91b4644fbffaa5590566f24baefe50/screen_shot_result_1.png)
+![](https://raw.githubusercontent.com/fuhrmanator/course-activity-planner/ddae3a3f5a91b4644fbffaa5590566f24baefe50/screen_shot_result_2.png)
