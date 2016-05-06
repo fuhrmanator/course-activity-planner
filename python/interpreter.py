@@ -185,7 +185,8 @@ class Interpreter():
         raise InvalidEventIdentifier(string)
 
     def _split_line(self, string):
-        return string.strip().split(' ')
+        # Remove sequential spaces before trim
+        return re.sub(' +', ' ', string).strip().split(' ')
 
     def _get_modifiers_as_string(self, string):
         """Returns tuple (at_end, relative_modifier_str, time_modifier_str)
