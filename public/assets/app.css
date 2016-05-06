@@ -4,7 +4,7 @@
     color: #ccc;
     border: 5px dashed #DDD;
     line-height: 180px;
-    text-align: center
+    text-align: center;
 }
 .dragover {
     border: 5px dashed blue;

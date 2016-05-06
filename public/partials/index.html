@@ -9,11 +9,13 @@
                 </div>
             </div>
             <h2>OR</h2>
-            <div class="drop-box" ngf-drag-over-class="dragover" ngf-select ngf-drop ng-model="icsFile">
-                <p ng-hide="icsFile" class="text-info">Select ICS file or drop here</p>
-                <p ng-show="icsFile" class="text-success">Ready to upload "{{icsFile.name}}"</p>
+            <div style="padding-top: 8px;padding-bottom: 8px;">
+                <div class="drop-box" ngf-drag-over-class="dragover" ngf-select ngf-drop ng-model="icsFile">
+                    <p ng-hide="icsFile" class="text-info">Select ICS file or drop here</p>
+                    <p ng-show="icsFile" class="text-success">Ready to upload "{{icsFile.name}}"</p>
+                </div>
             </div>
-            <button class="btn btn-info center-block" ng-show="icsFile || ics_url" ng-click="upload()">Plan</button>
+            <button class="btn btn-info btn-lg center-block" ng-show="icsFile || ics_url" ng-click="upload()">Plan</button>
             <div class="row" ng-show="progress">
                 <div class="progress">
                     <div class="progress-bar" style="width: {{progress}}%;"></div>
@@ -46,13 +48,17 @@
                     <input name="group" id="group" ng-model="planning.group" class="form-control" placeholder="01" maxlength="64">
                   </div>
                 </div>
+                <hr>
             </div>
-
+            <hr>
             <h4>3. (Optional) Upload a Moodle Backup File</h4>
-            <div class="drop-box" ngf-drag-over-class="dragover" ngf-select ngf-drop ng-model="mbzFile">
-                <p ng-hide="mbzFile" class="text-info">Select MBZ file or drop here</p>
-                <p ng-show="mbzFile" class="text-success">Ready to upload "{{mbzFile.name}}"</p>
+            <div style="padding-top: 8px;padding-bottom: 8px;">
+                <div class="drop-box" ngf-drag-over-class="dragover" ngf-select ngf-drop ng-model="mbzFile">
+                    <p ng-hide="mbzFile" class="text-info">Select MBZ file or drop here</p>
+                    <p ng-show="mbzFile" class="text-success">Ready to upload "{{mbzFile.name}}"</p>
+                </div>
             </div>
+            <button class="btn btn-info btn-lg center-block" ng-show="icsFile || ics_url" ng-click="upload()">Plan</button>
         </div>
         <div class="col-md-4 col-md-offset-1">
             <h1>Reuse planning</h1>
