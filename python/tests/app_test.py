@@ -4,6 +4,7 @@ import imp
 import json
 import shutil
 import unittest
+import base64
 import tarfile
 import course_activity_planner
 
@@ -832,8 +833,10 @@ class AppTest(unittest.TestCase):
 
         new_mbz_path = os.path.join(self.app.config['UPLOAD_FOLDER'],
                                     'downloaded.mbz')
+
+        encoded = json.loads(res.data.decode('utf8'))['mbz_64']
         with open(new_mbz_path, 'wb') as f:
-            f.write(res.data)
+            f.write(base64.b64decode(encoded))
 
         print(os.path.exists(new_mbz_path))
         tmp_archive = os.path.join(self.app.config['UPLOAD_FOLDER'],
