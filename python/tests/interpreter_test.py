@@ -216,6 +216,10 @@ class InterpreterTest(unittest.TestCase):
             self.interpreter._interpret_relative_modifier('-2d'))
 
         self.assertEqual(
+            timedelta(days=10),
+            self.interpreter._interpret_relative_modifier('+10d'))
+
+        self.assertEqual(
             timedelta(hours=123),
             self.interpreter._interpret_relative_modifier('+0123h'))
 
@@ -238,6 +242,10 @@ class InterpreterTest(unittest.TestCase):
         self.assertEqual(
             timedelta(weeks=4),
             self.interpreter._interpret_relative_modifier('+4w'))
+
+        self.assertEqual(
+            timedelta(weeks=10),
+            self.interpreter._interpret_relative_modifier('+10w'))
 
     def test_build_new_date_from_event(self):
         expected = arrow.get(2000, 1, 1, 0, 1).datetime
@@ -275,6 +283,17 @@ class InterpreterTest(unittest.TestCase):
         actual = self.interpreter._get_new_datetime(
             arrow.get(2000, 1, 1).datetime, timedelta(days=-1),
             time(hour=23, minute=55))
+        self.assertEqual(expected, actual)
+
+    def test_get_datetime_from_token(self):
+        expected = arrow.get(2014, 1, 15, 12, 0).datetime
+        actual = self.interpreter._get_datetime_from_token('S1+9D')
+        self.assertEqual(expected, actual)
+        expected = arrow.get(2014, 1, 6, 22, 0).datetime
+        actual = self.interpreter._get_datetime_from_token('S1+10h')
+        self.assertEqual(expected, actual)
+        expected = arrow.get(2014, 1, 16, 12, 0).datetime
+        actual = self.interpreter._get_datetime_from_token('S1+10D')
         self.assertEqual(expected, actual)
 
     def test_get_subject(self):

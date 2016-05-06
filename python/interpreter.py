@@ -57,7 +57,7 @@ class Interpreter():
         r'(?:\@(?P<time>[0-9]{1,2}\:[0-9]{1,2}))?$', re.IGNORECASE)
 
     timedelta_regex = re.compile(
-        r'^(?P<neg>\-)?\+?(:?(?P<weeks>[0-9])+w)?(:?(?P<days>[0-9])+d)?' +
+        r'^(?P<neg>\-)?\+?(:?(?P<weeks>[0-9]+)w)?(:?(?P<days>[0-9]+)d)?' +
         r'(:?(?P<hours>[0-9]+)h)?(:?(?P<minutes>[0-9]+)m)?$', re.IGNORECASE)
 
     planets_name_regex = re.compile(r'\"(?P<name>[\w\s]+)\"$', re.IGNORECASE)
