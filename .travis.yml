@@ -3,7 +3,6 @@ python:
   - "3.4"
   - "3.5"
   - "3.5-dev"
-  - "nightly"
 node_js:
   - "0.12"
 before_install:
