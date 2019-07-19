@@ -1,4 +1,4 @@
-This project is affiliated with the [Maison du logiciel libre (ML<sup>2</sup>)](https://maisonlogiciellibre.org/) at <img src="http://www.etsmtl.ca/ETS/media/Prive/logo/ETS-rouge-ecran-fond_transparent.png" alt="ETS" width="64">.
+This project is affiliated with the [Maison du logiciel libre (ML<sup>2</sup>)](https://maisonlogiciellibre.org/) at <img src="https://www.etsmtl.ca/getmedia/4efcf5f0-b7ec-4429-a5d8-28fd4571039c/ETS-rouge-devise-ecran-fond_transparent" alt="ETS" width="64">.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
