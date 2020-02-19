@@ -12,7 +12,7 @@ class ActivityLoader():
 
         for f in glob.glob('config/activities/*.yaml'):
             stream = open(f, 'r')
-            yaml_data = yaml.load(stream)
+            yaml_data = yaml.load(stream, Loader=yaml.SafeLoader)
             self.activities.append(
                 UserDefinedEvent(key=yaml_data['key'], name=yaml_data['name']))
 
