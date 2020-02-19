@@ -1,10 +1,8 @@
 language: python
 python:
-  - "3.4"
-  - "3.5"
-  - "3.5-dev"
+  - "3.7"
 node_js:
-  - "0.12"
+  - 8
 before_install:
   - sudo apt-get update && sudo apt-get --reinstall install -qq language-pack-fr
 install:
